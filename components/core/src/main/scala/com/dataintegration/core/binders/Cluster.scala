@@ -1,6 +1,6 @@
 package com.dataintegration.core.binders
 
-case class Compute(
+case class Cluster(
                     clusterName: String,
                     bucketName: String,
                     project: String,

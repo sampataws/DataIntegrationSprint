@@ -1,12 +1,12 @@
 package com.dataintegration.core.configuration
 
-import com.dataintegration.core.binders.{Compute, IntegrationConf}
+import com.dataintegration.core.binders.{Cluster, IntegrationConf}
 import zio.config._
 import ConfigDescriptor._
 
 object Descriptors {
 
-  def getComputeDescriptor: ConfigDescriptor[Compute] =
+  def getComputeDescriptor: ConfigDescriptor[Cluster] =
     (string("cluster_name") |@|
       string("bucket_name") |@|
       string("project") |@|
@@ -23,7 +23,7 @@ object Descriptors {
       int("max_retries") |@|
       int("idle_deletion_duration_sec") |@|
       int("weightage")
-      ).apply(Compute.apply, Compute.unapply)
+      ).apply(Cluster.apply, Cluster.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =
     (list("cluster_group")(getComputeDescriptor)).apply(IntegrationConf.apply, IntegrationConf.unapply)
