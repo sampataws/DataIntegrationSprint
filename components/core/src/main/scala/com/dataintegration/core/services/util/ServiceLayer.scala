@@ -10,11 +10,11 @@ trait ServiceLayer[T] {
     def getStatus: T
   }
 
-  trait FrontendLayer {
-    def onCreate: ZIO[BackendLayer, Nothing, T]
-    def onDelete: ZIO[BackendLayer, Nothing, T]
-    def getStatus: ZIO[BackendLayer, Nothing, T]
-  }
+
+  def onCreate: ZIO[BackendLayer, Nothing, T]
+  def onDelete: ZIO[BackendLayer, Nothing, T]
+  def getStatus: ZIO[BackendLayer, Nothing, T]
+
 
   def createFunctionalDependencies(config: T): BackendLayer
 
