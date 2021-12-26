@@ -17,4 +17,8 @@ case class Cluster(
                     maxRetries: Int,
                     idleDeletionDurationSec: Int,
                     weightage: Int
-                  ) extends ServiceConfig
+                  ) extends ServiceConfig {
+
+  override def getName: String = "Cluster"
+  
+}

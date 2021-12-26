@@ -1,5 +1,5 @@
 package com.dataintegration.core.binders
 
 case class IntegrationConf (
-                           compute: List[Cluster]
+                             clusterList: List[Cluster]
                            )
