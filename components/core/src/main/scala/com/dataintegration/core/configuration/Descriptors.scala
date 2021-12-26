@@ -1,4 +1,4 @@
-package com.dataintegration.core.util.descriptors
+package com.dataintegration.core.configuration
 
 import com.dataintegration.core.binders.{Compute, IntegrationConf}
 import zio.config._
