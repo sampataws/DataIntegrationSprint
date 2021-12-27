@@ -23,13 +23,13 @@ object Descriptors {
       int("max_retries") |@|
       int("idle_deletion_duration_sec") |@|
       int("weightage") |@|
-      addStatusColumn(string("status").optional)
+      addStatusColumn()
       ).apply(Cluster.apply, Cluster.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =
     (list("cluster_group")(getComputeDescriptor)).apply(IntegrationConf.apply, IntegrationConf.unapply)
 
-  def addStatusColumn(text : ConfigDescriptor[Option[String]]) : ConfigDescriptor[Status.Type] =
-    text.transform[Status.Type](_ => Status.Pending, s => Option(s.toString))
+  def addStatusColumn() : ConfigDescriptor[Status.Type] =
+    string("status").optional.transform[Status.Type](_ => Status.Pending, s => Option(s.toString))
 
 }
