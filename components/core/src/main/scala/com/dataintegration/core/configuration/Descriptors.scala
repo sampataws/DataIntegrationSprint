@@ -1,6 +1,6 @@
 package com.dataintegration.core.configuration
 
-import com.dataintegration.core.binders.{Cluster, IntegrationConf}
+import com.dataintegration.core.binders.{Cluster, IntegrationConf, Status}
 import zio.config._
 import ConfigDescriptor._
 
@@ -22,10 +22,14 @@ object Descriptors {
       int("worker_boot_disk_size_gb") |@|
       int("max_retries") |@|
       int("idle_deletion_duration_sec") |@|
-      int("weightage")
+      int("weightage") |@|
+      addStatusColumn(string("status").optional)
       ).apply(Cluster.apply, Cluster.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =
     (list("cluster_group")(getComputeDescriptor)).apply(IntegrationConf.apply, IntegrationConf.unapply)
+
+  def addStatusColumn(text : ConfigDescriptor[Option[String]]) : ConfigDescriptor[Status.Type] =
+    text.transform[Status.Type](_ => Status.Pending, s => Option(s.toString))
 
 }
