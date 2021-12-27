@@ -1,5 +1,7 @@
 package com.dataintegration.core.binders
 
+import com.dataintegration.core.services.util.{ServiceConfig, Status}
+
 case class Cluster(
                     clusterName: String,
                     bucketName: String,
@@ -17,7 +19,8 @@ case class Cluster(
                     maxRetries: Int,
                     idleDeletionDurationSec: Int,
                     weightage: Int,
-                    status: Status.Type
+                    status: Status.Type,
+//                    errorMessage : Seq[String]
                   ) extends ServiceConfig {
 
   override def getName: String = "Cluster"
