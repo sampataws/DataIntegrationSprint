@@ -20,7 +20,7 @@ case class Cluster(
                     idleDeletionDurationSec: Int,
                     weightage: Int,
                     status: Status.Type,
-//                    errorMessage : Seq[String]
+                    errorMessage : Seq[String]
                   ) extends ServiceConfig {
 
   override def getName: String = "Cluster"

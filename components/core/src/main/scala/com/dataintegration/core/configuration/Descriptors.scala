@@ -27,7 +27,7 @@ object Descriptors {
       int("max_retries") |@|
       int("idle_deletion_duration_sec") |@|
       int("weightage") |@|
-      addStatusColumn()
+      addStatusColumn() |@| addErrorColumn()
       ).apply(Cluster.apply, Cluster.unapply)
 
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
@@ -52,7 +52,7 @@ object Descriptors {
       boolean("runnable") |@|
       list("args")(string).optional |@|
       map("spark_conf")(string).optional |@|
-      addStatusColumn()
+      addStatusColumn() |@| addErrorColumn()
       ).apply(Feature.apply, Feature.unapply)
 
   def getFileStoreDescriptor: ConfigDescriptor[FileStore] =
@@ -60,7 +60,7 @@ object Descriptors {
       string("source_path") |@|
       string("target_bucket").optional |@|
       string("target_path").optional |@|
-      addStatusColumn()
+      addStatusColumn() |@| addErrorColumn()
     ).apply(FileStore.apply, FileStore.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =

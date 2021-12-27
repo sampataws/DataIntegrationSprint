@@ -8,5 +8,5 @@ case class FileStore(
                       targetBucket: Option[String],
                       targetPath: Option[String],
                       status: Status.Type,
-//                      errorMessage: Seq[String]
+                      errorMessage: Seq[String]
                     )
