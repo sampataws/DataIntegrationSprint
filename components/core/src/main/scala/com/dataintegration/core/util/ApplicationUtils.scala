@@ -48,4 +48,9 @@ object ApplicationUtils {
     println()
   }
 
+  def cleanForwardSlash(text : String) : String =
+    text.replaceAll("//+","")
+
+  def updateMap[A,B](primary : Map[A,B], secondary : Map[A, B]): Map[A, B] =
+    primary ++ secondary
 }

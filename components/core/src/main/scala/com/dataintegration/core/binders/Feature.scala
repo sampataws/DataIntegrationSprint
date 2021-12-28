@@ -10,5 +10,4 @@ case class Feature(
                   arguments : Option[List[String]],
                   sparkConf : Option[Map[String, String]],
                   status : Status.Type,
-                  errorMessage : Seq[String]
-                  )
+                  errorMessage : Seq[String])
