@@ -10,7 +10,7 @@ object JobService extends ServiceFrontLayer[Cluster] {
     for {
       integrationConf <- ZIO.service[IntegrationConf]
       clusterService <- ZIO.service[Service[Cluster]]
-    } yield JobSubmit(integrationConf.clusterList, clusterService)
+    } yield JobSubmit(integrationConf.getClustersList, clusterService)
   }.toLayer
 
   case class JobSubmit(clusterList: List[Cluster], clusterService: Service[Cluster]) extends ServiceBackLayer {

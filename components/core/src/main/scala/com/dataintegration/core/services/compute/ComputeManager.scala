@@ -24,7 +24,7 @@ object ComputeManager {
     for {
       integrationConf <- ZIO.service[IntegrationConf]
       clusterService <- ZIO.service[Service[Cluster]]
-    } yield Compute(integrationConf.clusterList, clusterService)
+    } yield Compute(integrationConf.getClustersList, clusterService)
   }.toLayer
 
   case class Compute(clusterList: List[Cluster], clusterService: Service[Cluster]) extends ComputeManager {
