@@ -11,7 +11,7 @@ import com.dataintegration.core.services.util.Status
 object Descriptors {
 
   def getComputeDescriptor: ConfigDescriptor[Cluster] =
-    (string("cluster_name") |@|
+    (applyFunctionalTransformation(string("cluster_name")) |@|
       string("bucket_name") |@|
       string("project") |@|
       string("region") |@|
@@ -34,7 +34,6 @@ object Descriptors {
     (string("job_name") |@|
       string("source_system") |@|
       int("max_cluster_retries") |@|
-      int("max_cluster_parallelism") |@|
       int("max_file_retries") |@|
       int("max_file_transfer_parallelism") |@|
       int("max_job_parallelism") |@|
@@ -47,7 +46,7 @@ object Descriptors {
 
   def getFeatureDescriptor: ConfigDescriptor[Feature] =
     (string("name") |@|
-      string("base_path") |@|
+      applyFunctionalTransformation(string("base_path")) |@|
       string("main_class").optional |@|
       boolean("runnable") |@|
       list("args")(string).optional |@|
