@@ -33,7 +33,7 @@ object Descriptors {
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
     (string("job_name") |@|
       string("source_system") |@|
-      int("max_cluster_retries") |@|
+      int("max_cluster_parallelism") |@|
       int("max_file_retries") |@|
       int("max_file_transfer_parallelism") |@|
       int("max_job_parallelism") |@|

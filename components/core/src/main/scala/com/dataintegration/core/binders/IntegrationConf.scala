@@ -14,7 +14,7 @@ case class IntegrationConf(
 
   def getClustersList: List[Cluster] = clusterList
 
-  def getFilesStoreList: List[FileStore] = (getJarsToMove ++ getFilesToMove).toList
+  def getFileStoreList: List[FileStore] = (getJarsToMove ++ getFilesToMove).toList
 
   def getFeatures: List[Feature] =
     getExecutableFeatures.map(self => self.copy(

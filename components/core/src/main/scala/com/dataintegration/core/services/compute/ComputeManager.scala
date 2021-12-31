@@ -1,36 +1,31 @@
 package com.dataintegration.core.services.compute
 
-import com.dataintegration.core.binders.{Cluster, IntegrationConf}
-import com.dataintegration.core.services.util.ServiceLayer
-import zio.{ZIO, ZLayer}
+import com.dataintegration.core.binders.{Cluster, IntegrationConf, Properties}
+import com.dataintegration.core.services.util.{ServiceFrontEnd, ServiceLayer}
+import zio.{Task, ZIO, ZLayer}
 
-// Backend Layer
-trait ComputeManager {
-  def spawnCluster: ZIO[Any, Throwable, List[Cluster]]
-}
+object ComputeManager extends ServiceFrontEnd[Cluster] {
 
-object ComputeManager {
-  // Front Api's
-  def spawnClusterBackup: ZIO[ComputeManager, Nothing, ZIO[Any, Throwable, List[Cluster]]] =
-    ZIO.serviceWith[ComputeManager](_.spawnCluster)
-
-  def spawnClusterV3: ZIO[ComputeManager, Throwable, List[Cluster]] =
-    ZIO.environmentWithZIO[ComputeManager](_.get.spawnCluster)
-
-  def spawnClusterV2: ZIO[ComputeManager, Throwable, List[Cluster]] =
-    ZIO.serviceWithZIO[ComputeManager](_.spawnCluster)
-
-  val live: ZLayer[ServiceLayer[Cluster] with IntegrationConf, Nothing, Compute] = {
+  val live: ZLayer[IntegrationConf with ServiceLayer[Cluster], Nothing, Manager] = {
     for {
+      service <- ZIO.service[ServiceLayer[Cluster]]
       integrationConf <- ZIO.service[IntegrationConf]
-      clusterService <- ZIO.service[ServiceLayer[Cluster]]
-    } yield Compute(integrationConf.getClustersList, clusterService)
+    } yield Manager(service, integrationConf.getClustersList, integrationConf.getProperties)
   }.toLayer
 
-  case class Compute(clusterList: List[Cluster], clusterService: ServiceLayer[Cluster]) extends ComputeManager {
-    override def spawnCluster: ZIO[Any, Throwable, List[Cluster]] = for {
-      output <- ZIO.foreachPar(clusterList)(clusterService.onCreate).withParallelism(5)
-    } yield output
+  case class Manager(
+                      service: ServiceLayer[Cluster],
+                      clusterList: List[Cluster],
+                      properties: Properties) extends ServiceBackEnd {
+
+    def builder(task: Cluster => Task[Cluster]): ZIO[Any, Throwable, List[Cluster]] =
+      ZIO.foreachPar(clusterList)(task).withParallelism(properties.maxClusterParallelism)
+
+    override def onCreate: ZIO[Any, Throwable, List[Cluster]] = builder(service.onCreate)
+
+    override def onDestroy: ZIO[Any, Throwable, List[Cluster]] = builder(service.onDestroy)
+
+    override def getStatus: ZIO[Any, Throwable, List[Cluster]] = builder(service.getStatus)
   }
 
 }
