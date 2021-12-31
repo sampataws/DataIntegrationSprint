@@ -23,6 +23,17 @@ case class IntegrationConf(
       arguments = Some((self.arguments.getOrElse(List.empty) ++ properties.arguments).distinct),
       sparkConf = Some(ApplicationUtils.updateMap(self.sparkConf.getOrElse(Map.empty), properties.sparkConf))))
 
+  def getJob: List[Job] =
+    getFeatures.map{ feature =>
+      Job(
+        name = feature.name,
+        programArguments = feature.arguments.get :+ s"workingDir=${feature.basePath}" ,
+        className = feature.mainClass.get,
+        sparkConf = feature.sparkConf.get,
+        libraryList = getJarsToMove.map(_.targetPath.get)
+      )
+    }
+
   def getProperties: Properties = properties
 
   private def getExecutableFeatures = featureList.filter(_.executableFlag)

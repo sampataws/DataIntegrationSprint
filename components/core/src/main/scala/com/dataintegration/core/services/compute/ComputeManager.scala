@@ -13,7 +13,7 @@ object ComputeManager extends ServiceFrontEnd[Cluster] {
     } yield Manager(service, integrationConf.getClustersList, integrationConf.getProperties)
   }.toLayer
 
-  case class Manager(
+  private[compute] case class Manager(
                       service: ServiceLayer[Cluster],
                       clusterList: List[Cluster],
                       properties: Properties) extends ServiceBackEnd {

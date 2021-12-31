@@ -1,34 +1,32 @@
 package com.dataintegration.core.services.job
 
-import com.dataintegration.core.binders.{Cluster, IntegrationConf, Properties}
+import com.dataintegration.core.binders.{IntegrationConf, Job, Properties}
 import com.dataintegration.core.services.util.{ServiceFrontEnd, ServiceLayer}
-import zio.{ZIO, ZLayer}
+import zio.{Task, ZIO, ZLayer}
 
-object JobManager extends ServiceFrontEnd[Cluster] {
+object JobManager extends ServiceFrontEnd[Job] {
 
-  val live: ZLayer[ServiceLayer[Cluster] with IntegrationConf, Nothing, Manager] = {
+  val live: ZLayer[IntegrationConf with ServiceLayer[Job], Nothing, Manager] = {
     for {
-      clusterService <- ZIO.service[ServiceLayer[Cluster]]
+      service <- ZIO.service[ServiceLayer[Job]]
       integrationConf <- ZIO.service[IntegrationConf]
-    } yield Manager(clusterService, integrationConf.getClustersList, integrationConf.getProperties)
+    } yield Manager(service, integrationConf.getJob, integrationConf.getProperties)
   }.toLayer
 
-  case class Manager(
-                      clusterService: ServiceLayer[Cluster],
-                      clusterList: List[Cluster],
-                      properties: Properties) extends ServiceBackEnd {
 
-    override def onCreate: ZIO[Any, Throwable, List[Cluster]] = for {
-      output <- ZIO.foreachPar(clusterList)(clusterService.onCreate).withParallelism(5)
-    } yield output
+  case class Manager(service: ServiceLayer[Job],
+                     jobList: List[Job],
+                     properties: Properties) extends ServiceBackEnd {
 
-    override def onDestroy: ZIO[Any, Throwable, List[Cluster]] = for {
-      output <- ZIO.foreachPar(clusterList)(clusterService.onDestroy).withParallelism(5)
-    } yield output
 
-    override def getStatus: ZIO[Any, Throwable, List[Cluster]] = for {
-      output <- ZIO.foreachPar(clusterList)(clusterService.getStatus).withParallelism(5)
-    } yield output
+    def builder(task: Job => Task[Job]): ZIO[Any, Throwable, List[Job]] =
+      ZIO.foreachPar(jobList)(task).withParallelism(properties.maxJobParallelism)
+
+    override def onCreate: ZIO[Any, Throwable, List[Job]] = builder(service.onCreate)
+
+    override def onDestroy: ZIO[Any, Throwable, List[Job]] = builder(service.onDestroy)
+
+    override def getStatus: ZIO[Any, Throwable, List[Job]] = builder(service.getStatus)
   }
 
 }
