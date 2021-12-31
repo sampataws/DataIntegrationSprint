@@ -2,21 +2,21 @@ package com.dataintegration.core.binders
 
 import java.nio.file.{FileSystems, Files, Path}
 
-import com.dataintegration.core.util.ApplicationUtils
+import com.dataintegration.core.util.{ApplicationLogger, ApplicationUtils}
 
 import scala.jdk.CollectionConverters._
 
 case class IntegrationConf(
-                            clusterList: List[Cluster],
-                            featureList: List[Feature],
-                            fileStoreList: Map[String, List[FileStore]],
-                            properties: Properties) {
+                            private val clusterList: List[Cluster],
+                            private val featureList: List[Feature],
+                            private val fileStoreList: Map[String, List[FileStore]],
+                            private val properties: Properties) extends ApplicationLogger {
 
-  def getClustersList: Seq[Cluster] = clusterList
+  def getClustersList: List[Cluster] = clusterList
 
-  def getFilesStoreList: Seq[FileStore] = getJarsToMove ++ getFilesToMove
+  def getFilesStoreList: List[FileStore] = (getJarsToMove ++ getFilesToMove).toList
 
-  def getFeatures: Seq[Feature] =
+  def getFeatures: List[Feature] =
     getExecutableFeatures.map(self => self.copy(
       basePath = ApplicationUtils.cleanForwardSlash(properties.workingDir + self.basePath),
       mainClass = Some(self.mainClass.getOrElse(properties.mainClass)),
@@ -36,9 +36,10 @@ case class IntegrationConf(
   }.flatten
 
   private def getJarsToMove: Seq[FileStore] =
-    moveFiles(fileStoreList("jars_to_move"),basePath = properties.workingDir + "/lib/")
+    moveFiles(fileStoreList("jars_to_move"), basePath = properties.workingDir)
 
-  private def moveFiles(listOfFiles : List[FileStore], basePath : String): Seq[FileStore] = listOfFiles.flatMap { fileStore =>
+  private def moveFiles(listOfFiles: List[FileStore], basePath: String): Seq[FileStore] = listOfFiles.flatMap { fileStore =>
+    warnFileOrDirectoryStruct(fileStore.sourcePath, fileStore.targetPath.getOrElse(basePath))
     if (isLocal(fileStore.sourceBucket)) moveFilesLocalToCloud(fileStore, basePath)
     else Seq(moveFilesCloudToCloud(fileStore, basePath))
   }
@@ -51,32 +52,33 @@ case class IntegrationConf(
     )
 
   // local to cloud
-  private def moveFilesLocalToCloud(file: FileStore, basePath: String): Seq[FileStore] = {
-    val localFiles = filesInDir(file.sourcePath)
-    localFiles.map { filePath =>
+  private def moveFilesLocalToCloud(file: FileStore, basePath: String): Seq[FileStore] =
+    filesInDir(file.sourcePath).map { filePath =>
       file.copy(
         sourcePath = filePath.toString,
-        targetBucket = Some(file.targetBucket.getOrElse(file.sourceBucket)),
+        targetBucket = Some(file.targetBucket.getOrElse(throw new RuntimeException("" +
+          "Target bucket cannot be local. When target bucket is not specified app assumes source bucket as " +
+          "target bucket Please explicitly define target bucket in config"))),
         targetPath =
           Some(ApplicationUtils.cleanForwardSlash(basePath +
             getTargetPathFromLocal(filePath, file.sourcePath, file.targetPath.getOrElse(""))))
       )
     }
-  }
 
   private def getTargetPathFromLocal(fileName: Path, sourcePath: String, targetPath: String): String = {
+    val directorySplitter = if (System.getProperty("os.name").toLowerCase.contains("windows")) "\\\\" else "/"
 
     val replaceableString = (sourcePath: String) =>
-      if (sourcePath.endsWith("/")) sourcePath
+      if (sourcePath.endsWith(directorySplitter)) sourcePath
       else {
-        val splitFilePath = sourcePath.split("/")
+        val splitFilePath = sourcePath.split(directorySplitter)
         splitFilePath.slice(0, splitFilePath.length - 1).mkString("/")
       }
 
-    if (targetPath.endsWith("/"))
+    if (targetPath.endsWith("/") || targetPath.isEmpty)
       targetPath + fileName.toString.replace(replaceableString(sourcePath), "")
     else targetPath
-  }
+  }.replaceAll("\\\\", "/")
 
   private def filesInDir(path: String): Seq[Path] = {
     val dirPath = FileSystems.getDefault.getPath(path)
@@ -84,5 +86,11 @@ case class IntegrationConf(
   }
 
   private def isLocal(path: String) = path.toLowerCase.trim == "local"
+
+  private def warnFileOrDirectoryStruct(source: String, target: String): Unit = {
+    val updatedTargetPath = target.split("/")
+    if (!source.replaceAll("\\\\", "/").endsWith(if (updatedTargetPath.nonEmpty) updatedTargetPath.last else "/"))
+      logger.warn("Make sure when source path and target path are of same type either director or file")
+  }
 
 }
