@@ -1,19 +1,19 @@
 package com.dataintegration.core.services.job
 
 import com.dataintegration.core.binders.{Cluster, IntegrationConf}
-import com.dataintegration.core.services.util.{Service, ServiceFrontLayer}
+import com.dataintegration.core.services.util.{ServiceLayer, ServiceFrontEnd}
 import zio.ZIO
 
-object JobService extends ServiceFrontLayer[Cluster] {
+object JobService extends ServiceFrontEnd[Cluster] {
 
   val live = {
     for {
       integrationConf <- ZIO.service[IntegrationConf]
-      clusterService <- ZIO.service[Service[Cluster]]
+      clusterService <- ZIO.service[ServiceLayer[Cluster]]
     } yield JobSubmit(integrationConf.getClustersList, clusterService)
   }.toLayer
 
-  case class JobSubmit(clusterList: List[Cluster], clusterService: Service[Cluster]) extends ServiceBackLayer {
+  case class JobSubmit(clusterList: List[Cluster], clusterService: ServiceLayer[Cluster]) extends ServiceBackEnd {
     override def onCreate: ZIO[Any, Throwable, List[Cluster]] = for {
       output <- ZIO.foreachPar(clusterList)(clusterService.onCreate).withParallelism(5)
     } yield output
