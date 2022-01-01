@@ -21,11 +21,11 @@ object StorageManager extends ServiceFrontEnd[FileStore] {
     def builder(task: FileStore => Task[FileStore]): ZIO[Any, Throwable, List[FileStore]] =
       ZIO.foreachPar(fileStoreList)(task).withParallelism(properties.maxFileParallelism)
 
-    override def onCreate: ZIO[Any, Throwable, List[FileStore]] = builder(service.onCreate)
+    override def onCreate: ZIO[Any, Throwable, List[FileStore]] = builder(service.onCreate(properties))
 
-    override def onDestroy: ZIO[Any, Throwable, List[FileStore]] = builder(service.onDestroy)
+    override def onDestroy: ZIO[Any, Throwable, List[FileStore]] = builder(service.onDestroy(properties))
 
-    override def getStatus: ZIO[Any, Throwable, List[FileStore]] = builder(service.getStatus)
+    override def getStatus: ZIO[Any, Throwable, List[FileStore]] = builder(service.getStatus(properties))
   }
 
 }

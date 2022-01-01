@@ -19,15 +19,13 @@ object ComputeManager extends ServiceFrontEnd[Cluster] {
                                        properties: Properties) extends ServiceBackEnd {
 
     def builder(task: Cluster => Task[Cluster]): ZIO[Any, Throwable, List[Cluster]] =
-      ZIO.foreachPar(clusterList)(task)
-        .withParallelism(properties.maxClusterParallelism)
-        .retryN(properties.maxClusterRetries)
+      ZIO.foreachPar(clusterList)(task).withParallelism(properties.maxClusterParallelism)
 
-    override def onCreate: ZIO[Any, Throwable, List[Cluster]] = builder(service.onCreate)
+    override def onCreate: ZIO[Any, Throwable, List[Cluster]] = builder(service.onCreate(properties))
 
-    override def onDestroy: ZIO[Any, Throwable, List[Cluster]] = builder(service.onDestroy)
+    override def onDestroy: ZIO[Any, Throwable, List[Cluster]] = builder(service.onDestroy(properties))
 
-    override def getStatus: ZIO[Any, Throwable, List[Cluster]] = builder(service.getStatus)
+    override def getStatus: ZIO[Any, Throwable, List[Cluster]] = builder(service.getStatus(properties))
   }
 
 }

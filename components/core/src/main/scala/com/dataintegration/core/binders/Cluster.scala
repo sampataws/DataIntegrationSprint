@@ -22,6 +22,5 @@ case class Cluster(
                     errorMessage : Seq[String]
                   ) extends ServiceConfig {
 
-  override def getName: String = "Cluster"
   
 }

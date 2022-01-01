@@ -22,11 +22,11 @@ object JobManager extends ServiceFrontEnd[Job] {
     def builder(task: Job => Task[Job]): ZIO[Any, Throwable, List[Job]] =
       ZIO.foreachPar(jobList)(task).withParallelism(properties.maxJobParallelism)
 
-    override def onCreate: ZIO[Any, Throwable, List[Job]] = builder(service.onCreate)
+    override def onCreate: ZIO[Any, Throwable, List[Job]] = builder(service.onCreate(properties))
 
-    override def onDestroy: ZIO[Any, Throwable, List[Job]] = builder(service.onDestroy)
+    override def onDestroy: ZIO[Any, Throwable, List[Job]] = builder(service.onDestroy(properties))
 
-    override def getStatus: ZIO[Any, Throwable, List[Job]] = builder(service.getStatus)
+    override def getStatus: ZIO[Any, Throwable, List[Job]] = builder(service.getStatus(properties))
   }
 
 }

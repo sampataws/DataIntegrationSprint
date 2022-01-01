@@ -1,6 +1,6 @@
 package com.dataintegration.core.binders
 
-import com.dataintegration.core.services.util.Status
+import com.dataintegration.core.services.util.{ServiceConfig, Status}
 
 case class Feature(
                   name : String,
@@ -10,4 +10,6 @@ case class Feature(
                   arguments : Option[List[String]],
                   sparkConf : Option[Map[String, String]],
                   status : Status.Type,
-                  errorMessage : Seq[String])
+                  errorMessage : Seq[String]
+                  ) extends ServiceConfig
+

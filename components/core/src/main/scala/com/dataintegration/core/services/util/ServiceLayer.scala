@@ -1,9 +1,13 @@
 package com.dataintegration.core.services.util
 
+import com.dataintegration.core.binders.Properties
+import com.dataintegration.core.util.ApplicationLogger
 import zio.Task
 
-trait ServiceLayer[T] {
-  def onCreate(data : T) : Task[T]
-  def onDestroy(data : T) : Task[T]
-  def getStatus(data : T) : Task[T]
+trait ServiceLayer[T] extends ApplicationLogger {
+  def onCreate(properties: Properties)(data: T): Task[T]
+
+  def onDestroy(properties: Properties)(data: T): Task[T]
+
+  def getStatus(properties: Properties)(data: T): Task[T]
 }
