@@ -24,7 +24,6 @@ object Descriptors {
       string("worker_machine_type_uri") |@|
       int("worker_num_instance") |@|
       int("worker_boot_disk_size_gb") |@|
-      int("max_retries") |@|
       int("idle_deletion_duration_sec") |@|
       int("weightage") |@|
       addStatusColumn() |@| addErrorColumn()
@@ -34,6 +33,7 @@ object Descriptors {
     (string("job_name") |@|
       string("source_system") |@|
       int("max_cluster_parallelism") |@|
+      int("max_cluster_retries") |@|
       int("max_file_retries") |@|
       int("max_file_transfer_parallelism") |@|
       int("max_job_parallelism") |@|

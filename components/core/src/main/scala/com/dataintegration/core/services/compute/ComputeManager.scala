@@ -14,12 +14,14 @@ object ComputeManager extends ServiceFrontEnd[Cluster] {
   }.toLayer
 
   private[compute] case class Manager(
-                      service: ServiceLayer[Cluster],
-                      clusterList: List[Cluster],
-                      properties: Properties) extends ServiceBackEnd {
+                                       service: ServiceLayer[Cluster],
+                                       clusterList: List[Cluster],
+                                       properties: Properties) extends ServiceBackEnd {
 
     def builder(task: Cluster => Task[Cluster]): ZIO[Any, Throwable, List[Cluster]] =
-      ZIO.foreachPar(clusterList)(task).withParallelism(properties.maxClusterParallelism)
+      ZIO.foreachPar(clusterList)(task)
+        .withParallelism(properties.maxClusterParallelism)
+        .retryN(properties.maxClusterRetries)
 
     override def onCreate: ZIO[Any, Throwable, List[Cluster]] = builder(service.onCreate)
 

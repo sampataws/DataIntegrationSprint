@@ -4,6 +4,7 @@ case class Properties(
                        jobName: String,
                        sourceSystem: String,
                        maxClusterParallelism: Int,
+                       maxClusterRetries : Int,
                        maxFileRetires: Int,
                        maxFileParallelism: Int,
                        maxJobParallelism: Int,

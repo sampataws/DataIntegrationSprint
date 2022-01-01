@@ -16,7 +16,6 @@ case class Cluster(
                     workerMachineTypeUri: String,
                     workerNumInstance: Int,
                     workerBootDiskSizeGB: Int,
-                    maxRetries: Int,
                     idleDeletionDurationSec: Int,
                     weightage: Int,
                     status: Status.Type,
