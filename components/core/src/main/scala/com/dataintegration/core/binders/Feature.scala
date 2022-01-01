@@ -11,5 +11,5 @@ case class Feature(
                   sparkConf : Option[Map[String, String]],
                   status : Status.Type,
                   errorMessage : Seq[String]
-                  ) extends ServiceConfig
+                  )
 

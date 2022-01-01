@@ -10,4 +10,4 @@ case class Job(
                 libraryList: Seq[String],
                 status: Status.Type = Status.Pending,
                 errorMessage: Seq[String] = Seq.empty
-              ) extends ServiceConfig
+              )

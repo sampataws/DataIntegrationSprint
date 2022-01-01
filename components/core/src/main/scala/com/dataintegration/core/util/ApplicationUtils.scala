@@ -10,7 +10,7 @@ object ApplicationUtils {
   def prettyPrintCaseClass(listOfCases: Seq[AnyRef]): Unit = {
     val getHeader = (p: AnyRef) => p.getClass.getDeclaredFields.map(x => {
       x.setAccessible(true)
-      x.getName -> x.get(p).toString
+      x.getName -> (if(x.get(p)== null) "null" else x.get(p).toString)
     })
 
     val createString = (text: String, maxLength: Int) => {

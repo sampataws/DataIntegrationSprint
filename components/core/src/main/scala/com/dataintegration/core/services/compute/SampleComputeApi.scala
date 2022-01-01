@@ -5,9 +5,26 @@ import com.dataintegration.core.services.util.{ServiceLayer, Status}
 import zio.Task
 
 object SampleComputeApi extends ServiceLayer[Cluster] {
-  override def onCreate(properties: Properties)(data: Cluster): Task[Cluster] = Task(data.copy(status = Status.Running))
 
-  override def onDestroy(properties: Properties)(data: Cluster): Task[Cluster] = Task(data.copy(status = Status.Success))
+  override def onCreate(properties: Properties)(data: Cluster): Task[Cluster] =
+    serviceBuilder(
+      task = (data: Cluster, properties: Properties) => Task(data.copy(status = Status.Running)),
+      service = data,
+      properties = properties
+    )
 
-  override def getStatus(properties: Properties)(data: Cluster): Task[Cluster] = Task(data.copy(status = Status.Success))
+  override def onDestroy(properties: Properties)(data: Cluster): Task[Cluster] =
+    serviceBuilder(
+      task = (data: Cluster, properties: Properties) => Task(data.copy(status = Status.Success)),
+      service = data,
+      properties = properties
+    )
+
+  override def getStatus(properties: Properties)(data: Cluster): Task[Cluster] =
+    for {
+      _ <- data.logServiceStart()
+      serviceResult <- Task(data.copy(status = Status.Success)).fold(data.onFailure, data.onSuccess)
+      _ <- serviceResult.logServiceEnd(serviceResult)
+    } yield (data)
+
 }

@@ -9,4 +9,4 @@ case class FileStore(
                       targetPath: Option[String],
                       status: Status.Type,
                       errorMessage: Seq[String]
-                    ) extends ServiceConfig
+                    )

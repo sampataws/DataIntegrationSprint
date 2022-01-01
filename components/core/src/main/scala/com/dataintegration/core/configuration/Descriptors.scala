@@ -5,13 +5,14 @@ import java.util.UUID
 
 import zio.config._
 import ConfigDescriptor._
-import com.dataintegration.core.binders.{Cluster, Feature, FileStore, IntegrationConf, Properties}
+import com.dataintegration.core.binders._
 import com.dataintegration.core.services.util.Status
 
 object Descriptors {
 
   def getComputeDescriptor: ConfigDescriptor[Cluster] =
-    (applyFunctionalTransformation(string("cluster_name")) |@|
+    (addColumn("service_id", UUID.randomUUID().toString) |@|
+      applyFunctionalTransformation(string("cluster_name")) |@|
       string("bucket_name") |@|
       string("project") |@|
       string("region") |@|
@@ -26,7 +27,8 @@ object Descriptors {
       int("worker_boot_disk_size_gb") |@|
       int("idle_deletion_duration_sec") |@|
       int("weightage") |@|
-      addStatusColumn() |@| addErrorColumn()
+      addColumn[Status.Type]("status", Status.Pending) |@|
+      addColumn("error_message", Seq.empty[String])
       ).apply(Cluster.apply, Cluster.unapply)
 
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
@@ -60,7 +62,7 @@ object Descriptors {
       string("target_bucket").optional |@|
       string("target_path").optional |@|
       addStatusColumn() |@| addErrorColumn()
-    ).apply(FileStore.apply, FileStore.unapply)
+      ).apply(FileStore.apply, FileStore.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =
     (list("cluster_group")(getComputeDescriptor) |@|
@@ -69,11 +71,17 @@ object Descriptors {
       nested("project_properties")(getPropertiesDescriptor)
       ).apply(IntegrationConf.apply, IntegrationConf.unapply)
 
+  private def addServiceIdColumn(): ConfigDescriptor[String] =
+    string("service_id").optional.transform[String](_ => UUID.randomUUID().toString, s => Option(s.toString))
+
   private def addStatusColumn(): ConfigDescriptor[Status.Type] =
     string("status").optional.transform[Status.Type](_ => Status.Pending, s => Option(s.toString))
 
   private def addErrorColumn(): ConfigDescriptor[Seq[String]] =
     string("error_message").optional.transform[Seq[String]](_ => Seq.empty[String], s => Option(s.toString))
+
+  private def addColumn[T](name: String, transformation: => T): ConfigDescriptor[T] =
+    string(name).optional.transform[T](_ => transformation , s => Option(s.toString))
 
   private def applyFunctionalTransformation(text: ConfigDescriptor[String]): ConfigDescriptor[String] = {
     def getUUID: String = UUID.randomUUID().toString
