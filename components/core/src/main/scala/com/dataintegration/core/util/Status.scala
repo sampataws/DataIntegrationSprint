@@ -1,4 +1,4 @@
-package com.dataintegration.core.services.util
+package com.dataintegration.core.util
 
 object Status {
   sealed trait Type

@@ -1,6 +1,6 @@
 package com.dataintegration.core.services.util
 
-import com.dataintegration.core.util.ApplicationLogger
+import com.dataintegration.core.util.{ApplicationLogger, Status}
 import zio.Task
 
 trait ServiceConfig extends ApplicationLogger {

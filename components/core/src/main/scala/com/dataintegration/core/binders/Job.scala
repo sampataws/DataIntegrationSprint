@@ -1,6 +1,7 @@
 package com.dataintegration.core.binders
 
-import com.dataintegration.core.services.util.{ServiceConfig, Status}
+import com.dataintegration.core.services.util.ServiceConfig
+import com.dataintegration.core.util.Status
 
 case class Job(
                 name: String,

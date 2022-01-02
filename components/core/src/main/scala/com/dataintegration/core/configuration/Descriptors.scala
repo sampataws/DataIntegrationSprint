@@ -6,7 +6,7 @@ import java.util.UUID
 import zio.config._
 import ConfigDescriptor._
 import com.dataintegration.core.binders._
-import com.dataintegration.core.services.util.Status
+import com.dataintegration.core.util.Status
 
 object Descriptors {
 

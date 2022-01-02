@@ -1,7 +1,8 @@
 package com.dataintegration.core.services.compute
 
 import com.dataintegration.core.binders.{Cluster, Properties}
-import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer, Status}
+import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer}
+import com.dataintegration.core.util.Status
 import zio.Task
 
 object SampleComputeApi extends ServiceLayer[Cluster] {
