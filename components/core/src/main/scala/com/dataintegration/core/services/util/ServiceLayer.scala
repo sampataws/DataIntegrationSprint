@@ -2,7 +2,7 @@ package com.dataintegration.core.services.util
 
 import com.dataintegration.core.binders.Properties
 import com.dataintegration.core.util.ApplicationLogger
-import zio.{Task, ZIO}
+import zio.Task
 
 trait ServiceLayer[T] extends ApplicationLogger {
 
@@ -12,14 +12,16 @@ trait ServiceLayer[T] extends ApplicationLogger {
 
   def getStatus(properties: Properties)(data: T): Task[T]
 
-  def serviceBuilder[IN, A <: ServiceConfig[IN]](task: (A, Properties) => Task[IN],
-                                                 service: A,
-                                                 properties: Properties): ZIO[Any, Throwable, IN] = for {
-    _ <- service.logServiceStart()
+  def serviceBuilder[A <: ServiceConfig](task: (A, Properties) => Task[A],
+                                         service: A,
+                                         properties: Properties): Task[A] = for {
+    _ <- service.logServiceStart
+
     serviceResult <- task(service, properties)
       .retryN(properties.maxClusterRetries)
-      .fold(service.onFailure, service.onSuccess)
-    _ <- service.logServiceEnd(serviceResult)
-  } yield serviceResult
+      .fold(service.onFailure, _ => service.onGenericSuccess)
+
+    _ <- serviceResult.logServiceEnd
+  } yield (service) // Todo it returns Service that's why its working should return service result
 
 }

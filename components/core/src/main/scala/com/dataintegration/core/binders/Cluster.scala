@@ -21,7 +21,7 @@ case class Cluster(
                     weightage: Int,
                     status: Status.Type,
                     errorMessage: Seq[String]
-                  ) extends ServiceConfig[Cluster] {
+                  ) extends ServiceConfig {
 
   override def getName: String = "cluster_creation"
 
@@ -34,24 +34,12 @@ case class Cluster(
 
   override def getStatus: Status.Type = status
 
-  override def logConsoleStart(): Unit =
-    logger.info(getLoggingInfo + " Started")
-
-  override def logConsoleEnd(service: Cluster): Unit = {
-    val errorMessagesIfAny = if (service.getErrorMessage.isEmpty) "" else "error message :- " + service.getErrorMessage
-    if (service.getStatus == Status.Failed)
-      logger.warn(getLoggingInfo + s" Ended with status ${service.getStatus} and $errorMessagesIfAny")
-    else
-      logger.info(getLoggingInfo + s" Ended with status ${service.getStatus}")
-  }
-
   /**
    * On service success - Called when service completes successfully
    *
-   * @param service Service config type :- Can be compute/feature/job/fileStore
    * @return
    */
-  override def onSuccess(service: Cluster): Cluster =
+  override def onGenericSuccess: Cluster =
     this.copy(status = Status.Success)
 
 
@@ -63,6 +51,5 @@ case class Cluster(
    */
   override def onFailure(failure: Throwable): Cluster =
     this.copy(status = Status.Failed, errorMessage = this.errorMessage :+ failure.getMessage)
-
 
 }

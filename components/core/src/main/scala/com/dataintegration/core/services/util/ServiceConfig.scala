@@ -3,7 +3,7 @@ package com.dataintegration.core.services.util
 import com.dataintegration.core.util.ApplicationLogger
 import zio.Task
 
-trait ServiceConfig[T] extends ApplicationLogger {
+trait ServiceConfig extends ApplicationLogger {
 
   def getName: String
 
@@ -35,20 +35,27 @@ trait ServiceConfig[T] extends ApplicationLogger {
    * Log Service start on console/DB
    *
    */
-  protected def logConsoleStart(): Unit
+  private def logConsoleStart(): Unit =
+    logger.info(getLoggingInfo + " Started")
 
   /**
    * Log Service end on console/DB
    *
    */
-  protected def logConsoleEnd(service: T): Unit
+  private def logConsoleEnd(): Unit = {
+    val errorMessagesIfAny = if (getErrorMessage.isEmpty) "" else "error message :- " + getErrorMessage
+    if (getStatus == Status.Failed)
+      logger.warn(getLoggingInfo + s" Ended with status ${getStatus} and $errorMessagesIfAny")
+    else
+      logger.info(getLoggingInfo + s" Ended with status ${getStatus}")
+  }
 
   /**
    * Should insert entry to db table
    *
    * @return
    */
-  protected def logAuditStart(): String = "Insert into table"
+  protected def logAuditStart: String = "Insert into table"
 
   /**
    * Should update entry which was inserted previously based on serviceId
@@ -56,25 +63,24 @@ trait ServiceConfig[T] extends ApplicationLogger {
    *
    * @return
    */
-  protected def logAuditEnd(service: T): String = "Update table"
+  protected def logAuditEnd: String = "Update table"
 
-  def logServiceStart(): Task[String] = Task {
+  def logServiceStart: Task[String] = Task {
     logConsoleStart()
-    logAuditStart()
+    logAuditStart
   }
 
-  def logServiceEnd(service : T): Task[String] = Task {
-    logConsoleEnd(service)
-    logAuditEnd(service)
+  def logServiceEnd: Task[String] = Task {
+    logConsoleEnd()
+    logAuditEnd
   }
 
   /**
    * On service success - Called when service completes successfully
    *
-   * @param service Service config type :- Can be compute/feature/job/fileStore
    * @return
    */
-  def onSuccess(service: T): T
+  def onGenericSuccess: ServiceConfig
 
   /**
    * On service Failed - Called when service fails
@@ -82,7 +88,7 @@ trait ServiceConfig[T] extends ApplicationLogger {
    * @param failure Failure Type of the service
    * @return
    */
-  def onFailure(failure: Throwable): T
+  def onFailure(failure: Throwable): ServiceConfig
 
   /**
    * Returns a logging info to print in console

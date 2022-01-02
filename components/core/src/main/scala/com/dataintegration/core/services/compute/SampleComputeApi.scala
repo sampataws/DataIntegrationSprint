@@ -1,7 +1,7 @@
 package com.dataintegration.core.services.compute
 
 import com.dataintegration.core.binders.{Cluster, Properties}
-import com.dataintegration.core.services.util.{ServiceLayer, Status}
+import com.dataintegration.core.services.util.{ServiceConfig, ServiceLayer, Status}
 import zio.Task
 
 object SampleComputeApi extends ServiceLayer[Cluster] {
@@ -22,9 +22,9 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
   override def getStatus(properties: Properties)(data: Cluster): Task[Cluster] =
     for {
-      _ <- data.logServiceStart()
-      serviceResult <- Task(data.copy(status = Status.Success)).fold(data.onFailure, data.onSuccess)
-      _ <- serviceResult.logServiceEnd(serviceResult)
+      _ <- data.logServiceStart
+      serviceResult <- Task(data.copy(status = Status.Success)).fold(data.onFailure, _ => data.onGenericSuccess)
+      _ <- serviceResult.logServiceEnd
     } yield (data)
 
 }
