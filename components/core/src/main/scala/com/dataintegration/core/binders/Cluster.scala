@@ -39,8 +39,8 @@ case class Cluster(
    *
    * @return
    */
-  override def onSuccess(status: Status.Type): Cluster =
-    this.copy(status = Status.Success)
+  override def onSuccess(updatedStatus: Status.Type): Cluster =
+    this.copy(status = updatedStatus)
 
 
   /**
@@ -49,7 +49,7 @@ case class Cluster(
    * @param failure Failure Type of the service
    * @return
    */
-  override def onFailure(status: Status.Type)(failure: Throwable): Cluster =
-    this.copy(status = Status.Failed, errorMessage = this.errorMessage :+ failure.getMessage)
+  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): Cluster =
+    this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
 
 }

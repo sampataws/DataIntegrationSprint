@@ -1,48 +1,45 @@
 package com.dataintegration.core.services.compute
 
 import com.dataintegration.core.binders.{Cluster, Properties}
-import com.dataintegration.core.services.util.{ServiceLayer, Status}
+import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer, Status}
 import zio.Task
 
 object SampleComputeApi extends ServiceLayer[Cluster] {
 
-  override def serviceBuilder(task: (Cluster, Properties) => Task[Cluster],
-                              service: Cluster,
-                              properties: Properties): Task[Cluster] =
-    for {
-      _ <- service.logServiceStart
-
-      serviceResult <- task(service, properties)
-        .retryN(properties.maxClusterRetries)
-        .fold(service.onFailure(Status.Failed), _ => service.onSuccess(Status.Success))
-
-      _ <- serviceResult.logServiceEnd
-    } yield serviceResult
-
   override def onCreate(properties: Properties)(data: Cluster): Task[Cluster] =
-    serviceBuilderV3(
-      task = Task(data.copy(status = Status.Running)),
-      service = data,
-      onSuccess = data.onSuccess(Status.Success),
-      onFailure = data.onFailure(Status.Failed),
-      retries = properties.maxClusterRetries
-    )
+    ClusterApi(data, properties).execute
 
   override def onDestroy(properties: Properties)(data: Cluster): Task[Cluster] =
-    serviceBuilderV2(
-      task = (data: Cluster, properties: Properties) => Task(data.copy(status = Status.Success)),
-      service = data,
-      properties = properties,
-      onFailure = data.onFailure(Status.Failed),
-      onSuccess = data.onSuccess(Status.Success),
-      retries = properties.maxClusterRetries
-    )
+    ClusterApi(data, properties).execute
 
   override def getStatus(properties: Properties)(data: Cluster): Task[Cluster] =
-    serviceBuilder(
-      task = (data: Cluster, properties: Properties) => Task(data.copy(status = Status.Running)),
-      service = data,
-      properties = properties
-    )
+    new ServiceApi[Cluster] {
+      override def preJob(): Task[String] = data.logServiceStart
+
+      override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
+
+      override def postJob(serviceResult: Cluster): Task[String] = serviceResult.logServiceEnd
+
+      override def onSuccess: () => Cluster = () => data.onSuccess(Status.Running)
+
+      override def onFailure: Throwable => Cluster = data.onFailure(Status.Failed)
+
+      override def retries: Int = properties.maxClusterRetries
+    }.execute
+
+
+  private case class ClusterApi(data: Cluster, properties: Properties) extends ServiceApi[Cluster] {
+    override def preJob(): Task[String] = data.logServiceStart
+
+    override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
+
+    override def postJob(serviceResult: Cluster): Task[String] = serviceResult.logServiceEnd
+
+    override def onSuccess: () => Cluster = () => data.onSuccess(Status.Running)
+
+    override def onFailure: Throwable => Cluster = data.onFailure(Status.Failed)
+
+    override def retries: Int = properties.maxClusterRetries
+  }
 
 }
