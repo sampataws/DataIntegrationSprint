@@ -1,20 +1,20 @@
 package com.dataintegration.core.services.compute
 
 import com.dataintegration.core.binders.{Cluster, IntegrationConf, Properties}
-import com.dataintegration.core.services.util.{ServiceFrontEnd, ServiceLayer}
+import com.dataintegration.core.services.util.{ServiceFrontEnd, ServiceLayerV2}
 import zio.{Task, ZIO, ZLayer}
 
 object ComputeManager extends ServiceFrontEnd[Cluster] {
 
-  val live: ZLayer[IntegrationConf with ServiceLayer[Cluster], Nothing, Manager] = {
+  val live: ZLayer[IntegrationConf with ServiceLayerV2[Cluster], Nothing, Manager] = {
     for {
-      service <- ZIO.service[ServiceLayer[Cluster]]
+      service <- ZIO.service[ServiceLayerV2[Cluster]]
       integrationConf <- ZIO.service[IntegrationConf]
     } yield Manager(service, integrationConf.getClustersList, integrationConf.getProperties)
   }.toLayer
 
   private[compute] case class Manager(
-                                       service: ServiceLayer[Cluster],
+                                       service: ServiceLayerV2[Cluster],
                                        clusterList: List[Cluster],
                                        properties: Properties) extends ServiceBackEnd {
 
