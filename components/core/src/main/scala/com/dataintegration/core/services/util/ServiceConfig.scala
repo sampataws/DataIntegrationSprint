@@ -80,7 +80,7 @@ trait ServiceConfig extends ApplicationLogger {
    *
    * @return
    */
-  def onGenericSuccess: ServiceConfig
+  def onSuccess: ServiceConfig
 
   /**
    * On service Failed - Called when service fails

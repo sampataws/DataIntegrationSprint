@@ -39,7 +39,7 @@ case class Cluster(
    *
    * @return
    */
-  override def onGenericSuccess: Cluster =
+  override def onSuccess: Cluster =
     this.copy(status = Status.Success)
 
 

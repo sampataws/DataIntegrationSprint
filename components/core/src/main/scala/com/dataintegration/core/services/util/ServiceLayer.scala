@@ -12,16 +12,9 @@ trait ServiceLayer[T] extends ApplicationLogger {
 
   def getStatus(properties: Properties)(data: T): Task[T]
 
-  def serviceBuilder[A <: ServiceConfig](task: (A, Properties) => Task[A],
-                                         service: A,
-                                         properties: Properties): Task[A] = for {
-    _ <- service.logServiceStart
-
-    serviceResult <- task(service, properties)
-      .retryN(properties.maxClusterRetries)
-      .fold(service.onFailure, _ => service.onGenericSuccess)
-
-    _ <- serviceResult.logServiceEnd
-  } yield (service) // Todo it returns Service that's why its working should return service result
+  def serviceBuilder(task: (T, Properties) => Task[T],
+                     service: T,
+                     properties: Properties): Task[T]
+  = task(service, properties)
 
 }
