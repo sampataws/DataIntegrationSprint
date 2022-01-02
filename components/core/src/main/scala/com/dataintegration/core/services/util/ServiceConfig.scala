@@ -80,7 +80,7 @@ trait ServiceConfig extends ApplicationLogger {
    *
    * @return
    */
-  def onSuccess: ServiceConfig
+  def onSuccess(status: Status.Type): ServiceConfig
 
   /**
    * On service Failed - Called when service fails
@@ -88,7 +88,7 @@ trait ServiceConfig extends ApplicationLogger {
    * @param failure Failure Type of the service
    * @return
    */
-  def onFailure(failure: Throwable): ServiceConfig
+  def onFailure(status: Status.Type)(failure: Throwable): ServiceConfig
 
   /**
    * Returns a logging info to print in console

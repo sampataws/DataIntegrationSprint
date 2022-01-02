@@ -2,7 +2,7 @@ package com.dataintegration.core.services.util
 
 import com.dataintegration.core.binders.Properties
 import com.dataintegration.core.util.ApplicationLogger
-import zio.Task
+import zio.{Task, ZIO}
 
 trait ServiceLayer[T] extends ApplicationLogger {
 
