@@ -1,10 +1,10 @@
 package com.dataintegration.core.services.compute
 
 import com.dataintegration.core.binders.{Cluster, Properties}
-import com.dataintegration.core.services.util.{ServiceLayer, ServiceLayerV2, Status}
+import com.dataintegration.core.services.util.{ServiceLayer, Status}
 import zio.Task
 
-object SampleComputeApi extends ServiceLayerV2[Cluster] {
+object SampleComputeApi extends ServiceLayer[Cluster] {
 
   override def serviceBuilder(task: (Cluster, Properties) => Task[Cluster],
                               service: Cluster,
