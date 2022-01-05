@@ -5,15 +5,15 @@ import zio.ZIO
 trait ServiceFrontEnd[T] {
 
   trait ServiceBackEnd {
-    def onCreate: ZIO[Any, Throwable, List[T]]
-    def onDestroy: ZIO[Any, Throwable, List[T]]
-    def getStatus: ZIO[Any, Throwable, List[T]]
+    def startService: ZIO[Any, Throwable, List[T]]
+    def stopService: ZIO[Any, Throwable, List[T]]
+    def getServiceStatus: ZIO[Any, Throwable, List[T]]
   }
 
   object Apis {
-    def onCreate: ZIO[ServiceBackEnd, Throwable, List[T]] = ZIO.serviceWithZIO[ServiceBackEnd](_.onCreate)
-    def onDestroy: ZIO[ServiceBackEnd, Throwable, List[T]] = ZIO.serviceWithZIO[ServiceBackEnd](_.onDestroy)
-    def getStatus: ZIO[ServiceBackEnd, Throwable, List[T]] = ZIO.serviceWithZIO[ServiceBackEnd](_.getStatus)
+    def startService: ZIO[ServiceBackEnd, Throwable, List[T]] = ZIO.serviceWithZIO[ServiceBackEnd](_.startService)
+    def stopService: ZIO[ServiceBackEnd, Throwable, List[T]] = ZIO.serviceWithZIO[ServiceBackEnd](_.stopService)
+    def getServiceStatus: ZIO[ServiceBackEnd, Throwable, List[T]] = ZIO.serviceWithZIO[ServiceBackEnd](_.getServiceStatus)
   }
 
 }

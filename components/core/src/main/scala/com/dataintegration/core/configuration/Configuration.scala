@@ -3,7 +3,8 @@ package com.dataintegration.core.configuration
 import java.io.File
 
 import com.dataintegration.core.binders.IntegrationConf
-import zio.config.read
+import zio.{ZIO, ZLayer}
+import zio.config.{ReadError, read}
 import zio.config.typesafe.TypesafeConfigSource
 
 trait Configuration {
@@ -17,4 +18,7 @@ trait Configuration {
     case Left(value) => throw new Exception(value)
     case Right(value) => value
   }
+
+  private lazy val readableLayerConf: ZLayer[Any, ReadError[String], IntegrationConf] =
+    ZIO.fromEither(conf).toLayer
 }
