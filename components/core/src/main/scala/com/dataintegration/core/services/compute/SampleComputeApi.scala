@@ -11,7 +11,19 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
     ClusterApi(data, properties).execute
 
   override def onDestroy(properties: Properties)(data: Cluster): Task[Cluster] =
-    ClusterApi(data, properties).execute
+    new ServiceApi[Cluster] {
+      override def preJob(): Task[String] = data.logServiceStart
+
+      override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
+
+      override def postJob(serviceResult: Cluster): Task[String] = serviceResult.logServiceEnd
+
+      override def onSuccess: () => Cluster = () => data.onSuccess(Status.Success)
+
+      override def onFailure: Throwable => Cluster = data.onFailure(Status.Failed)
+
+      override def retries: Int = properties.maxClusterRetries
+    }.execute
 
   override def getStatus(properties: Properties)(data: Cluster): Task[Cluster] =
     new ServiceApi[Cluster] {

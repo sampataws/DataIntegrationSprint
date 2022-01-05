@@ -2,7 +2,8 @@ package com.dataintegration.core.services.compute
 
 import com.dataintegration.core.binders.{Cluster, IntegrationConf, Properties}
 import com.dataintegration.core.services.util.{ServiceFrontEnd, ServiceLayer}
-import zio.{Task, UIO, ZIO, ZLayer}
+import com.dataintegration.core.util.Status
+import zio.{UIO, ZIO, ZLayer, ZManaged}
 
 object ComputeManager extends ServiceFrontEnd[Cluster] {
 
@@ -11,23 +12,38 @@ object ComputeManager extends ServiceFrontEnd[Cluster] {
       service <- ZIO.service[ServiceLayer[Cluster]]
       integrationConf <- ZIO.service[IntegrationConf]
     } yield Manager(service, integrationConf.getClustersList, integrationConf.getProperties)
-  }.toManagedWith(_.shutdown).toLayer
+  }.toManagedWith(_.stopService).toLayer
 
   private[compute] case class Manager(
                                        service: ServiceLayer[Cluster],
                                        clusterList: List[Cluster],
                                        properties: Properties) extends ServiceBackEnd {
 
-    def builder(task: Cluster => Task[Cluster]): ZIO[Any, Throwable, List[Cluster]] =
-      ZIO.foreachPar(clusterList)(task).withParallelism(properties.maxClusterParallelism)
+    override def startService: ZIO[Any, Throwable, List[Cluster]] =
+      serviceBuilder(service.onCreate(properties), clusterList, properties.maxClusterParallelism)
 
-    override def startService: ZIO[Any, Throwable, List[Cluster]] = builder(service.onCreate(properties))
+    override def getServiceStatus: ZIO[Any, Throwable, List[Cluster]] =
+      serviceBuilder(service.getStatus(properties), clusterList, properties.maxClusterParallelism)
 
-    override def stopService: ZIO[Any, Throwable, List[Cluster]] = builder(service.onDestroy(properties))
+    override def stopService: ZIO[Any, Nothing, List[Cluster]] =
+      serviceBuilder(service.onDestroy(properties), clusterList.filter(_.status == Status.Running), properties.maxClusterParallelism)
+        .fold(e => clusterList, clusterList => clusterList)
 
-    override def getServiceStatus: ZIO[Any, Throwable, List[Cluster]] = builder(service.getStatus(properties))
+    /*** Test ***/
+    def startManagedService: ZManaged[Any, Throwable, List[Cluster]] =
+      serviceBuilder(
+        service.onCreate(properties),
+        clusterList,
+        properties.maxClusterParallelism)
+      .toManagedWith(destroyCluster)
 
-    def shutdown : UIO[Unit] = ZIO.succeed("")
+
+    def destroyCluster(list : List[Cluster]) =
+      serviceBuilder(service.onDestroy(properties), list.filter(_.status == Status.Running), properties.maxClusterParallelism)
+        .fold(e => clusterList, clusterList => clusterList)
+
+    /*** Test ***/
+
   }
 
 }
