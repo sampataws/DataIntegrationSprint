@@ -69,12 +69,13 @@ case class IntegrationConf(
 
   private def getTargetPathFromLocal(fileName: Path, sourcePath: String, targetPath: String): String = {
     val directorySplitter = if (System.getProperty("os.name").toLowerCase.contains("windows")) "\\\\" else "/"
+    val anotherDirectorySplitterCauseWindows = if (System.getProperty("os.name").toLowerCase.contains("windows")) "\\" else "/"
 
     val replaceableString = (sourcePath: String) =>
       if (sourcePath.endsWith(directorySplitter)) sourcePath
       else {
         val splitFilePath = sourcePath.split(directorySplitter)
-        splitFilePath.slice(0, splitFilePath.length - 1).mkString("/")
+        splitFilePath.slice(0, splitFilePath.length - 1).mkString(anotherDirectorySplitterCauseWindows)
       }
 
     if (targetPath.endsWith("/") || targetPath.isEmpty)
