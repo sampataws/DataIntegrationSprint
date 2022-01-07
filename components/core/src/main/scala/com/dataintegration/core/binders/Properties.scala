@@ -2,15 +2,13 @@ package com.dataintegration.core.binders
 
 case class Properties(
                        jobName: String,
-                       sourceSystem: String,
-                       maxClusterParallelism: Int,
-                       maxClusterRetries : Int,
-                       maxFileRetires: Int,
-                       maxFileParallelism: Int,
-                       maxJobParallelism: Int,
-                       arguments: List[String],
-                       workingDir: String,
-                       cleanUpFlag: Boolean,
-                       mainClass: String,
-                       sparkConf: Map[String, String]
+                       systemName: String,
+                       parentMainClass: String,
+                       parentWorkingDir: String,
+                       jobArguments: List[String],
+                       jobSparkConf: Map[String, String],
+                       jarDependencies: List[FileStore],
+                       maxParallelism: Int,
+                       maxRetries: Int,
+                       cleanUpFlag: Boolean
                      )

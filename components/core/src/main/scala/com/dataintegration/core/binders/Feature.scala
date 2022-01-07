@@ -1,16 +1,16 @@
 package com.dataintegration.core.binders
 
-import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
 case class Feature(
-                  name : String,
-                  basePath : String,
-                  mainClass : Option[String],
-                  executableFlag : Boolean,
-                  arguments : Option[List[String]],
-                  sparkConf : Option[Map[String, String]],
-                  status : Status.Type,
-                  errorMessage : Seq[String]
+                    name: String,
+                    basePath: String,
+                    mainClass: Option[String],
+                    fileDependencies : List[FileStore],
+                    arguments: Option[List[String]],
+                    sparkConf: Option[Map[String, String]],
+                    executableFlag: Boolean,
+                    status: Status.Type,
+                    errorMessage: Seq[String]
                   )
 

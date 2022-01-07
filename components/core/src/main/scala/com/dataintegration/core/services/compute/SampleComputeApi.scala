@@ -22,7 +22,7 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
       override def onFailure: Throwable => Cluster = data.onFailure(Status.Failed)
 
-      override def retries: Int = properties.maxClusterRetries
+      override def retries: Int = properties.maxRetries
     }.execute
 
   override def getStatus(properties: Properties)(data: Cluster): Task[Cluster] =
@@ -37,7 +37,7 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
       override def onFailure: Throwable => Cluster = data.onFailure(Status.Failed)
 
-      override def retries: Int = properties.maxClusterRetries
+      override def retries: Int = properties.maxRetries
     }.execute
 
 
@@ -52,7 +52,7 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
     override def onFailure: Throwable => Cluster = data.onFailure(Status.Failed)
 
-    override def retries: Int = properties.maxClusterRetries
+    override def retries: Int = properties.maxRetries
   }
 
 }

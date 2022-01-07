@@ -34,26 +34,26 @@ object Descriptors {
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
     (string("job_name") |@|
       string("source_system") |@|
+      string("main_class") |@|
+      string("working_directory") |@|
+      list("args")(string) |@|
+      map("spark_conf")(string) |@|
+      nested("jars")(list("jar_dependencies")(getFileStoreDescriptor)) |@|
       int("max_cluster_parallelism") |@|
       int("max_cluster_retries") |@|
-      int("max_file_retries") |@|
-      int("max_file_transfer_parallelism") |@|
-      int("max_job_parallelism") |@|
-      list("args")(string) |@|
-      string("working_directory") |@|
-      boolean("clean_up_directory") |@|
-      string("main_class") |@|
-      map("spark_conf")(string)
+      boolean("clean_up_directory")
       ).apply(Properties.apply, Properties.unapply)
 
   def getFeatureDescriptor: ConfigDescriptor[Feature] =
     (string("name") |@|
       applyFunctionalTransformation(string("base_path")) |@|
       string("main_class").optional |@|
-      boolean("runnable") |@|
+      nested("storage")(list("file_dependencies")(getFileStoreDescriptor)) |@|
       list("args")(string).optional |@|
       map("spark_conf")(string).optional |@|
-      addStatusColumn() |@| addErrorColumn()
+      boolean("runnable") |@|
+      addColumn[Status.Type]("status", Status.Pending) |@|
+      addColumn("error_message", Seq.empty[String])
       ).apply(Feature.apply, Feature.unapply)
 
   def getFileStoreDescriptor: ConfigDescriptor[FileStore] =
@@ -61,37 +61,28 @@ object Descriptors {
       string("source_path") |@|
       string("target_bucket").optional |@|
       string("target_path").optional |@|
-      addStatusColumn() |@| addErrorColumn()
+      addColumn[Status.Type]("status", Status.Pending) |@|
+      addColumn("error_message", Seq.empty[String])
       ).apply(FileStore.apply, FileStore.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =
     (list("cluster_group")(getComputeDescriptor) |@|
       list("features")(getFeatureDescriptor) |@|
-      map("files_transfer")(list(getFileStoreDescriptor)) |@|
       nested("project_properties")(getPropertiesDescriptor)
       ).apply(IntegrationConf.apply, IntegrationConf.unapply)
-
-  private def addServiceIdColumn(): ConfigDescriptor[String] =
-    string("service_id").optional.transform[String](_ => UUID.randomUUID().toString, s => Option(s.toString))
-
-  private def addStatusColumn(): ConfigDescriptor[Status.Type] =
-    string("status").optional.transform[Status.Type](_ => Status.Pending, s => Option(s.toString))
-
-  private def addErrorColumn(): ConfigDescriptor[Seq[String]] =
-    string("error_message").optional.transform[Seq[String]](_ => Seq.empty[String], s => Option(s.toString))
 
   private def addColumn[T](name: String, transformation: => T): ConfigDescriptor[T] =
     string(name).optional.transform[T](_ => transformation , s => Option(s.toString))
 
   private def applyFunctionalTransformation(text: ConfigDescriptor[String]): ConfigDescriptor[String] = {
-    def getUUID: String = UUID.randomUUID().toString
+    val getUUID = () => UUID.randomUUID().toString
 
-    def getDataTime(pattern: String = "YYYYMMdd"): String = DateTimeFormatter.ofPattern(pattern).format(java.time.LocalDateTime.now())
+    val getDataTime = () => DateTimeFormatter.ofPattern("YYYYMMdd").format(java.time.LocalDateTime.now())
 
-    val transformations = Seq("@{uuid}" -> getUUID, "@{today}" -> getDataTime())
+    val transformations = Seq("@{uuid}" -> getUUID, "@{today}" -> getDataTime)
 
     val transform = (text: String) => transformations.foldLeft(text) { (text, transformations) =>
-      text.replace(transformations._1, transformations._2)
+      text.replace(transformations._1, transformations._2())
     }
 
     text.transform[String](transform, _.toString)

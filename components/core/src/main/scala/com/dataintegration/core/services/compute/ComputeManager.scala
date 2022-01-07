@@ -20,13 +20,13 @@ object ComputeManager extends ServiceFrontEnd[Cluster] {
                                        properties: Properties) extends ServiceBackEnd {
 
     override def startService: ZIO[Any, Throwable, List[Cluster]] =
-      serviceBuilder(service.onCreate(properties), clusterList, properties.maxClusterParallelism)
+      serviceBuilder(service.onCreate(properties), clusterList, properties.maxParallelism)
 
     override def getServiceStatus: ZIO[Any, Throwable, List[Cluster]] =
-      serviceBuilder(service.getStatus(properties), clusterList, properties.maxClusterParallelism)
+      serviceBuilder(service.getStatus(properties), clusterList, properties.maxParallelism)
 
     override def stopService: ZIO[Any, Nothing, List[Cluster]] =
-      serviceBuilder(service.onDestroy(properties), clusterList.filter(_.status == Status.Running), properties.maxClusterParallelism)
+      serviceBuilder(service.onDestroy(properties), clusterList.filter(_.status == Status.Running), properties.maxParallelism)
         .fold(e => clusterList, clusterList => clusterList)
 
     /*** Test ***/
@@ -34,12 +34,12 @@ object ComputeManager extends ServiceFrontEnd[Cluster] {
       serviceBuilder(
         service.onCreate(properties),
         clusterList,
-        properties.maxClusterParallelism)
+        properties.maxParallelism)
       .toManagedWith(destroyCluster)
 
 
     def destroyCluster(list : List[Cluster]) =
-      serviceBuilder(service.onDestroy(properties), list.filter(_.status == Status.Running), properties.maxClusterParallelism)
+      serviceBuilder(service.onDestroy(properties), list.filter(_.status == Status.Running), properties.maxParallelism)
         .fold(e => clusterList, clusterList => clusterList)
 
     /*** Test ***/

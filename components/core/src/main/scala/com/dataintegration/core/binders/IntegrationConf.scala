@@ -9,19 +9,20 @@ import scala.jdk.CollectionConverters._
 case class IntegrationConf(
                             private val clusterList: List[Cluster],
                             private val featureList: List[Feature],
-                            private val fileStoreList: Map[String, List[FileStore]],
                             private val properties: Properties) extends ApplicationLogger {
 
   def getClustersList: List[Cluster] = clusterList
 
-  def getFileStoreList: List[FileStore] = (getJarsToMove ++ getFilesToMove).toList
+  def getFeatures: List[Feature] = {
+    val getBasePath = (feature : Feature) => ApplicationUtils.cleanForwardSlash(properties.parentWorkingDir + feature.basePath)
 
-  def getFeatures: List[Feature] =
-    getExecutableFeatures.map(self => self.copy(
-      basePath = ApplicationUtils.cleanForwardSlash(properties.workingDir + self.basePath),
-      mainClass = Some(self.mainClass.getOrElse(properties.mainClass)),
-      arguments = Some((self.arguments.getOrElse(List.empty) ++ properties.arguments).distinct),
-      sparkConf = Some(ApplicationUtils.updateMap(self.sparkConf.getOrElse(Map.empty), properties.sparkConf))))
+    getExecutableFeatures.map(feature => feature.copy(
+      basePath = getBasePath(feature),
+      mainClass = Some(feature.mainClass.getOrElse(properties.parentMainClass)),
+      fileDependencies = moveFiles(feature.fileDependencies, getBasePath(feature)),
+      arguments = Some((feature.arguments.getOrElse(List.empty) ++ properties.jobArguments).distinct),
+      sparkConf = Some(ApplicationUtils.updateMap(feature.sparkConf.getOrElse(Map.empty), properties.jobSparkConf))))
+  }
 
   def getJob: List[Job] =
     getFeatures.map{ feature =>
@@ -30,26 +31,16 @@ case class IntegrationConf(
         programArguments = feature.arguments.get :+ s"workingDir=${feature.basePath}" ,
         className = feature.mainClass.get,
         sparkConf = feature.sparkConf.get,
-        libraryList = getJarsToMove.map(_.targetPath.get)
+        libraryList = properties.jarDependencies.map(_.targetPath.get)
       )
     }
 
-  def getProperties: Properties = properties
+  def getProperties: Properties =
+    properties.copy(jarDependencies = moveFiles(properties.jarDependencies, basePath = properties.parentWorkingDir).toList)
 
   private def getExecutableFeatures = featureList.filter(_.executableFlag)
 
-  private def getFilesToMove: Seq[FileStore] = {
-    for {
-      feature <- getFeatures
-      fileStore <- fileStoreList
-      if feature.name == fileStore._1
-    } yield moveFiles(fileStore._2, feature.basePath)
-  }.flatten
-
-  private def getJarsToMove: Seq[FileStore] =
-    moveFiles(fileStoreList("jars_to_move"), basePath = properties.workingDir)
-
-  private def moveFiles(listOfFiles: List[FileStore], basePath: String): Seq[FileStore] = listOfFiles.flatMap { fileStore =>
+  private def moveFiles(listOfFiles: List[FileStore], basePath: String): List[FileStore] = listOfFiles.flatMap { fileStore =>
     warnFileOrDirectoryStruct(fileStore.sourcePath, fileStore.targetPath.getOrElse(basePath))
     if (isLocal(fileStore.sourceBucket)) moveFilesLocalToCloud(fileStore, basePath)
     else Seq(moveFilesCloudToCloud(fileStore, basePath))
