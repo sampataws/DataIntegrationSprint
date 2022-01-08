@@ -1,6 +1,7 @@
 package com.dataintegration.core.services.compute
 
 import com.dataintegration.core.binders.{Cluster, Properties}
+import com.dataintegration.core.services.audit.Logging
 import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer}
 import com.dataintegration.core.util.Status
 import zio.Task
@@ -14,11 +15,11 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
   override def onDestroy(properties: Properties)(data: Cluster): Task[Cluster] =
     new ServiceApi[Cluster] {
-      override def preJob(): Task[String] = data.logServiceStart
+      override def preJob(): Task[Unit] = Logging.atStart(data)
 
       override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
 
-      override def postJob(serviceResult: Cluster): Task[String] = serviceResult.logServiceEnd
+      override def postJob(serviceResult: Cluster): Task[Unit] = Logging.atStop(serviceResult)
 
       override def onSuccess: () => Cluster = () => data.onSuccess(Status.Success)
 
@@ -29,11 +30,11 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
   override def getStatus(properties: Properties)(data: Cluster): Task[Cluster] =
     new ServiceApi[Cluster] {
-      override def preJob(): Task[String] = data.logServiceStart
+      override def preJob(): Task[Unit] = Logging.atStart(data)
 
       override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
 
-      override def postJob(serviceResult: Cluster): Task[String] = serviceResult.logServiceEnd
+      override def postJob(serviceResult: Cluster): Task[Unit] = Logging.atStop(serviceResult)
 
       override def onSuccess: () => Cluster = () => data.onSuccess(Status.Running)
 
@@ -44,13 +45,13 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
 
   private case class ClusterApi(data: Cluster, properties: Properties) extends ServiceApi[Cluster] {
-    override def preJob(): Task[String] = data.logServiceStart
+    override def preJob(): Task[Unit] = Logging.atStart(data)
 
     def randomFailTask[T](task : T): T = if(Random.nextBoolean()) throw new Exception("Fail shame :)") else task
 
     override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
 
-    override def postJob(serviceResult: Cluster): Task[String] = serviceResult.logServiceEnd
+    override def postJob(serviceResult: Cluster): Task[Unit] = Logging.atStop(serviceResult)
 
     override def onSuccess: () => Cluster = () => data.onSuccess(Status.Running)
 

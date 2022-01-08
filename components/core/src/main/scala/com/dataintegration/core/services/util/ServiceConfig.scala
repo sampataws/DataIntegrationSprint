@@ -1,7 +1,6 @@
 package com.dataintegration.core.services.util
 
 import com.dataintegration.core.util.{ApplicationLogger, Status}
-import zio.Task
 
 trait ServiceConfig extends ApplicationLogger {
 
@@ -30,50 +29,6 @@ trait ServiceConfig extends ApplicationLogger {
    * @return
    */
   def getStatus: Status.Type
-
-  /**
-   * Log Service start on console/DB
-   *
-   */
-  private def logConsoleStart(): Unit =
-    logger.info(getLoggingInfo + " Started")
-
-  /**
-   * Log Service end on console/DB
-   *
-   */
-  private def logConsoleEnd(): Unit = {
-    val errorMessagesIfAny = if (getErrorMessage.isEmpty) "" else "error message :- " + getErrorMessage
-    if (getStatus == Status.Failed)
-      logger.warn(getLoggingInfo + s" Ended with status ${getStatus} and $errorMessagesIfAny")
-    else
-      logger.info(getLoggingInfo + s" Ended with status ${getStatus}")
-  }
-
-  /**
-   * Should insert entry to db table
-   *
-   * @return
-   */
-  protected def logAuditStart: String = "Insert into table"
-
-  /**
-   * Should update entry which was inserted previously based on serviceId
-   * get error message/service_id and status from service itself
-   *
-   * @return
-   */
-  protected def logAuditEnd: String = "Update table"
-
-  def logServiceStart: Task[String] = Task {
-    logConsoleStart()
-    logAuditStart
-  }
-
-  def logServiceEnd: Task[String] = Task {
-    logConsoleEnd()
-    logAuditEnd
-  }
 
   /**
    * On service success - Called when service completes successfully

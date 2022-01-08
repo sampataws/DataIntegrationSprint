@@ -4,11 +4,11 @@ import zio.{Task, ZIO}
 
 trait ServiceApi[T <: ServiceConfig] {
 
-  def preJob(): Task[String]
+  def preJob(): Task[Unit]
 
   def mainJob: Task[T]
 
-  def postJob(serviceResult: T): Task[String]
+  def postJob(serviceResult: T): Task[Unit]
 
   def onSuccess: () => T
 
