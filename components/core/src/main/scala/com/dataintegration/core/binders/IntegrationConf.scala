@@ -35,8 +35,10 @@ case class IntegrationConf(
       )
     }
 
+  def getFileStore: List[FileStore] = getProperties.jarDependencies ++ getFeatures.flatMap(_.fileDependencies)
+
   def getProperties: Properties =
-    properties.copy(jarDependencies = moveFiles(properties.jarDependencies, basePath = properties.parentWorkingDir).toList)
+    properties.copy(jarDependencies = moveFiles(properties.jarDependencies, basePath = properties.parentWorkingDir))
 
   private def getExecutableFeatures = featureList.filter(_.executableFlag)
 
