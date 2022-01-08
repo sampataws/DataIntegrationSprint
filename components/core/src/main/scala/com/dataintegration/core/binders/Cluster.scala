@@ -1,10 +1,11 @@
 package com.dataintegration.core.binders
 
+import java.util.UUID
+
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
 case class Cluster(
-                    serviceId: String,
                     clusterName: String,
                     bucketName: String,
                     project: String,
@@ -24,9 +25,9 @@ case class Cluster(
                     errorMessage: Seq[String]
                   ) extends ServiceConfig {
 
-  override def getName: String = "cluster_creation"
+  override def getName: String = "Cluster"
 
-  override def getServiceId: String = serviceId
+  override val serviceId: String = UUID.randomUUID().toString
 
   override def keyParamsToPrint: Map[String, String] =
     Map("cluster_name" -> clusterName)

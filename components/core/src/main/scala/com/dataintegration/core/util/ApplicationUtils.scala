@@ -60,4 +60,9 @@ object ApplicationUtils {
 
   def updateMap[A,B](primary : Map[A,B], secondary : Map[A, B]): Map[A, B] =
     primary ++ secondary
+
+  def mapToJson[I,O](data : Map[I,O]) : String =
+    "{" + data.foreach { self => s"${self._1.toString} : ${self._2.toString}" + "}"
+
+  }
 }

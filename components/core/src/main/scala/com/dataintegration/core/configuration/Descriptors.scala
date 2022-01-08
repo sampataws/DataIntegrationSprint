@@ -11,8 +11,7 @@ import com.dataintegration.core.util.Status
 object Descriptors {
 
   def getComputeDescriptor: ConfigDescriptor[Cluster] =
-    (addColumn("service_id", UUID.randomUUID().toString) |@|
-      applyFunctionalTransformation(string("cluster_name")) |@|
+    (applyFunctionalTransformation(string("cluster_name")) |@|
       string("bucket_name") |@|
       string("project") |@|
       string("region") |@|
