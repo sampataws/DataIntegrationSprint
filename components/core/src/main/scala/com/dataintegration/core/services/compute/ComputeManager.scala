@@ -22,13 +22,13 @@ object ComputeManager extends ServiceManager[Cluster] {
                       properties: Properties) extends ServiceBackend {
 
     override def startService: ZIO[Any, Throwable, List[Cluster]] =
-      serviceBuilder(clusterService.onCreate(properties), clusterList, properties.maxParallelism)
+      serviceBuilder(clusterService.onCreate(properties), clusterList, FailSafe, properties.maxParallelism)
 
     override def stopService(upServices: List[Cluster]): ZIO[Any, Nothing, List[Cluster]] =
-      serviceBuilder(clusterService.onDestroy(properties), upServices, properties.maxParallelism).orDie
+      serviceBuilder(clusterService.onDestroy(properties), upServices, FailSafe, properties.maxParallelism).orDie
 
     override def getServiceStatus: ZIO[Any, Throwable, List[Cluster]] =
-      serviceBuilder(clusterService.getStatus(properties), clusterList, properties.maxParallelism)
+      serviceBuilder(clusterService.getStatus(properties), clusterList, FailSafe, properties.maxParallelism)
 
   }
 

@@ -29,7 +29,7 @@ trait ServiceConfig extends ApplicationLogger {
    *
    * @return
    */
-  protected def getStatus: Status.Type
+  def getStatus: Status.Type
 
   /**
    * Log Service start on console/DB

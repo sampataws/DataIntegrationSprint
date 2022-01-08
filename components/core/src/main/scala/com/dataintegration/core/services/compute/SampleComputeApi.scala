@@ -5,6 +5,8 @@ import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer}
 import com.dataintegration.core.util.Status
 import zio.Task
 
+import scala.util.Random
+
 object SampleComputeApi extends ServiceLayer[Cluster] {
 
   override def onCreate(properties: Properties)(data: Cluster): Task[Cluster] =
@@ -43,6 +45,8 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
 
   private case class ClusterApi(data: Cluster, properties: Properties) extends ServiceApi[Cluster] {
     override def preJob(): Task[String] = data.logServiceStart
+
+    def randomFailTask[T](task : T): T = if(Random.nextBoolean()) throw new Exception("Fail shame :)") else task
 
     override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
 

@@ -15,7 +15,7 @@ object ApplicationUtils {
       x.getName -> (if(x.get(p)== null) "null" else x.get(p).toString)
     })
 
-    var result = ""
+    var result = "Service Output"
 
     val createString = (text: String, maxLength: Int) => {
       val ttl = maxLength - text.length
