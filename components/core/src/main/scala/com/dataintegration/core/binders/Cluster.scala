@@ -50,7 +50,9 @@ case class Cluster(
    * @param failure Failure Type of the service
    * @return
    */
-  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): Cluster =
+  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): Cluster = {
+    logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
+  }
 
 }
