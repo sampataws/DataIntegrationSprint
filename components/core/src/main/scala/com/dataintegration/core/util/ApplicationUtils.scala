@@ -1,5 +1,7 @@
 package com.dataintegration.core.util
 
+import org.slf4j.Logger
+
 object ApplicationUtils {
 
   /**
@@ -7,11 +9,13 @@ object ApplicationUtils {
    *
    * @param listOfCases Seq of case class
    */
-  def prettyPrintCaseClass(listOfCases: Seq[AnyRef]): Unit = {
+  def prettyPrintCaseClass(listOfCases: Seq[AnyRef],logger: Logger): String = {
     val getHeader = (p: AnyRef) => p.getClass.getDeclaredFields.map(x => {
       x.setAccessible(true)
       x.getName -> (if(x.get(p)== null) "null" else x.get(p).toString)
     })
+
+    var result = ""
 
     val createString = (text: String, maxLength: Int) => {
       val ttl = maxLength - text.length
@@ -19,7 +23,7 @@ object ApplicationUtils {
     }
 
     val printLineBreak = (length: Int) =>
-      println("\n" + "-" * length)
+      result += ("\n" + "-" * length) + "\n"
 
     val header = listOfCases.map(getHeader)
 
@@ -34,18 +38,21 @@ object ApplicationUtils {
     printLineBreak(maxTextBreaks)
 
     header.head.foreach { x =>
-      print(createString(x._1, headerWithMaxLength(x._1)))
+      result += (createString(x._1, headerWithMaxLength(x._1)))
     }
 
-    print("\n" + "-" * maxTextBreaks)
+    result += ("\n" + "-" * maxTextBreaks)
 
     header.foreach { x =>
-      println()
-      x.foreach(y => print(createString(y._2, headerWithMaxLength(y._1))))
+      result += "\n"
+      x.foreach(y => result += (createString(y._2, headerWithMaxLength(y._1))))
 
     }
     printLineBreak(maxTextBreaks)
-    println()
+    result += "\n"
+
+    logger.info(result)
+    result
   }
 
   def cleanForwardSlash(text : String) : String =
