@@ -3,9 +3,9 @@ package com.dataintegration.core.configuration
 import java.io.File
 
 import com.dataintegration.core.binders.IntegrationConf
-import zio.{ZIO, ZLayer}
-import zio.config.{ReadError, read}
 import zio.config.typesafe.TypesafeConfigSource
+import zio.config.{ReadError, read}
+import zio.{ZIO, ZLayer}
 
 trait Configuration {
   private val configPath: String = "components\\core\\src\\main\\resources\\integrationTestSuite\\main.conf"

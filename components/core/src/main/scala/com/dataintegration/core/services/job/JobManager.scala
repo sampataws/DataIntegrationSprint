@@ -2,7 +2,7 @@ package com.dataintegration.core.services.job
 
 import com.dataintegration.core.binders.{Cluster, IntegrationConf, Job, Properties}
 import com.dataintegration.core.services.util.{ServiceLayer, ServiceManager}
-import com.dataintegration.core.util.Status
+import com.dataintegration.core.util.{ApplicationUtils, Status}
 import zio.{ZIO, ZLayer}
 
 object JobManager extends ServiceManager[Job] {
@@ -30,7 +30,7 @@ object JobManager extends ServiceManager[Job] {
                             properties: Properties) extends ServiceBackend {
 
     private def assignJobsToCluster: List[Job] =
-      DivideJobsToClusters.equallyDistribute(jobList, clusterList.filter(_.status == Status.Running)).map { self =>
+      ApplicationUtils.equallyDistributeList(jobList, clusterList.filter(_.status == Status.Running)).map { self =>
         self._1.copy(compute = self._2)
       }.toList
 

@@ -6,7 +6,7 @@ case class Feature(
                     name: String,
                     basePath: String,
                     mainClass: Option[String],
-                    fileDependencies : List[FileStore],
+                    fileDependencies: List[FileStore],
                     arguments: Option[List[String]],
                     sparkConf: Option[Map[String, String]],
                     executableFlag: Boolean,

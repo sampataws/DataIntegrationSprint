@@ -9,7 +9,7 @@ case class Job(
                 name: String,
                 programArguments: Seq[String],
                 className: String,
-                compute : Cluster = null,
+                compute: Cluster = null,
                 sparkConf: Map[String, String],
                 libraryList: Seq[String],
                 status: Status.Type = Status.Pending,

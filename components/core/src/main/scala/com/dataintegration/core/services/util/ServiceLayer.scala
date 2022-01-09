@@ -13,15 +13,15 @@ trait ServiceLayer[T] extends ApplicationLogger {
   def getStatus(properties: Properties)(data: T): Task[T]
 
   // Good to remove :- holding for time
-//  def serviceBuilderV3(
-//                        task: => Task[T],
-//                        service: T,
-//                        onSuccess : => T,
-//                        onFailure : Throwable => T,
-//                        retries : Int): ZIO[Any, Throwable, T] =
-//    for {
-//      _ <- service.logServiceStart
-//      serviceResult <- task.retryN(retries).fold(onFailure, _ => onSuccess)
-//      _ <- serviceResult.logServiceEnd
-//    } yield serviceResult
+  //  def serviceBuilderV3(
+  //                        task: => Task[T],
+  //                        service: T,
+  //                        onSuccess : => T,
+  //                        onFailure : Throwable => T,
+  //                        retries : Int): ZIO[Any, Throwable, T] =
+  //    for {
+  //      _ <- service.logServiceStart
+  //      serviceResult <- task.retryN(retries).fold(onFailure, _ => onSuccess)
+  //      _ <- serviceResult.logServiceEnd
+  //    } yield serviceResult
 }

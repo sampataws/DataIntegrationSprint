@@ -11,11 +11,11 @@ import com.dataintegration.core.util.ApplicationLogger
  *
  *  - Manager
  *    - dependency
- *      1 - Config
- *      2 - Audit
- *      3 - Compute and storage
- *      4 - Run job
- *      5 - Clean Up ???
+ * 1 - Config
+ * 2 - Audit
+ * 3 - Compute and storage
+ * 4 - Run job
+ * 5 - Clean Up ???
  *
  *  - Service
  *    - Initializer
@@ -28,7 +28,7 @@ import com.dataintegration.core.util.ApplicationLogger
  */
 object Driver extends App with ApplicationLogger {
 
-  def printHello(from : String): Unit = println(s"Hello $from")
+  def printHello(from: String): Unit = println(s"Hello $from")
 
   printHello(getClass.getName)
 }

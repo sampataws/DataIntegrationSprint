@@ -71,7 +71,7 @@ object Descriptors {
       ).apply(IntegrationConf.apply, IntegrationConf.unapply)
 
   private def addColumn[T](name: String, transformation: => T): ConfigDescriptor[T] =
-    string(name).optional.transform[T](_ => transformation , s => Option(s.toString))
+    string(name).optional.transform[T](_ => transformation, s => Option(s.toString))
 
   private def applyFunctionalTransformation(text: ConfigDescriptor[String]): ConfigDescriptor[String] = {
     val getUUID = () => UUID.randomUUID().toString

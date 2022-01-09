@@ -9,10 +9,10 @@ object ApplicationUtils {
    *
    * @param listOfCases Seq of case class
    */
-  def prettyPrintCaseClass(listOfCases: Seq[AnyRef],logger: Logger): String = {
+  def prettyPrintCaseClass(listOfCases: Seq[AnyRef], logger: Logger): String = {
     val getHeader = (p: AnyRef) => p.getClass.getDeclaredFields.map(x => {
       x.setAccessible(true)
-      x.getName -> (if(x.get(p)== null) "null" else x.get(p).toString)
+      x.getName -> (if (x.get(p) == null) "null" else x.get(p).toString)
     })
 
     var result = "Service Output"
@@ -55,14 +55,28 @@ object ApplicationUtils {
     result
   }
 
-  def cleanForwardSlash(text : String) : String =
-    text.replaceAll("//+","/")
+  def cleanForwardSlash(text: String): String =
+    text.replaceAll("//+", "/")
 
-  def updateMap[A,B](primary : Map[A,B], secondary : Map[A, B]): Map[A, B] =
+  def updateMap[A, B](primary: Map[A, B], secondary: Map[A, B]): Map[A, B] =
     primary ++ secondary
 
-  def mapToJson[I,O](data : Map[I,O]) : String =
-    "{" + data.foreach { self => s"${self._1.toString} : ${self._2.toString}" + "}"
+  def mapToJson[I, O](data: Map[I, O]): String =
+    "{" + data.foreach { self => s"${self._1.toString} : ${self._2.toString}" + "}" }
 
+  @scala.annotation.tailrec
+  def equallyDistributeList[C, J](
+                                   primaryList: List[J],
+                                   distributionList: List[C],
+                                   accumulator: Map[J, C] = Map.empty[J, C]): Map[J, C] = {
+
+    if (distributionList.isEmpty) throw new RuntimeException("Not enough clusters running to create spark job!")
+
+    if (primaryList.isEmpty) accumulator
+    else
+      equallyDistributeList(
+        primaryList = primaryList.tail,
+        distributionList = distributionList.tail :+ distributionList.head,
+        accumulator = accumulator ++ Map(primaryList.head -> distributionList.head))
   }
 }

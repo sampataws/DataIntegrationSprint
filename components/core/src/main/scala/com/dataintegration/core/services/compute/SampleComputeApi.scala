@@ -47,7 +47,7 @@ object SampleComputeApi extends ServiceLayer[Cluster] {
   private case class ClusterApi(data: Cluster, properties: Properties) extends ServiceApi[Cluster] {
     override def preJob(): Task[Unit] = Logging.atStart(data)
 
-    def randomFailTask[T](task : T): T = if(Random.nextBoolean()) throw new Exception("Fail shame :)") else task
+    def randomFailTask[T](task: T): T = if (Random.nextBoolean()) throw new Exception("Fail shame :)") else task
 
     override def mainJob: Task[Cluster] = Task(data.copy(status = Status.Running))
 
