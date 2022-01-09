@@ -29,7 +29,7 @@ object ComputeManager extends ServiceManager[Cluster] {
 
     override def stopService(upServices: List[Cluster]): ZIO[Any, Nothing, List[Cluster]] = serviceBuilder(
       task = clusterService.onDestroy(properties),
-      listOfResources = clusterList,
+      listOfResources = upServices,
       failureType = FailSafe,
       parallelism = properties.maxParallelism).orDie
 

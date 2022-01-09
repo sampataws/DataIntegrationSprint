@@ -29,7 +29,7 @@ object StorageManager extends ServiceManager[FileStore] {
 
     override def stopService(upServices: List[FileStore]): ZIO[Any, Nothing, List[FileStore]] = serviceBuilder(
       task = fileStore.onDestroy(properties),
-      listOfResources = fileStoreList,
+      listOfResources = upServices,
       failureType = FailFast,
       parallelism = properties.maxParallelism).orDie
 
