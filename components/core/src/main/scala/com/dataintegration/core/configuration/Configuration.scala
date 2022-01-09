@@ -14,11 +14,12 @@ trait Configuration {
     TypesafeConfigSource.fromHoconFile(new File(configPath))
       .flatMap(c => read(Descriptors.getIntegrationConf from c))
 
+  @deprecated("Use configLayer")
   protected lazy val readableConf: IntegrationConf = conf match {
     case Left(value) => throw new Exception(value)
     case Right(value) => value
   }
 
-  private lazy val readableLayerConf: ZLayer[Any, ReadError[String], IntegrationConf] =
+  protected lazy val configLayer: ZLayer[Any, ReadError[String], IntegrationConf] =
     ZIO.fromEither(conf).toLayer
 }
