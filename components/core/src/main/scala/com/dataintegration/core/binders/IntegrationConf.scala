@@ -14,7 +14,7 @@ case class IntegrationConf(
   def getClustersList: List[Cluster] = clusterList
 
   def getFeatures: List[Feature] = {
-    val getBasePath = (feature : Feature) => ApplicationUtils.cleanForwardSlash(properties.parentWorkingDir + feature.basePath)
+    val getBasePath = (feature: Feature) => ApplicationUtils.cleanForwardSlash(properties.parentWorkingDir + feature.basePath)
 
     getExecutableFeatures.map(feature => feature.copy(
       basePath = getBasePath(feature),
@@ -25,10 +25,10 @@ case class IntegrationConf(
   }
 
   def getJob: List[Job] =
-    getFeatures.map{ feature =>
+    getFeatures.map { feature =>
       Job(
         name = feature.name,
-        programArguments = feature.arguments.get :+ s"workingDir=${feature.basePath}" ,
+        programArguments = feature.arguments.get :+ s"workingDir=${feature.basePath}",
         className = feature.mainClass.get,
         sparkConf = feature.sparkConf.get,
         libraryList = properties.jarDependencies.map(_.targetPath.get)

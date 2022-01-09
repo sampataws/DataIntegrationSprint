@@ -5,8 +5,6 @@ import com.dataintegration.core.services.util.{ServiceLayer, ServiceManager}
 import com.dataintegration.core.util.Status
 import zio.{ZIO, ZLayer}
 
-import scala.collection.immutable
-
 object JobManager extends ServiceManager[Job] {
 
   val live: ZLayer[IntegrationConf with List[Cluster] with ServiceLayer[Job], Nothing, JobManagerLive] = {
