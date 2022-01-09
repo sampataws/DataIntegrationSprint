@@ -1,6 +1,6 @@
 package com.dataintegration.core.services.util
 
-import com.dataintegration.core.util.{ApplicationLogger, Status}
+import com.dataintegration.core.util.{ApplicationLogger, ApplicationUtils, Status}
 import zio.{Task, ZIO}
 
 trait ServiceManager[T <: ServiceConfig] extends ApplicationLogger {
@@ -30,6 +30,7 @@ trait ServiceManager[T <: ServiceConfig] extends ApplicationLogger {
                      failureType: FailureType,
                      parallelism: Int): ZIO[Any, Throwable, List[T]] = for {
     result <- ZIO.foreachPar(listOfResources)(task).withParallelism(parallelism)
+    _ = ApplicationUtils.prettyPrintCaseClass(result, logger)
     _ <- validateServiceTask(result, failureType)
   } yield result
 
