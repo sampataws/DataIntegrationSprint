@@ -16,7 +16,7 @@ object SampleJobApi extends ServiceLayer[Job] {
     override def preJob(): Task[Unit] = Logging.atStart(data)
     override def mainJob: Task[Job] = Task(data.copy(status = upStatus))
     override def postJob(serviceResult: Job): Task[Unit] = Logging.atStop(serviceResult)
-    override def onSuccess: () => Job = () => data.onSuccess(Status.Running)
+    override def onSuccess: () => Job = () => data.onSuccess(upStatus)
     override def onFailure: Throwable => Job = data.onFailure(Status.Failed)
     override def retries: Int = properties.maxRetries
   }

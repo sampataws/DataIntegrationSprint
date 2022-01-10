@@ -15,7 +15,7 @@ object SampleStorageApi extends ServiceLayer[FileStore] {
     override def preJob(): Task[Unit] = Logging.atStart(data)
     override def mainJob: Task[FileStore] = Task(data.copy(status = upStatus))
     override def postJob(serviceResult: FileStore): Task[Unit] = Logging.atStop(serviceResult)
-    override def onSuccess: () => FileStore = () => data.onSuccess(Status.Running)
+    override def onSuccess: () => FileStore = () => data.onSuccess(upStatus)
     override def onFailure: Throwable => FileStore = data.onFailure(Status.Failed)
     override def retries: Int = properties.maxRetries
   }
