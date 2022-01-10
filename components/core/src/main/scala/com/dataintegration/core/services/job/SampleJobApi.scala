@@ -4,7 +4,7 @@ import com.dataintegration.core.binders.{Job, Properties}
 import com.dataintegration.core.services.audit.Logging
 import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer}
 import com.dataintegration.core.util.Status
-import zio.Task
+import zio.{Task, ULayer, ZLayer}
 
 object SampleJobApi extends ServiceLayer[Job] {
 
@@ -21,4 +21,5 @@ object SampleJobApi extends ServiceLayer[Job] {
     override def retries: Int = properties.maxRetries
   }
 
+  override val layer: ULayer[ServiceLayer[Job]] = ZLayer.succeed(this)
 }

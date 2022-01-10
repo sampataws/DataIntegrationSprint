@@ -4,11 +4,13 @@ import com.dataintegration.core.binders.{Cluster, Properties}
 import com.dataintegration.core.services.audit.Logging
 import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer}
 import com.dataintegration.core.util.Status
-import zio.Task
+import zio.{Task, ULayer, ZLayer}
 
 import scala.util.Random
 
 object SampleComputeApi extends ServiceLayer[Cluster] {
+
+  override val layer: ULayer[ServiceLayer[Cluster]] = ZLayer.succeed(this)
 
   override def onCreate(properties: Properties)(data: Cluster): Task[Cluster] =
     ClusterApi(data, properties).execute

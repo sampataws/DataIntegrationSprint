@@ -7,13 +7,14 @@ import zio.{ZIO, ZLayer}
 
 object JobManager extends ServiceManager[Job] {
 
+  // All validations are already done at this point. Not needed as such but there for holding fiber till cluster and file upload is completed
   val live: ZLayer[IntegrationConf with List[FileStore] with List[Cluster] with ServiceLayer[Job], Nothing, JobManagerLive] = {
     for {
       jobService <- ZIO.service[ServiceLayer[Job]]
       clusterList <- ZIO.service[List[Cluster]]
       fileStoreList <- ZIO.service[List[FileStore]]
       conf <- ZIO.service[IntegrationConf]
-    } yield JobManagerLive(jobService, conf.getJob, clusterList, fileStoreList, conf.getProperties)
+    } yield JobManagerLive(jobService, conf.getJob, clusterList, conf.getProperties)
   }.toLayer
 
   val liveManaged: ZLayer[IntegrationConf with List[FileStore] with List[Cluster] with ServiceLayer[Job], Throwable, List[Job]] =
@@ -22,12 +23,7 @@ object JobManager extends ServiceManager[Job] {
   case class JobManagerLive(jobService: ServiceLayer[Job],
                             jobList: List[Job],
                             clusterList: List[Cluster],
-                            fileStoreList: List[FileStore],
                             properties: Properties) extends ServiceBackend {
-
-    // All validations are already done at this point. Not needed as such but there for holding fiber till cluster and file upload is completed
-    private def validate =
-      fileStoreList.count(_.status == Status.Failed) == 0 && clusterList.count(_.status == Status.Running) > 0
 
     private def assignJobsToCluster: List[Job] =
       ApplicationUtils.equallyDistributeList(jobList, clusterList.filter(_.status == Status.Running)).map { self =>

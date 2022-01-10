@@ -4,7 +4,7 @@ import com.dataintegration.core.binders.{FileStore, Properties}
 import com.dataintegration.core.services.audit.Logging
 import com.dataintegration.core.services.util.{ServiceApi, ServiceLayer}
 import com.dataintegration.core.util.Status
-import zio.Task
+import zio.{Task, ULayer, ZLayer}
 
 object SampleStorageApi extends ServiceLayer[FileStore] {
   override def onCreate(properties: Properties)(data: FileStore): Task[FileStore] = StorageApi(data, Status.Running, properties).execute
@@ -20,4 +20,5 @@ object SampleStorageApi extends ServiceLayer[FileStore] {
     override def retries: Int = properties.maxRetries
   }
 
+  override val layer: ULayer[ServiceLayer[FileStore]] = ZLayer.succeed(this)
 }
