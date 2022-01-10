@@ -11,7 +11,8 @@ import com.dataintegration.core.util.Status
 object Descriptors {
 
   def getComputeDescriptor: ConfigDescriptor[Cluster] =
-    (applyFunctionalTransformation(string("cluster_name")) |@|
+    (addColumn("uuid", UUID.randomUUID().toString) |@|
+      applyFunctionalTransformation(string("cluster_name")) |@|
       string("bucket_name") |@|
       string("project") |@|
       string("region") |@|
@@ -56,7 +57,8 @@ object Descriptors {
       ).apply(Feature.apply, Feature.unapply)
 
   def getFileStoreDescriptor: ConfigDescriptor[FileStore] =
-    (string("source_bucket") |@|
+    (addColumn("uuid", UUID.randomUUID().toString) |@|
+      string("source_bucket") |@|
       string("source_path") |@|
       string("target_bucket").optional |@|
       string("target_path").optional |@|

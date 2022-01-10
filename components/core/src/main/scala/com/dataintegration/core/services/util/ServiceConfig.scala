@@ -7,7 +7,7 @@ trait ServiceConfig extends ApplicationLogger {
   def getName: String
 
 
-  val serviceId: String
+  def getServiceId: String
 
   /**
    * Key parameters to print
@@ -50,7 +50,7 @@ trait ServiceConfig extends ApplicationLogger {
    *
    * @return
    */
-  def getLoggingInfo: String = s"Service $getName : $serviceId with params $mapToString"
+  def getLoggingInfo: String = s"Service $getName : $getServiceId with params $mapToString"
 
   private def mapToString =
     s"{${keyParamsToPrint.map(v => v._1 + " : " + v._2).mkString(",")}}"

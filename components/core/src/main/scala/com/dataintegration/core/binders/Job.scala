@@ -6,6 +6,7 @@ import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.{ApplicationUtils, Status}
 
 case class Job(
+                serviceId: String = UUID.randomUUID().toString,
                 name: String,
                 programArguments: Seq[String],
                 className: String,
@@ -18,7 +19,7 @@ case class Job(
 
   override def getName: String = "SparkJob"
 
-  override val serviceId: String = UUID.randomUUID().toString
+  override def getServiceId: String = serviceId
 
   /**
    * Key parameters to print

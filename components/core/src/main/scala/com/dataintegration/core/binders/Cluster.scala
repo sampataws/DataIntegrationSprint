@@ -6,6 +6,7 @@ import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
 case class Cluster(
+                    serviceId: String = UUID.randomUUID().toString,
                     clusterName: String,
                     bucketName: String,
                     project: String,
@@ -27,7 +28,7 @@ case class Cluster(
 
   override def getName: String = "Cluster"
 
-  override val serviceId: String = UUID.randomUUID().toString
+  override def getServiceId: String = serviceId
 
   override def keyParamsToPrint: Map[String, String] =
     Map("cluster_name" -> clusterName)

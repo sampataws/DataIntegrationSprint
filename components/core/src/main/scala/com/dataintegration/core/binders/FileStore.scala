@@ -6,6 +6,7 @@ import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
 case class FileStore(
+                      serviceId: String = UUID.randomUUID().toString,
                       sourceBucket: String,
                       sourcePath: String,
                       targetBucket: Option[String],
@@ -15,7 +16,7 @@ case class FileStore(
                     ) extends ServiceConfig {
   override def getName: String = "FileStore"
 
-  override val serviceId: String = UUID.randomUUID().toString
+  override def getServiceId: String = serviceId
 
   /**
    * Key parameters to print
