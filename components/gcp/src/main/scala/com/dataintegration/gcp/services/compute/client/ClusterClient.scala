@@ -1,4 +1,4 @@
-package com.dataintegration.gcp.services.compute.applicationv2
+package com.dataintegration.gcp.services.compute.client
 
 import com.dataintegration.core.util.ApplicationLogger
 import com.google.cloud.dataproc.v1.{ClusterControllerClient, ClusterControllerSettings}
