@@ -1,4 +1,4 @@
-package com.dataintegration.gcp.services.compute.applicationv2
+package com.dataintegration.gcp.services
 
 import java.nio.file.{Files, Paths}
 
@@ -10,8 +10,6 @@ import com.google.cloud.dataproc.v1._
 import com.google.cloud.storage.{BlobInfo, Storage}
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.{Duration, Empty}
-
-import scala.jdk.CollectionConverters._
 
 object Utils {
 

@@ -1,20 +1,20 @@
 package com.dataintegration.gcp.services.compute
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
-import com.dataintegration.core.services.utilv2.{ServiceLayer, ServiceResult}
-import com.dataintegration.gcp.services.compute.application.CreateCluster
-import com.google.cloud.dataproc.v1.{Cluster, ClusterControllerClient}
+import com.dataintegration.core.services.util.ServiceLayerV2
+import com.dataintegration.gcp.services.compute.applicationv2.{CreateCluster, DeleteCluster}
+import com.google.cloud.dataproc.v1.ClusterControllerClient
 import zio.{Task, ULayer, ZLayer}
 
-object ComputeApi extends ServiceLayer[ComputeConfig, Cluster, ClusterControllerClient] {
+class ComputeApi extends ServiceLayerV2[ComputeConfig, ClusterControllerClient] {
+  override val layer: ULayer[ServiceLayerV2[ComputeConfig, ClusterControllerClient]] = ZLayer.succeed(this)
 
-  override val layer: ULayer[ServiceLayer[ComputeConfig, Cluster, ClusterControllerClient]] = ZLayer.succeed(this)
+  override def onCreate(client: ClusterControllerClient, properties: Properties)(data: ComputeConfig): Task[ComputeConfig] =
+    CreateCluster(client, data, properties).execute
 
-  override def onCreate(properties: Properties, client: ClusterControllerClient)(data: ComputeConfig): Task[ServiceResult[ComputeConfig, Cluster]] =
-    CreateCluster(data, properties, client).execute
+  override def onDestroy(client: ClusterControllerClient, properties: Properties)(data: ComputeConfig): Task[ComputeConfig] =
+    DeleteCluster(client, data, properties).execute
 
-  override def onDestroy(properties: Properties, client: ClusterControllerClient)(data: ServiceResult[ComputeConfig, Cluster]): Task[ComputeConfig] =
-    ??? //DeleteCluster(data, properties, client).execute
-
-  override def getStatus(properties: Properties, client: ClusterControllerClient)(data: ServiceResult[ComputeConfig, Cluster]): Task[Cluster] = ???
+  override def getStatus(client: ClusterControllerClient, properties: Properties)(data: ComputeConfig): Task[ComputeConfig] =
+    Task(data)
 }

@@ -1,10 +1,10 @@
-package com.dataintegration.gcp.services.compute.applicationv2.cluster
+package com.dataintegration.gcp.services.compute.applicationv2
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger
 import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
-import com.dataintegration.gcp.services.compute.applicationv2.Utils
+import com.dataintegration.gcp.services.Utils
 import com.google.cloud.dataproc.v1.ClusterControllerClient
 import zio.Task
 

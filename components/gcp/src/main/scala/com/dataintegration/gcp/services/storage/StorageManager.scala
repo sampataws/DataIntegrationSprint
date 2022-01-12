@@ -1,5 +1,5 @@
 package com.dataintegration.gcp.services.storage
 
-object GoogleStorageApi {
+object StorageManager {
 
 }
