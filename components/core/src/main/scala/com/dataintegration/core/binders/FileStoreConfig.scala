@@ -5,7 +5,7 @@ import java.util.UUID
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
-case class FileStore(
+case class FileStoreConfig(
                       serviceId: String = UUID.randomUUID().toString,
                       sourceBucket: String,
                       sourcePath: String,
@@ -47,7 +47,7 @@ case class FileStore(
    *
    * @return
    */
-  override def onSuccess(updatedStatus: Status.Type): FileStore =
+  override def onSuccess(updatedStatus: Status.Type): FileStoreConfig =
     this.copy(status = updatedStatus)
 
   /**
@@ -56,7 +56,7 @@ case class FileStore(
    * @param failure Failure Type of the service
    * @return
    */
-  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): FileStore = {
+  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): FileStoreConfig = {
     logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
   }

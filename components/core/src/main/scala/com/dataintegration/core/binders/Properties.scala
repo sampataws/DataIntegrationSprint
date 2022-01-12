@@ -7,7 +7,7 @@ case class Properties(
                        parentWorkingDir: String,
                        jobArguments: List[String],
                        jobSparkConf: Map[String, String],
-                       jarDependencies: List[FileStore],
+                       jarDependencies: List[FileStoreConfig],
                        maxParallelism: Int,
                        maxRetries: Int,
                        cleanUpFlag: Boolean

@@ -1,14 +1,15 @@
 package com.dataintegration.gcp.services.compute.backup
 
-import com.dataintegration.core.binders.{Cluster, Properties}
+import com.dataintegration.core.binders.{ComputeConfig, Properties}
 import com.dataintegration.core.services.util.{ServiceApi, ServiceResult}
 import com.dataintegration.core.util.Status
 import com.google.cloud.dataproc.v1.InstanceGroupConfig.Preemptibility
 import com.google.cloud.dataproc.v1._
 import com.google.protobuf.Duration
 import zio.Task
+import com.google.cloud.dataproc.v1.{Cluster => DataprocCluster}
 
-case class CreateCluster(data: Cluster, properties: Properties) extends ServiceApi[ServiceResult[Cluster, DataprocCluster]] {
+case class CreateClusterBkup(data: ComputeConfig, properties: Properties) extends ServiceApi[ServiceResult[ComputeConfig, DataprocCluster]] {
   /**
    * Inject deps of clusterControllerClient
    *  on create step -> on destroy or get status
@@ -16,10 +17,10 @@ case class CreateCluster(data: Cluster, properties: Properties) extends ServiceA
    */
 
   override def preJob(): Task[Unit] = ??? //Logging.atStart(data)
-  override def mainJob: Task[ServiceResult[Cluster, DataprocCluster]] = ???
-  override def postJob(serviceResult: ServiceResult[Cluster, DataprocCluster]): Task[Unit] = ??? //Logging.atStop(serviceResult)
-  override def onSuccess: () => ServiceResult[Cluster, DataprocCluster] = () => ServiceResult(data.onSuccess(Status.Running),???)
-  override def onFailure: Throwable => ServiceResult[Cluster, DataprocCluster] = data.onFailure(Status.Failed)
+  override def mainJob: Task[ServiceResult[ComputeConfig, DataprocCluster]] = ???
+  override def postJob(serviceResult: ServiceResult[ComputeConfig, DataprocCluster]): Task[Unit] = ??? //Logging.atStop(serviceResult)
+  override def onSuccess: () => ServiceResult[ComputeConfig, DataprocCluster] = () => ServiceResult(data.onSuccess(Status.Running),???)
+  override def onFailure: Throwable => ServiceResult[ComputeConfig, DataprocCluster] = data.onFailure(Status.Failed)
   override def retries: Int = properties.maxRetries
 
   private def spawnDataprocCluster(): Unit = {
@@ -53,7 +54,7 @@ case class CreateCluster(data: Cluster, properties: Properties) extends ServiceA
     val response = request.get()
     response.getStatus.getState.getDescriptorForType
 
-    //clusterControllerClient.deleteClusterAsync(data.project, data.region, data.clusterName)
+    //val del = clusterControllerClient.deleteClusterAsync(data.project, data.region, data.clusterName)
 
 
   }

@@ -5,7 +5,7 @@ import java.util.UUID
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
-case class Cluster(
+case class ComputeConfig(
                     serviceId: String = UUID.randomUUID().toString,
                     clusterName: String,
                     bucketName: String,
@@ -42,7 +42,7 @@ case class Cluster(
    *
    * @return
    */
-  override def onSuccess(updatedStatus: Status.Type): Cluster =
+  override def onSuccess(updatedStatus: Status.Type): ComputeConfig =
     this.copy(status = updatedStatus)
 
 
@@ -52,7 +52,7 @@ case class Cluster(
    * @param failure Failure Type of the service
    * @return
    */
-  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): Cluster = {
+  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): ComputeConfig = {
     logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
   }

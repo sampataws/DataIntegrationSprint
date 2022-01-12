@@ -5,12 +5,12 @@ import java.util.UUID
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.{ApplicationUtils, Status}
 
-case class Job(
+case class JobConfig(
                 serviceId: String = UUID.randomUUID().toString,
                 name: String,
                 programArguments: Seq[String],
                 className: String,
-                compute: Cluster = null,
+                compute: ComputeConfig = null,
                 sparkConf: Map[String, String],
                 libraryList: Seq[String],
                 status: Status.Type = Status.Pending,
@@ -53,7 +53,7 @@ case class Job(
    *
    * @return
    */
-  override def onSuccess(updatedStatus: Status.Type): Job =
+  override def onSuccess(updatedStatus: Status.Type): JobConfig =
     this.copy(status = updatedStatus)
 
   /**
@@ -62,7 +62,7 @@ case class Job(
    * @param failure Failure Type of the service
    * @return
    */
-  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): Job = {
+  override def onFailure(updatedStatus: Status.Type)(failure: Throwable): JobConfig = {
     logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
   }

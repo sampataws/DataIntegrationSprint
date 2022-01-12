@@ -10,7 +10,7 @@ import com.dataintegration.core.util.Status
 
 object Descriptors {
 
-  def getComputeDescriptor: ConfigDescriptor[Cluster] =
+  def getComputeDescriptor: ConfigDescriptor[ComputeConfig] =
     (addColumn("uuid", UUID.randomUUID().toString) |@|
       applyFunctionalTransformation(string("cluster_name")) |@|
       string("bucket_name") |@|
@@ -29,7 +29,7 @@ object Descriptors {
       int("weightage") |@|
       addColumn[Status.Type]("status", Status.Pending) |@|
       addColumn("error_message", Seq.empty[String])
-      ).apply(Cluster.apply, Cluster.unapply)
+      ).apply(ComputeConfig.apply, ComputeConfig.unapply)
 
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
     (string("job_name") |@|
@@ -56,7 +56,7 @@ object Descriptors {
       addColumn("error_message", Seq.empty[String])
       ).apply(Feature.apply, Feature.unapply)
 
-  def getFileStoreDescriptor: ConfigDescriptor[FileStore] =
+  def getFileStoreDescriptor: ConfigDescriptor[FileStoreConfig] =
     (addColumn("uuid", UUID.randomUUID().toString) |@|
       string("source_bucket") |@|
       string("source_path") |@|
@@ -64,7 +64,7 @@ object Descriptors {
       string("target_path").optional |@|
       addColumn[Status.Type]("status", Status.Pending) |@|
       addColumn("error_message", Seq.empty[String])
-      ).apply(FileStore.apply, FileStore.unapply)
+      ).apply(FileStoreConfig.apply, FileStoreConfig.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =
     (list("cluster_group")(getComputeDescriptor) |@|

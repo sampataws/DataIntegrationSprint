@@ -1,6 +1,6 @@
 package com.dataintegration.gcp.services.compute.backup
 
-import com.dataintegration.core.binders.{Cluster, IntegrationConf}
+import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf}
 import com.dataintegration.core.services.util.ServiceResult
 import com.google.cloud.dataproc.v1.ClusterControllerClient
 import zio.ZIO
@@ -16,14 +16,14 @@ object Test2 {
 
   val live = for {
     client <- ZIO.service[ClusterControllerClient]
-    initializer <- ZIO.service[create[Cluster]]
+    initializer <- ZIO.service[create[ComputeConfig]]
     conf <- ZIO.service[IntegrationConf]
   } yield SomeObject(client, initializer, conf)
 
-  case class SomeObject(client: ClusterControllerClient, initializer: create[Cluster], conf: IntegrationConf) extends create[Cluster] {
-    override def onCreate[T2]: ServiceResult[Cluster, T2] = ???
-    override def onDestroy[T2](service: ServiceResult[Cluster, T2]): String = ???
-    override def getStatus[T2](service: ServiceResult[Cluster, T2]): String = ???
+  case class SomeObject(client: ClusterControllerClient, initializer: create[ComputeConfig], conf: IntegrationConf) extends create[ComputeConfig] {
+    override def onCreate[T2]: ServiceResult[ComputeConfig, T2] = ???
+    override def onDestroy[T2](service: ServiceResult[ComputeConfig, T2]): String = ???
+    override def getStatus[T2](service: ServiceResult[ComputeConfig, T2]): String = ???
   }
 
   /**
