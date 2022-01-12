@@ -9,12 +9,14 @@ object ClusterClient extends ApplicationLogger {
   def createClient(endpoint: String): Task[ClusterControllerClient] = Task {
     val clusterControllerSettings = ClusterControllerSettings.newBuilder().setEndpoint(endpoint).build()
     val clusterControllerClient = ClusterControllerClient.create(clusterControllerSettings)
+    logger.info("Cluster client initiated")
     clusterControllerClient
   }
 
   def destroyClient(client: ClusterControllerClient): URIO[Any, Unit] = Task {
     client.shutdown() // todo :- Need to check
     client.close()
+    logger.info("Cluster client destroyed")
   }.orDie
 
 
