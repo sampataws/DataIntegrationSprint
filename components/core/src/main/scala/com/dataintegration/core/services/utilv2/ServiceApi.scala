@@ -1,22 +1,23 @@
 package com.dataintegration.core.services.utilv2
 
+import com.dataintegration.core.services.util.ServiceConfig
 import zio.{Task, ZIO}
 
-trait ServiceApi[T] {
+trait ServiceApi[OUT <: ServiceConfig, T] {
 
   def preJob(): Task[Unit]
 
   def mainJob: Task[T]
 
-  def postJob(serviceResult: T): Task[Unit]
+  def postJob(serviceResult: ServiceResult[OUT,T]): Task[Unit]
 
-  def onSuccess[A]: A => T
+  def onSuccess: T => ServiceResult[OUT,T]
 
-  def onFailure: Throwable => T
+  def onFailure: Throwable => ServiceResult[OUT,T]
 
   def retries: Int
 
-  def execute: ZIO[Any, Throwable, T] = for {
+  def execute: ZIO[Any, Throwable, ServiceResult[OUT,T]] = for {
     _ <- preJob()
     serviceResult <- mainJob.fold(onFailure, onSuccess)
     _ <- postJob(serviceResult)

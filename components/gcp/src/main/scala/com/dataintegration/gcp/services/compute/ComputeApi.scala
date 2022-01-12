@@ -1,19 +1,20 @@
 package com.dataintegration.gcp.services.compute
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
-import com.dataintegration.core.services.util.ServiceResult
-import com.dataintegration.core.services.utilv2.ServiceLayer
-import com.dataintegration.gcp.services.compute.application.CreateCluster
-import com.google.cloud.dataproc.v1.{ClusterControllerClient, Cluster => Dataproc}
+import com.dataintegration.core.services.utilv2.{ServiceLayer, ServiceResult}
+import com.dataintegration.gcp.services.compute.application.{CreateCluster, DeleteCluster}
+import com.google.cloud.dataproc.v1.{Cluster, ClusterControllerClient, DeleteClusterRequest}
 import zio.{Task, ULayer, ZLayer}
 
-object ComputeApi extends ServiceLayer[ComputeConfig, Dataproc, ClusterControllerClient] {
-  override val layer: ULayer[ServiceLayer[ComputeConfig, Dataproc, ClusterControllerClient]] = ZLayer.succeed(this)
+object ComputeApi extends ServiceLayer[ComputeConfig, Cluster, ClusterControllerClient] {
 
-  override def onCreate(properties: Properties, client: ClusterControllerClient)(data: ComputeConfig): Task[ServiceResult[ComputeConfig, Dataproc]] =
-    CreateCluster(data, properties, client)
+  override val layer: ULayer[ServiceLayer[ComputeConfig, Cluster, ClusterControllerClient]] = ZLayer.succeed(this)
 
-  override def onDestroy(properties: Properties, client: ClusterControllerClient)(data: ServiceResult[ComputeConfig, Dataproc]): Task[ComputeConfig] = ???
+  override def onCreate(properties: Properties, client: ClusterControllerClient)(data: ComputeConfig): Task[ServiceResult[ComputeConfig, Cluster]] =
+    CreateCluster(data, properties, client).execute
 
-  override def getStatus(properties: Properties, client: ClusterControllerClient)(data: ServiceResult[ComputeConfig, Dataproc]): Task[Dataproc] = ???
+  override def onDestroy(properties: Properties, client: ClusterControllerClient)(data: ServiceResult[ComputeConfig, Cluster]): Task[ComputeConfig] =
+    DeleteCluster(data, properties, client)
+
+  override def getStatus(properties: Properties, client: ClusterControllerClient)(data: ServiceResult[ComputeConfig, Cluster]): Task[Cluster] = ???
 }

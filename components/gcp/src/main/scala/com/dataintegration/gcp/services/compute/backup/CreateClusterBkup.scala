@@ -54,7 +54,7 @@ case class CreateClusterBkup(data: ComputeConfig, properties: Properties) extend
     val response = request.get()
     response.getStatus.getState.getDescriptorForType
 
-    //val del = clusterControllerClient.deleteClusterAsync(data.project, data.region, data.clusterName)
+    val del = clusterControllerClient.deleteClusterAsync(data.project, data.region, data.clusterName)
 
 
   }
