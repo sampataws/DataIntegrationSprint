@@ -3,6 +3,7 @@ package com.dataintegration.gcp.services.compute.application
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
 import com.dataintegration.core.services.utilv2.{ServiceApi, ServiceResult}
 import com.dataintegration.core.util.Status
+import com.dataintegration.gcp.services.compute.applicationv2.Utils
 import com.google.cloud.dataproc.v1.{Cluster, ClusterControllerClient}
 import zio.{Task, ZIO}
 
