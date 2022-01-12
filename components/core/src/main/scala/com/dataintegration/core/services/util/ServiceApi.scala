@@ -2,7 +2,7 @@ package com.dataintegration.core.services.util
 
 import zio.{Task, ZIO}
 
-trait ServiceApi[T <: ServiceConfig] {
+trait ServiceApi[T] {
 
   def preJob(): Task[Unit]
 

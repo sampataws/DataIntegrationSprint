@@ -1,3 +1,3 @@
 package com.dataintegration.core.services.util
 
-case class ServiceResult[C <: ServiceConfig, R](config: C, result: R)
+case class ServiceResult[T <: ServiceConfig, S](config: T, result: S)

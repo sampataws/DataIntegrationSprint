@@ -2,14 +2,14 @@ package com.dataintegration.gcp.services.compute
 
 import com.dataintegration.core.binders.{Cluster, Properties}
 import com.dataintegration.core.services.audit.Logging
-import com.dataintegration.core.services.util.ServiceApi
+import com.dataintegration.core.services.util.{ServiceApi, ServiceResult}
 import com.dataintegration.core.util.Status
 import com.google.cloud.dataproc.v1.InstanceGroupConfig.Preemptibility
 import com.google.cloud.dataproc.v1.{ClusterConfig, ClusterControllerClient, ClusterControllerSettings, DiskConfig, InstanceGroupConfig, LifecycleConfig, Cluster => DataprocCluster}
 import com.google.protobuf.Duration
 import zio.Task
 
-case class CreateCluster(data: Cluster, properties: Properties) extends ServiceApi[Cluster] {
+case class CreateCluster(data: Cluster, properties: Properties) extends ServiceApi[ServiceResult[Cluster, DataprocCluster]] {
   /**
    * Inject deps of clusterControllerClient
    *  on create step -> on destroy or get status
@@ -17,10 +17,10 @@ case class CreateCluster(data: Cluster, properties: Properties) extends ServiceA
    */
 
   override def preJob(): Task[Unit] = Logging.atStart(data)
-  override def mainJob: Task[Cluster] = ???
-  override def postJob(serviceResult: Cluster): Task[Unit] = Logging.atStop(serviceResult)
-  override def onSuccess: () => Cluster = () => data.onSuccess(Status.Running)
-  override def onFailure: Throwable => Cluster = data.onFailure(Status.Failed)
+  override def mainJob: Task[ServiceResult[Cluster, DataprocCluster]] = ???
+  override def postJob(serviceResult: ServiceResult[Cluster, DataprocCluster]): Task[Unit] = ??? //Logging.atStop(serviceResult)
+  override def onSuccess: () => ServiceResult[Cluster, DataprocCluster] = () => ServiceResult(data.onSuccess(Status.Running),???)
+  override def onFailure: Throwable => ServiceResult[Cluster, DataprocCluster] = data.onFailure(Status.Failed)
   override def retries: Int = properties.maxRetries
 
   private def spawnDataprocCluster(): Unit = {
