@@ -1,4 +1,4 @@
-package com.dataintegration.core.configuration
+package com.dataintegration.core.services.configuration
 
 import java.io.File
 

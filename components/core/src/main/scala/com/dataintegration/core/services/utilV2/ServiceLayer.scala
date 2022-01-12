@@ -1,11 +1,12 @@
-package com.dataintegration.core.services.util
+package com.dataintegration.core.services.utilV2
 
 import com.dataintegration.core.binders.Properties
+import com.dataintegration.core.services.util.{ServiceConfig, ServiceResult}
 import com.dataintegration.core.util.ApplicationLogger
 import zio.{Task, ULayer}
 
-trait ServiceLayerV2[T <: ServiceConfig, S] extends ApplicationLogger {
-  val layer: ULayer[ServiceLayerV2[T,S]]
+trait ServiceLayer[T <: ServiceConfig, S] extends ApplicationLogger {
+  val layer: ULayer[ServiceLayer[T,S]]
 
   def onCreate(properties: Properties)(data: T): Task[ServiceResult[T,S]]
 

@@ -1,7 +1,7 @@
 package com.dataintegration.gcp.services.compute
 
 import com.dataintegration.core.binders.{Cluster, Properties}
-import com.dataintegration.core.services.audit.Logging
+
 import com.dataintegration.core.services.util.{ServiceApi, ServiceResult}
 import com.dataintegration.core.util.Status
 import com.google.cloud.dataproc.v1.InstanceGroupConfig.Preemptibility
@@ -16,7 +16,7 @@ case class CreateCluster(data: Cluster, properties: Properties) extends ServiceA
    *
    */
 
-  override def preJob(): Task[Unit] = Logging.atStart(data)
+  override def preJob(): Task[Unit] = ??? //Logging.atStart(data)
   override def mainJob: Task[ServiceResult[Cluster, DataprocCluster]] = ???
   override def postJob(serviceResult: ServiceResult[Cluster, DataprocCluster]): Task[Unit] = ??? //Logging.atStop(serviceResult)
   override def onSuccess: () => ServiceResult[Cluster, DataprocCluster] = () => ServiceResult(data.onSuccess(Status.Running),???)

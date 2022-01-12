@@ -1,9 +1,10 @@
-package com.dataintegration.core.services.util
+package com.dataintegration.core.services.utilV2
 
+import com.dataintegration.core.services.util.{ServiceConfig, ServiceResult}
 import com.dataintegration.core.util.{ApplicationLogger, ApplicationUtils, Status}
 import zio.{Task, ZIO}
 
-trait ServiceManagerV2[T <: ServiceConfig, S] extends ApplicationLogger {
+trait ServiceManager[T <: ServiceConfig, S] extends ApplicationLogger {
 
   trait ServiceBackend {
     def startService: ZIO[Any, Throwable, List[ServiceResult[T,S]]]
