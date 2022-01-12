@@ -17,6 +17,11 @@ lazy val subProjectName = "components"
 lazy val root = (project in file("."))
   .aggregate(core, gcp)
 
+lazy val gcpLibraries = Seq(
+  "com.google.cloud" % "google-cloud-dataproc" %  "2.3.1",
+  "com.google.cloud" % "google-cloud-storage" % "2.2.3"
+)
+
 lazy val core = (project in file(s"$subProjectName/core"))
   .settings(
     name := "core",
@@ -25,5 +30,6 @@ lazy val core = (project in file(s"$subProjectName/core"))
 
 lazy val gcp = (project in file(s"$subProjectName/gcp"))
   .settings(
-    name := "gcp"
+    name := "gcp",
+    libraryDependencies ++= gcpLibraries
   ).dependsOn(core)
