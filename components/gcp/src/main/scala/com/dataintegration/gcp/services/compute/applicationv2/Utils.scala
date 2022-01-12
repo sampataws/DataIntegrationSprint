@@ -1,11 +1,17 @@
 package com.dataintegration.gcp.services.compute.applicationv2
 
-import com.dataintegration.core.binders.ComputeConfig
+import java.nio.file.{Files, Paths}
+
+import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig}
+import com.dataintegration.core.util.Status
 import com.google.api.gax.longrunning.OperationFuture
 import com.google.cloud.dataproc.v1.InstanceGroupConfig.Preemptibility
 import com.google.cloud.dataproc.v1._
+import com.google.cloud.storage.{BlobInfo, Storage}
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.{Duration, Empty}
+
+import scala.jdk.CollectionConverters._
 
 object Utils {
 
@@ -38,18 +44,42 @@ object Utils {
     request.get()
   }
 
-  def deleteCluster(cluster: Cluster, client: ClusterControllerClient): OperationFuture[Empty, ClusterOperationMetadata] = {
-    val endpoint = cluster.getField(FieldDescriptor.Type.STRING("endpoint")).toString
-    client.deleteClusterAsync(cluster.getProjectId, endpoint, cluster.getClusterName)
-  }
-
   // Later on first check if cluster exists via status apis.
-  def deleteCluster(config : ComputeConfig, client : ClusterControllerClient): OperationFuture[Empty, ClusterOperationMetadata] =
+  def deleteCluster(config: ComputeConfig, client: ClusterControllerClient): OperationFuture[Empty, ClusterOperationMetadata] =
     client.deleteClusterAsync(config.project, config.region, config.clusterName)
 
-  def listOfRunningClusters(config : ComputeConfig, client : ClusterControllerClient): Seq[String] = {
+  def listOfRunningClusters(config: ComputeConfig, client: ClusterControllerClient): Seq[String] = {
     val clusterList = client.listClusters(config.project, config.region)
     clusterList.iterateAll().asScala.map(cluster => cluster.getClusterName).toSeq
+  }
+
+  def copyFiles(storage: Storage, data: FileStoreConfig): FileStoreConfig = {
+    data.sourceBucket.trim.toLowerCase match {
+      case "local" => copyLocalToGCS
+      case _ => copyGCStoGCS
+    }
+
+    def copyLocalToGCS: Boolean = {
+      val blobInfo = BlobInfo.newBuilder(data.targetBucket.get, data.targetPath.get).build()
+      storage.create(blobInfo, Files.readAllBytes(Paths.get(data.targetPath.get)))
+      true
+    }
+
+    def copyGCStoGCS: Boolean = {
+      val blobList = storage.list(data.sourceBucket, Storage.BlobListOption.prefix(data.sourcePath))
+      blobList.iterateAll().asScala.map { blob =>
+        blob.copyTo(data.targetBucket.get, data.targetPath.get)
+      }
+      true
+    }
+
+    data.copy(status = Status.Success)
+  }
+
+  def deleteFiles(storage: Storage, data: FileStoreConfig): FileStoreConfig = {
+    val blobList = storage.list(data.sourceBucket, Storage.BlobListOption.prefix(data.sourcePath))
+    blobList.iterateAll().asScala.map(_.delete())
+    data.copy(status = Status.Success)
   }
 
 }

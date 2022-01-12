@@ -24,7 +24,7 @@ case class CreateCluster(
   }
 
   override def postJob(serviceResult: ComputeConfig): Task[Unit] =
-    ServiceLogger.logAll(className,s"${data.getLoggingInfo} creation process completed with ${serviceResult.getStatus}")
+    ServiceLogger.logAll(className,s"${serviceResult.getLoggingInfo} creation process completed with ${serviceResult.getStatus}")
 
   override def onSuccess: () => ComputeConfig = () => data.onSuccess(Status.Running)
 

@@ -13,22 +13,22 @@ case class DeleteCluster(
                           data: ComputeConfig,
                           properties: Properties) extends ServiceApi[ComputeConfig] {
 
-                            val className: String = getClass.getSimpleName.stripSuffix("$")
+  val className: String = getClass.getSimpleName.stripSuffix("$")
 
-                            override def preJob(): Task[Unit] =
-                              ServiceLogger.logAll(className, s"${data.getLoggingInfo} deletion process started")
+  override def preJob(): Task[Unit] =
+    ServiceLogger.logAll(className, s"${data.getLoggingInfo} deletion process started")
 
-                            override def mainJob: Task[ComputeConfig] = Task {
-                              Utils.deleteCluster(data, client)
-                              data.copy(status = Status.Success)
-                            }
+  override def mainJob: Task[ComputeConfig] = Task {
+    Utils.deleteCluster(data, client)
+    data.copy(status = Status.Success)
+  }
 
-                            override def postJob(serviceResult: ComputeConfig): Task[Unit] =
-                              ServiceLogger.logAll(className, s"${data.getLoggingInfo}  deletion process completed with status ${serviceResult.getStatus}")
+  override def postJob(serviceResult: ComputeConfig): Task[Unit] =
+    ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo}  deletion process completed with status ${serviceResult.getStatus}")
 
-                            override def onSuccess: () => ComputeConfig = () => data.onSuccess(Status.Success)
+  override def onSuccess: () => ComputeConfig = () => data.onSuccess(Status.Success)
 
-                            override def onFailure: Throwable => ComputeConfig = data.onFailure(Status.Running)
+  override def onFailure: Throwable => ComputeConfig = data.onFailure(Status.Running)
 
-                            override def retries: Int = properties.maxRetries
-                          }
+  override def retries: Int = properties.maxRetries
+}
