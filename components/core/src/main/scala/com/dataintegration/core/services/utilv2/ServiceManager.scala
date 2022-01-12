@@ -1,4 +1,4 @@
-package com.dataintegration.core.services.utilV2
+package com.dataintegration.core.services.utilv2
 
 import com.dataintegration.core.services.util.{ServiceConfig, ServiceResult}
 import com.dataintegration.core.util.{ApplicationLogger, ApplicationUtils, Status}

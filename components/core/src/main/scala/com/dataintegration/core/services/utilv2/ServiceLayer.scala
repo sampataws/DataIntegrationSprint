@@ -1,4 +1,4 @@
-package com.dataintegration.core.services.utilV2
+package com.dataintegration.core.services.utilv2
 
 import com.dataintegration.core.binders.Properties
 import com.dataintegration.core.services.util.{ServiceConfig, ServiceResult}

@@ -1,11 +1,10 @@
-package com.dataintegration.gcp.services.compute
+package com.dataintegration.gcp.services.compute.backup
 
 import com.dataintegration.core.binders.{Cluster, Properties}
-
 import com.dataintegration.core.services.util.{ServiceApi, ServiceResult}
 import com.dataintegration.core.util.Status
 import com.google.cloud.dataproc.v1.InstanceGroupConfig.Preemptibility
-import com.google.cloud.dataproc.v1.{ClusterConfig, ClusterControllerClient, ClusterControllerSettings, DiskConfig, InstanceGroupConfig, LifecycleConfig, Cluster => DataprocCluster}
+import com.google.cloud.dataproc.v1._
 import com.google.protobuf.Duration
 import zio.Task
 

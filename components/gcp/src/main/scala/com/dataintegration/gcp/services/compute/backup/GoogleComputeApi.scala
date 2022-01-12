@@ -1,9 +1,8 @@
-package com.dataintegration.gcp.services.compute
+package com.dataintegration.gcp.services.compute.backup
 
 import com.dataintegration.core.binders.{Cluster, Properties}
 import com.dataintegration.core.services.util.ServiceResult
-import com.dataintegration.core.services.utilV2.ServiceLayer
-import com.google.cloud.dataproc.v1.{Cluster => DataprocCluster}
+import com.dataintegration.core.services.utilv2.ServiceLayer
 import zio.{Task, ULayer, ZLayer}
 
 object GoogleComputeApi extends ServiceLayer[Cluster, DataprocCluster] {
