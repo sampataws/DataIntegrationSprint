@@ -101,10 +101,7 @@ object GoogleUtils extends ApplicationLogger {
     data.copy(status = Status.Success)
   }
 
-  def submitSparkJob(jobConfig: JobConfig): JobConfig = {
-    // singleton
-    val jobControllerSettings = JobControllerSettings.newBuilder().setEndpoint(jobConfig.compute.endpoint).build()
-    val client = JobControllerClient.create(jobControllerSettings)
+  def submitSparkJob(client : JobControllerClient ,jobConfig: JobConfig): JobConfig = {
 
     val jobPlacement = JobPlacement.newBuilder().setClusterName(jobConfig.compute.clusterName).build()
 
