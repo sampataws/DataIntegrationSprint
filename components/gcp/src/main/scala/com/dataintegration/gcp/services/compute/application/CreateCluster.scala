@@ -1,28 +1,33 @@
 package com.dataintegration.gcp.services.compute.application
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
-import com.dataintegration.core.services.utilv2.{ServiceApi, ServiceResult}
+import com.dataintegration.core.services.log.ServiceLogger
+import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
-import com.dataintegration.gcp.services.Utils
-import com.google.cloud.dataproc.v1.{Cluster, ClusterControllerClient}
-import zio.{Task, ZIO}
+import com.dataintegration.gcp.services.GoogleUtils
+import com.google.cloud.dataproc.v1.ClusterControllerClient
+import zio.Task
 
 case class CreateCluster(
+                          client: ClusterControllerClient,
                           data: ComputeConfig,
-                          properties: Properties,
-                          client: ClusterControllerClient) extends ServiceApi[ComputeConfig, Cluster] {
+                          properties: Properties) extends ServiceApi[ComputeConfig] {
 
-  override def preJob(): Task[Unit] = ZIO.unit
+  val className: String = getClass.getSimpleName.stripSuffix("$")
 
-  override def mainJob: Task[Cluster] = Task(Utils.createDataprocCluster(data, client))
+  override def preJob(): Task[Unit] =
+    ServiceLogger.logAll(className, s"${data.getLoggingInfo} creation process started")
 
-  override def postJob(serviceResult: ServiceResult[ComputeConfig, Cluster]): Task[Unit] = ZIO.unit
+  override def mainJob: Task[ComputeConfig] = Task {
+    GoogleUtils.createDataprocCluster(data, client)
+  }
 
-  override def onSuccess: Cluster => ServiceResult[ComputeConfig, Cluster] =
-    (cls: Cluster) => ServiceResult(data.copy(status = Status.Running), Some(cls))
+  override def postJob(serviceResult: ComputeConfig): Task[Unit] =
+    ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} creation process completed with ${serviceResult.getStatus}")
 
-  override def onFailure: Throwable => ServiceResult[ComputeConfig, Cluster] =
-    (failure: Throwable) => ServiceResult(data.copy(status = Status.Failed), None)
+  override def onSuccess: () => ComputeConfig = () => data.onSuccess(Status.Running)
+
+  override def onFailure: Throwable => ComputeConfig = data.onFailure(Status.Failed)
 
   override def retries: Int = properties.maxRetries
 }

@@ -4,11 +4,11 @@ import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger
 import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
-import com.dataintegration.gcp.services.Utils
+import com.dataintegration.gcp.services.GoogleUtils
 import com.google.cloud.storage.Storage
 import zio.Task
 
-case class MoveFiles(
+case class CopyFiles(
                       client: Storage,
                       data: FileStoreConfig,
                       properties: Properties) extends ServiceApi[FileStoreConfig] {
@@ -19,7 +19,7 @@ case class MoveFiles(
     ServiceLogger.logAll(className, s"${data.getLoggingInfo} copying..")
 
   override def mainJob: Task[FileStoreConfig] = Task {
-    Utils.copyFiles(client, data)
+    GoogleUtils.copyFiles(client, data)
   }
 
   override def postJob(serviceResult: FileStoreConfig): Task[Unit] =

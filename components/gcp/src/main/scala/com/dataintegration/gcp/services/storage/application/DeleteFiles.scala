@@ -4,7 +4,7 @@ import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger
 import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
-import com.dataintegration.gcp.services.Utils
+import com.dataintegration.gcp.services.GoogleUtils
 import com.google.cloud.storage.Storage
 import zio.Task
 
@@ -19,7 +19,7 @@ case class DeleteFiles(
     ServiceLogger.logAll(className, s"${data.getLoggingInfo} deleting..")
 
   override def mainJob: Task[FileStoreConfig] = Task {
-    Utils.deleteFiles(client, data)
+    GoogleUtils.deleteFiles(client, data)
   }
 
   override def postJob(serviceResult: FileStoreConfig): Task[Unit] =
