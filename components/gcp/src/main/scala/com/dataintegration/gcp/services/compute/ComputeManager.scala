@@ -1,26 +1,26 @@
 package com.dataintegration.gcp.services.compute
 
 import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf, Properties}
-import com.dataintegration.core.services.util.{ServiceLayerV2, ServiceManager}
+import com.dataintegration.core.services.util.{ServiceLayer, ServiceManager}
 import com.google.cloud.dataproc.v1.ClusterControllerClient
 import zio.{ZIO, ZLayer}
 
 object ComputeManager extends ServiceManager[ComputeConfig] {
 
-  val live: ZLayer[IntegrationConf with ServiceLayerV2[ComputeConfig, ClusterControllerClient] with ClusterControllerClient, Nothing, ComputeLive] = {
+  val live: ZLayer[IntegrationConf with ServiceLayer[ComputeConfig, ClusterControllerClient] with ClusterControllerClient, Nothing, ComputeLive] = {
     for {
       client <- ZIO.service[ClusterControllerClient]
-      service <- ZIO.service[ServiceLayerV2[ComputeConfig, ClusterControllerClient]]
+      service <- ZIO.service[ServiceLayer[ComputeConfig, ClusterControllerClient]]
       conf <- ZIO.service[IntegrationConf]
     } yield ComputeLive(client, service, conf.getClustersList, conf.getProperties)
   }.toLayer
 
-  val liveManaged: ZLayer[IntegrationConf with ServiceLayerV2[ComputeConfig, ClusterControllerClient] with ClusterControllerClient, Throwable, List[ComputeConfig]] =
+  val liveManaged: ZLayer[IntegrationConf with ServiceLayer[ComputeConfig, ClusterControllerClient] with ClusterControllerClient, Throwable, List[ComputeConfig]] =
     live >>> Apis.startService.toManagedWith(Apis.stopService).toLayer
 
   case class ComputeLive(
                           client: ClusterControllerClient,
-                          service: ServiceLayerV2[ComputeConfig, ClusterControllerClient],
+                          service: ServiceLayer[ComputeConfig, ClusterControllerClient],
                           clustersList: List[ComputeConfig],
                           properties: Properties) extends ServiceBackend {
 

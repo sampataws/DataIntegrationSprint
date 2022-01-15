@@ -1,29 +1,29 @@
 package com.dataintegration.gcp.services.jobsubmit
 
 import com.dataintegration.core.binders._
-import com.dataintegration.core.services.util.{ServiceLayerV2, ServiceManager}
+import com.dataintegration.core.services.util.{ServiceLayer, ServiceManager}
 import com.dataintegration.core.util.{ApplicationUtils, Status}
 import com.google.cloud.dataproc.v1.JobControllerClient
 import zio.{ZIO, ZLayer}
 
 object JobManager extends ServiceManager[JobConfig] {
 
-  val live: ZLayer[IntegrationConf with List[FileStoreConfig] with List[ComputeConfig] with ServiceLayerV2[JobConfig, JobControllerClient] with JobControllerClient, Nothing, JobLive] = {
+  val live: ZLayer[IntegrationConf with List[FileStoreConfig] with List[ComputeConfig] with ServiceLayer[JobConfig, JobControllerClient] with JobControllerClient, Nothing, JobLive] = {
     for {
       client <- ZIO.service[JobControllerClient]
-      service <- ZIO.service[ServiceLayerV2[JobConfig, JobControllerClient]]
+      service <- ZIO.service[ServiceLayer[JobConfig, JobControllerClient]]
       clusterList <- ZIO.service[List[ComputeConfig]]
       _ <- ZIO.service[List[FileStoreConfig]]
       conf <- ZIO.service[IntegrationConf]
     } yield JobLive(client, service, conf.getJob, clusterList, conf.getProperties)
   }.toLayer
 
-  val liveManaged: ZLayer[IntegrationConf with List[FileStoreConfig] with List[ComputeConfig] with ServiceLayerV2[JobConfig, JobControllerClient] with JobControllerClient, Throwable, List[JobConfig]] =
+  val liveManaged: ZLayer[IntegrationConf with List[FileStoreConfig] with List[ComputeConfig] with ServiceLayer[JobConfig, JobControllerClient] with JobControllerClient, Throwable, List[JobConfig]] =
     live >>> Apis.startService.toManagedWith(Apis.stopService).toLayer
 
   case class JobLive(
                       client: JobControllerClient,
-                      service: ServiceLayerV2[JobConfig, JobControllerClient],
+                      service: ServiceLayer[JobConfig, JobControllerClient],
                       jobList: List[JobConfig],
                       clusterList: List[ComputeConfig],
                       properties: Properties) extends ServiceBackend {

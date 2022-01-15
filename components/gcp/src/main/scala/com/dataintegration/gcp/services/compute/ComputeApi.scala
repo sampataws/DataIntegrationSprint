@@ -1,13 +1,13 @@
 package com.dataintegration.gcp.services.compute
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
-import com.dataintegration.core.services.util.ServiceLayerV2
+import com.dataintegration.core.services.util.ServiceLayer
 import com.dataintegration.gcp.services.compute.application.{CreateCluster, DeleteCluster}
 import com.google.cloud.dataproc.v1.ClusterControllerClient
 import zio.{Task, ULayer, ZLayer}
 
-object ComputeApi extends ServiceLayerV2[ComputeConfig, ClusterControllerClient] {
-  override val layer: ULayer[ServiceLayerV2[ComputeConfig, ClusterControllerClient]] = ZLayer.succeed(this)
+object ComputeApi extends ServiceLayer[ComputeConfig, ClusterControllerClient] {
+  override val layer: ULayer[ServiceLayer[ComputeConfig, ClusterControllerClient]] = ZLayer.succeed(this)
 
   override def onCreate(client: ClusterControllerClient, properties: Properties)(data: ComputeConfig): Task[ComputeConfig] =
     CreateCluster(client, data, properties).execute

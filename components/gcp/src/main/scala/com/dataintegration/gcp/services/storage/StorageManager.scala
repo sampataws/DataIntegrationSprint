@@ -1,26 +1,26 @@
 package com.dataintegration.gcp.services.storage
 
 import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf, Properties}
-import com.dataintegration.core.services.util.{ServiceLayerV2, ServiceManager}
+import com.dataintegration.core.services.util.{ServiceLayer, ServiceManager}
 import com.google.cloud.storage.Storage
 import zio.{ZIO, ZLayer}
 
 object StorageManager extends ServiceManager[FileStoreConfig] {
 
-  val live: ZLayer[IntegrationConf with ServiceLayerV2[FileStoreConfig, Storage] with Storage, Nothing, StorageLive] = {
+  val live: ZLayer[IntegrationConf with ServiceLayer[FileStoreConfig, Storage] with Storage, Nothing, StorageLive] = {
     for {
       client <- ZIO.service[Storage]
-      service <- ZIO.service[ServiceLayerV2[FileStoreConfig, Storage]]
+      service <- ZIO.service[ServiceLayer[FileStoreConfig, Storage]]
       conf <- ZIO.service[IntegrationConf]
     } yield StorageLive(client, service, conf.getFileStore, conf.getProperties)
   }.toLayer
 
-  val liveManaged: ZLayer[IntegrationConf with ServiceLayerV2[FileStoreConfig, Storage] with Storage, Throwable, List[FileStoreConfig]] =
+  val liveManaged: ZLayer[IntegrationConf with ServiceLayer[FileStoreConfig, Storage] with Storage, Throwable, List[FileStoreConfig]] =
     live >>> Apis.startService.toManagedWith(Apis.stopService).toLayer
 
   case class StorageLive(
                           client: Storage,
-                          service: ServiceLayerV2[FileStoreConfig, Storage],
+                          service: ServiceLayer[FileStoreConfig, Storage],
                           fileStoreList: List[FileStoreConfig],
                           properties: Properties) extends ServiceBackend {
 
