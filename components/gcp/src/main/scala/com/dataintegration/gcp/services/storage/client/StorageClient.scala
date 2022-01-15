@@ -8,6 +8,8 @@ object StorageClient extends ApplicationLogger {
 
   def createClient: Task[Storage] = Task {
     val storage = StorageOptions.getDefaultInstance.getService
+    // StorageOptions.newBuilder.build.getService
+
     logger.info("storage client initiated")
     storage
   }
