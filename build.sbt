@@ -22,6 +22,11 @@ lazy val gcpLibraries = Seq(
   "com.google.cloud" % "google-cloud-storage" % "2.2.3"
 )
 
+lazy val awsLibraries = Seq(
+  "com.amazonaws" % "aws-java-sdk-emr" % "1.12.140",
+  "com.amazonaws" % "aws-java-sdk-s3" % "1.12.141"
+)
+
 lazy val core = (project in file(s"$subProjectName/core"))
   .settings(
     name := "core",
@@ -32,4 +37,10 @@ lazy val gcp = (project in file(s"$subProjectName/gcp"))
   .settings(
     name := "gcp",
     libraryDependencies ++= gcpLibraries
+  ).dependsOn(core)
+
+lazy val aws = (project in file(s"$subProjectName/aws"))
+  .settings(
+    name := "aws",
+    libraryDependencies ++= awsLibraries
   ).dependsOn(core)

@@ -3,4 +3,5 @@
 /project/
 /components/core/target/
 /components/gcp/target/
+/components/aws/target/
 /components/core/src/main/scala/backup/
