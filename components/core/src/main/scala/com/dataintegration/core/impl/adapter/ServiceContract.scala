@@ -1,20 +1,22 @@
 package com.dataintegration.core.impl.adapter
 
+import com.dataintegration.core.binders.{IntegrationConf, Properties}
 import com.dataintegration.core.services.util.{ServiceConfig, ServiceManager}
-import zio.{IsNotIntersection, Tag, Task, ULayer, URIO, ZLayer}
+import zio.{IsNotIntersection, Tag, ULayer, URIO, ZIO, ZLayer}
 
 abstract class ServiceContract[S <: ServiceConfig, T: Tag : IsNotIntersection] {
 
-  def createClient(endpoint: String): Task[T]
+  def createClient(properties: Properties): T
   def destroyClient(client: T): URIO[Any, Unit]
 
   def createService(client: T, data: S): S
   def destroyService(client: T, data: S): S
 
-  def liveClient(endpoint: String): ZLayer[Any, Throwable, T]
+  def clientLive: ZLayer[IntegrationConf, Nothing, T] =
+    ZIO.service[IntegrationConf].map(prop => createClient(prop.getProperties)).toManagedWith(destroyClient).toLayer
 
-  val api: ServiceLayerGenericImpl[S, T]
-  val manager: ServiceManager[S]
-  val live: ULayer[this.type]
+  val serviceApi: ServiceLayerGenericImpl[S, T]
+  val serviceManager: ServiceManager[S]
+  val contractLive: ULayer[this.type]
 
 }

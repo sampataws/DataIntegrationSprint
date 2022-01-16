@@ -7,11 +7,11 @@ import zio.{IsNotIntersection, Tag, ZLayer}
 
 abstract class StorageContract[T: Tag : IsNotIntersection] extends ServiceContract[FileStoreConfig, T] {
 
-  override val api: StorageApi[T] = new StorageApi[T]
-  override val manager: StorageManager[T] = new StorageManager[T]
+  override val serviceApi: StorageApi[T] = new StorageApi[T]
+  override val serviceManager: StorageManager[T] = new StorageManager[T]
 
-  def deps(configLayer: ZLayer[Any, ReadError[String], IntegrationConf]): ZLayer[Any, Throwable, List[FileStoreConfig]] =
-    (configLayer ++ liveClient("") ++ ZLayer.succeed(api) ++ live) >>> manager.liveManaged
+  def dependencies(configLayer: ZLayer[Any, ReadError[String], IntegrationConf]): ZLayer[Any, Throwable, List[FileStoreConfig]] =
+    (configLayer ++ (configLayer >>> clientLive) ++ ZLayer.succeed(serviceApi) ++ contractLive) >>> serviceManager.liveManaged
 
 }
 
