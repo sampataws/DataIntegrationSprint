@@ -1,11 +1,12 @@
 package com.dataintegration.core.automate.services
 
+import com.dataintegration.core.automate.adapter.ServiceContract
 import com.dataintegration.core.automate.services.compute.{ComputeApi, ComputeManager}
 import com.dataintegration.core.automate.services.jobsubmit.{JobApi, JobManager}
 import com.dataintegration.core.automate.services.storage.{StorageApi, StorageManager}
 import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, JobConfig}
 import com.dataintegration.core.services.configuration.Configuration
-import com.dataintegration.core.services.util.{ServiceContract, ServiceLayerAuto}
+import com.dataintegration.core.services.util.ServiceLayerAuto
 import com.dataintegration.core.util.{ApplicationLogger, Status}
 import zio.{IsNotIntersection, Tag, Task, ULayer, URIO, ZEnv, ZIO, ZIOAppArgs, ZLayer, ZManaged}
 

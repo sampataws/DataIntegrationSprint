@@ -1,7 +1,8 @@
 package com.dataintegration.core.automate.services.storage
 
+import com.dataintegration.core.automate.adapter.ServiceContract
 import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf, Properties}
-import com.dataintegration.core.services.util.{ServiceContract, ServiceLayerAuto, ServiceManager}
+import com.dataintegration.core.services.util.{ServiceLayerAuto, ServiceManager}
 import zio.{IsNotIntersection, Tag, Task, ZIO, ZLayer}
 
 class StorageManager[T: Tag : IsNotIntersection] extends ServiceManager[FileStoreConfig] {

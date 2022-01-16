@@ -1,7 +1,8 @@
 package com.dataintegration.core.automate.services.compute
 
+import com.dataintegration.core.automate.adapter.ServiceContract
 import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf, Properties}
-import com.dataintegration.core.services.util.{ServiceContract, ServiceLayerAuto, ServiceManager}
+import com.dataintegration.core.services.util.{ServiceLayerAuto, ServiceManager}
 import zio.{IsNotIntersection, Tag, Task, ZIO, ZLayer}
 
 class ComputeManager[T: Tag : IsNotIntersection] extends ServiceManager[ComputeConfig] {

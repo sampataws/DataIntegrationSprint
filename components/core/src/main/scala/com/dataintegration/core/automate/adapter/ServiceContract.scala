@@ -1,6 +1,7 @@
-package com.dataintegration.core.services.util
+package com.dataintegration.core.automate.adapter
 
 import com.dataintegration.core.automate.services.compute.{ComputeApi, ComputeManager}
+import com.dataintegration.core.services.util.{ServiceConfig, ServiceLayerAuto, ServiceManager}
 import zio.{IsNotIntersection, Tag, Task, ULayer, URIO, ZLayer}
 
 abstract class ServiceContract[S <: ServiceConfig, T: Tag : IsNotIntersection] {
