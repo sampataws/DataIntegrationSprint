@@ -1,6 +1,5 @@
 package com.dataintegration.core.automate.adapter
 
-import com.dataintegration.core.automate.services.compute.{ComputeApi, ComputeManager}
 import com.dataintegration.core.services.util.{ServiceConfig, ServiceLayerAuto, ServiceManager}
 import zio.{IsNotIntersection, Tag, Task, ULayer, URIO, ZLayer}
 
@@ -18,10 +17,4 @@ abstract class ServiceContract[S <: ServiceConfig, T: Tag : IsNotIntersection] {
   val manager: ServiceManager[S]
   val live: ULayer[this.type]
 
-  val newApi = new ComputeApi[T]
-  val newManager = new ComputeManager[T]
-
-
-
-  //def partialDep2: ZLayer[Any, Throwable, T with ServiceLayerAuto[S, T] with ServiceContract.this.type] = null
 }
