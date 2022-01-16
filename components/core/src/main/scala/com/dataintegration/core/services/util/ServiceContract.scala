@@ -1,8 +1,9 @@
 package com.dataintegration.core.services.util
 
-import zio.{Task, URIO, ZLayer}
+import com.dataintegration.core.automate.services.compute.{ComputeApi, ComputeManager}
+import zio.{IsNotIntersection, Tag, Task, ULayer, URIO, ZLayer}
 
-trait ServiceContract[S <: ServiceConfig, T] {
+abstract class ServiceContract[S <: ServiceConfig, T: Tag : IsNotIntersection] {
 
   def createClient(endpoint: String): Task[T]
   def destroyClient(client: T): URIO[Any, Unit]
@@ -10,8 +11,16 @@ trait ServiceContract[S <: ServiceConfig, T] {
   def createService(client: T, data: S): S
   def destroyService(client: T, data: S): S
 
-  def liveClient(endpoint: String) : ZLayer[Any, Throwable, T]
+  def liveClient(endpoint: String): ZLayer[Any, Throwable, T]
 
-  //  def live(endpoint: String): ZLayer[Any, Throwable, T] =
-  //    ZManaged.acquireReleaseWith(acquire = createClient(endpoint))(release = client => destroyClient(client)).toLayer
+  val api: ServiceLayerAuto[S, T]
+  val manager: ServiceManager[S]
+  val live: ULayer[this.type]
+
+  val newApi = new ComputeApi[T]
+  val newManager = new ComputeManager[T]
+
+
+
+  //def partialDep2: ZLayer[Any, Throwable, T with ServiceLayerAuto[S, T] with ServiceContract.this.type] = null
 }

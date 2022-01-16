@@ -32,7 +32,7 @@ class ComputeManager[T: Tag : IsNotIntersection] extends ServiceManager[ComputeC
       parallelism = properties.maxParallelism)
 
     override def stopService(clustersList: List[ComputeConfig]): ZIO[Any, Nothing, List[ComputeConfig]] = serviceBuilder(
-      task = service.onCreate(client, contract.destroyService, properties),
+      task = service.onDestroy(client, contract.destroyService, properties),
       listOfResources = clustersList,
       failureType = FailSafe,
       parallelism = properties.maxParallelism).orDie
