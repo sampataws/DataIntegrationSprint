@@ -1,11 +1,11 @@
-package com.dataintegration.core.automate.services.storage
+package com.dataintegration.core.impl.services.storage
 
-import com.dataintegration.core.automate.services.storage.application.{CopyFiles, DeleteFiles}
+import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
+import com.dataintegration.core.impl.services.storage.application.{CopyFiles, DeleteFiles}
 import com.dataintegration.core.binders.{FileStoreConfig, Properties}
-import com.dataintegration.core.services.util.ServiceLayerAuto
 import zio.Task
 
-class StorageApi[T] extends ServiceLayerAuto[FileStoreConfig, T] {
+class StorageApi[T] extends ServiceLayerGenericImpl[FileStoreConfig, T] {
 
   override def onCreate(
                          client: T,

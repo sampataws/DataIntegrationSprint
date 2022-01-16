@@ -1,11 +1,10 @@
-package com.dataintegration.core.automate.services
+package com.dataintegration.core.impl.services
 
-import com.dataintegration.core.automate.adapter.{ComputeContract, JobSubmitContract, ServiceContract, StorageContract}
-import com.dataintegration.core.automate.services.Driver.jd
+import com.dataintegration.core.impl.adapter.{ComputeContract, JobSubmitContract, StorageContract}
 import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, JobConfig}
 import com.dataintegration.core.services.configuration.Configuration
 import com.dataintegration.core.util.{ApplicationLogger, Status}
-import zio.{IsNotIntersection, Tag, Task, ULayer, URIO, ZEnv, ZIO, ZIOAppArgs, ZLayer, ZManaged}
+import zio.{Task, ULayer, URIO, ZEnv, ZIO, ZIOAppArgs, ZLayer, ZManaged}
 
 object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogger {
 

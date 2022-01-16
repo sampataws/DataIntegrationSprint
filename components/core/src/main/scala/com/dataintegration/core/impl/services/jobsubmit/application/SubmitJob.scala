@@ -1,4 +1,4 @@
-package com.dataintegration.core.automate.services.jobsubmit.application
+package com.dataintegration.core.impl.services.jobsubmit.application
 
 import com.dataintegration.core.binders.{JobConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger

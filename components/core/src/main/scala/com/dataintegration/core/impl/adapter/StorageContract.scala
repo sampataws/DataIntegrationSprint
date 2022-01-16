@@ -1,6 +1,6 @@
-package com.dataintegration.core.automate.adapter
+package com.dataintegration.core.impl.adapter
 
-import com.dataintegration.core.automate.services.storage.{StorageApi, StorageManager}
+import com.dataintegration.core.impl.services.storage.{StorageApi, StorageManager}
 import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf}
 import zio.config.ReadError
 import zio.{IsNotIntersection, Tag, ZLayer}

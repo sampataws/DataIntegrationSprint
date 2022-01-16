@@ -1,4 +1,4 @@
-package com.dataintegration.core.automate.services
+package com.dataintegration.core.impl.services
 /*
 
 package com.dataintegration.core.services.util

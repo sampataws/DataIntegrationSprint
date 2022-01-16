@@ -1,11 +1,11 @@
-package com.dataintegration.core.automate.services.jobsubmit
+package com.dataintegration.core.impl.services.jobsubmit
 
-import com.dataintegration.core.automate.services.jobsubmit.application.SubmitJob
+import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
+import com.dataintegration.core.impl.services.jobsubmit.application.SubmitJob
 import com.dataintegration.core.binders.{JobConfig, Properties}
-import com.dataintegration.core.services.util.ServiceLayerAuto
 import zio.Task
 
-class JobApi[T] extends ServiceLayerAuto[JobConfig, T] {
+class JobApi[T] extends ServiceLayerGenericImpl[JobConfig, T] {
 
   override def onCreate(
                          client: T,

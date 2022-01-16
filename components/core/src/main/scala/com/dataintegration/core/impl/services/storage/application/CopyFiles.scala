@@ -1,4 +1,4 @@
-package com.dataintegration.core.automate.services.storage.application
+package com.dataintegration.core.impl.services.storage.application
 
 import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger

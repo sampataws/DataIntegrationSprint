@@ -1,4 +1,4 @@
-package com.dataintegration.core.automate.services.compute.application
+package com.dataintegration.core.impl.services.compute.application
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger

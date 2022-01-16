@@ -1,8 +1,8 @@
-package com.dataintegration.core.automate.services.jobsubmit
+package com.dataintegration.core.impl.services.jobsubmit
 
-import com.dataintegration.core.automate.adapter.ServiceContract
+import com.dataintegration.core.impl.adapter.{ServiceContract, ServiceLayerGenericImpl}
 import com.dataintegration.core.binders._
-import com.dataintegration.core.services.util.{ServiceLayerAuto, ServiceManager}
+import com.dataintegration.core.services.util.ServiceManager
 import com.dataintegration.core.util.{ApplicationUtils, Status}
 import zio.{IsNotIntersection, Tag, Task, ZIO}
 
@@ -11,7 +11,7 @@ class JobManager[T: Tag : IsNotIntersection] extends ServiceManager[JobConfig] {
   val live = {
     for {
       client <- ZIO.service[T]
-      service <- ZIO.service[ServiceLayerAuto[JobConfig, T]]
+      service <- ZIO.service[ServiceLayerGenericImpl[JobConfig, T]]
       contract <- ZIO.service[ServiceContract[JobConfig, T]]
       clusterList <- ZIO.service[List[ComputeConfig]]
       _ <- ZIO.service[List[FileStoreConfig]]
@@ -22,7 +22,7 @@ class JobManager[T: Tag : IsNotIntersection] extends ServiceManager[JobConfig] {
 
   case class JobLive(
                       client: T,
-                      service: ServiceLayerAuto[JobConfig, T],
+                      service: ServiceLayerGenericImpl[JobConfig, T],
                       contract: ServiceContract[JobConfig, T],
                       jobList: List[JobConfig],
                       clusterList: List[ComputeConfig],

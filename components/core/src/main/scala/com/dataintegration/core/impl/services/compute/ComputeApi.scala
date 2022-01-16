@@ -1,11 +1,11 @@
-package com.dataintegration.core.automate.services.compute
+package com.dataintegration.core.impl.services.compute
 
-import com.dataintegration.core.automate.services.compute.application.{CreateCluster, DeleteCluster}
+import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
+import com.dataintegration.core.impl.services.compute.application.{CreateCluster, DeleteCluster}
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
-import com.dataintegration.core.services.util.ServiceLayerAuto
 import zio.{Task, ULayer, ZLayer}
 
-class ComputeApi[T] extends ServiceLayerAuto[ComputeConfig, T] {
+class ComputeApi[T] extends ServiceLayerGenericImpl[ComputeConfig, T] {
 
   override def onCreate(
                          client: T,
