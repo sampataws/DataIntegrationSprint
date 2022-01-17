@@ -28,7 +28,10 @@ object Descriptors {
       int("idle_deletion_duration_sec") |@|
       int("weightage") |@|
       addColumn[Status.Type]("status", Status.Pending) |@|
-      addColumn("error_message", Seq.empty[String])
+      addColumn("error_message", Seq.empty[String]) |@|
+      addColumn[String]("additional_field1", null) |@|
+      addColumn[String]("additional_field2", null) |@|
+      addColumn[String]("additional_field3", null)
       ).apply(ComputeConfig.apply, ComputeConfig.unapply)
 
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
@@ -63,7 +66,10 @@ object Descriptors {
       string("target_bucket").optional |@|
       string("target_path").optional |@|
       addColumn[Status.Type]("status", Status.Pending) |@|
-      addColumn("error_message", Seq.empty[String])
+      addColumn("error_message", Seq.empty[String]) |@|
+      addColumn[String]("additional_field1", null) |@|
+      addColumn[String]("additional_field2", null) |@|
+      addColumn[String]("additional_field3", null)
       ).apply(FileStoreConfig.apply, FileStoreConfig.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =

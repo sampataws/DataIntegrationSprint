@@ -14,7 +14,10 @@ case class JobConfig(
                 sparkConf: Map[String, String],
                 libraryList: Seq[String],
                 status: Status.Type = Status.Pending,
-                errorMessage: Seq[String] = Seq.empty
+                errorMessage: Seq[String] = Seq.empty,
+                additionalField1 : String = null,
+                additionalField2 : String = null,
+                additionalField3 : String = null
               ) extends ServiceConfig {
 
   override def getName: String = "SparkJob"

@@ -12,7 +12,10 @@ case class FileStoreConfig(
                       targetBucket: Option[String],
                       targetPath: Option[String],
                       status: Status.Type,
-                      errorMessage: Seq[String]
+                      errorMessage: Seq[String],
+                      additionalField1 : String = null,
+                      additionalField2 : String = null,
+                      additionalField3 : String = null
                     ) extends ServiceConfig {
   override def getName: String = "FileStore"
 

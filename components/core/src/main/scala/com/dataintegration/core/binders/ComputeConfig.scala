@@ -23,7 +23,10 @@ case class ComputeConfig(
                     idleDeletionDurationSec: Int,
                     weightage: Int,
                     status: Status.Type,
-                    errorMessage: Seq[String]
+                    errorMessage: Seq[String],
+                    additionalField1 : String = null,
+                    additionalField2 : String = null,
+                    additionalField3 : String = null
                   ) extends ServiceConfig {
 
   override def getName: String = "Cluster"
