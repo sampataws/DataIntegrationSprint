@@ -12,7 +12,7 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
 
   object ComputeContract extends ComputeContract[String] {
     override def createClient(properties: Properties): String = properties.jobName
-    override def destroyClient(client: String): URIO[Any, Unit] = Task("ComputeContract Ended").debug(debugStr).unit.orDie
+    override def destroyClient(client: String): Unit = "ComputeContract Ended"
     override def createService(client: String, data: ComputeConfig): ComputeConfig = {
       logger.info(s"Cluster create started $client")
       data.copy(status = Status.Running)
@@ -36,7 +36,7 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
 
   object StorageContract extends StorageContract[String] {
     override def createClient(properties: Properties): String = properties.jobName
-    override def destroyClient(client: String): URIO[Any, Unit] = Task("StorageContract Ended").debug(debugStr).unit.orDie
+    override def destroyClient(client: String): Unit = "ComputeContract Ended"
     override def createService(client: String, data: FileStoreConfig): FileStoreConfig = {
       logger.info(s"Storage create started $client")
       data.copy(status = Status.Running)
@@ -56,7 +56,7 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
 
   object JobContract extends JobContract[String] {
     override def createClient(properties: Properties): String = properties.jobName
-    override def destroyClient(client: String): URIO[Any, Unit] = Task("JobContract Ended").debug(debugStr).unit.orDie
+    override def destroyClient(client: String): Unit = "ComputeContract Ended"
     override def createService(client: String, data: JobConfig): JobConfig = {
       logger.info(s"Job create started $client")
       data.copy(status = Status.Running)
