@@ -2,7 +2,7 @@ package com.dataintegration.core.impl.services.compute.application
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger
-import com.dataintegration.core.services.util.ServiceApi
+import com.dataintegration.core.services.util.ServiceApiV2
 import com.dataintegration.core.util.Status
 import zio.Task
 
@@ -11,7 +11,7 @@ case class CreateCluster[T](
                              data: ComputeConfig,
                              job: (T, ComputeConfig) => ComputeConfig,
                              properties: Properties
-                           ) extends ServiceApi[ComputeConfig] {
+                           ) extends ServiceApiV2[ComputeConfig] {
 
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
@@ -25,7 +25,8 @@ case class CreateCluster[T](
   override def postJob(serviceResult: ComputeConfig): Task[Unit] =
     ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} creation process completed with ${serviceResult.getStatus}")
 
-  override def onSuccess: () => ComputeConfig = () => data.onSuccess(Status.Running)
+  override def onSuccess: ComputeConfig => ComputeConfig =
+    (data: ComputeConfig) => data.onSuccess(Status.Running)
 
   override def onFailure: Throwable => ComputeConfig = data.onFailure(Status.Failed)
 

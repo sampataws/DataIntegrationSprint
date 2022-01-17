@@ -2,16 +2,16 @@ package com.dataintegration.core.impl.services.storage.application
 
 import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger
-import com.dataintegration.core.services.util.ServiceApi
+import com.dataintegration.core.services.util.ServiceApiV2
 import com.dataintegration.core.util.Status
 import zio.Task
 
 case class DeleteFiles[T](
-                      client: T,
-                      data: FileStoreConfig,
-                      job: (T, FileStoreConfig) => FileStoreConfig,
-                      properties: Properties
-                    ) extends ServiceApi[FileStoreConfig] {
+                           client: T,
+                           data: FileStoreConfig,
+                           job: (T, FileStoreConfig) => FileStoreConfig,
+                           properties: Properties
+                         ) extends ServiceApiV2[FileStoreConfig] {
 
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
@@ -25,7 +25,8 @@ case class DeleteFiles[T](
   override def postJob(serviceResult: FileStoreConfig): Task[Unit] =
     ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} deleted with status ${serviceResult.getStatus}")
 
-  override def onSuccess: () => FileStoreConfig = () => data.onSuccess(Status.Success)
+  override def onSuccess: FileStoreConfig => FileStoreConfig =
+    (data: FileStoreConfig) => data.onSuccess(Status.Success)
 
   override def onFailure: Throwable => FileStoreConfig = data.onFailure(Status.Failed)
 

@@ -1,7 +1,7 @@
 package com.dataintegration.core.services.util
 
 import zio.{Task, ZIO}
-
+@deprecated
 trait ServiceApi[T] {
 
   def preJob(): Task[Unit]

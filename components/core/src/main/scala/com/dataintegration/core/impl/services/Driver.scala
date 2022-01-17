@@ -4,7 +4,7 @@ import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, JobConf
 import com.dataintegration.core.impl.adapter.{ComputeContract, JobContract, StorageContract}
 import com.dataintegration.core.services.configuration.Configuration
 import com.dataintegration.core.util.{ApplicationLogger, Status}
-import zio.{Task, ULayer, URIO, ZEnv, ZIO, ZIOAppArgs, ZLayer}
+import zio.{ULayer, ZEnv, ZIO, ZIOAppArgs, ZLayer}
 
 object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogger {
 

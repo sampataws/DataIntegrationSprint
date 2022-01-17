@@ -2,7 +2,7 @@ package com.dataintegration.core.impl.services.jobsubmit.application
 
 import com.dataintegration.core.binders.{JobConfig, Properties}
 import com.dataintegration.core.services.log.ServiceLogger
-import com.dataintegration.core.services.util.ServiceApi
+import com.dataintegration.core.services.util.ServiceApiV2
 import com.dataintegration.core.util.Status
 import zio.Task
 
@@ -11,7 +11,7 @@ case class SubmitJob[T](
                          data: JobConfig,
                          job: (T, JobConfig) => JobConfig,
                          properties: Properties
-                       ) extends ServiceApi[JobConfig] {
+                       ) extends ServiceApiV2[JobConfig] {
 
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
@@ -25,10 +25,10 @@ case class SubmitJob[T](
   override def postJob(serviceResult: JobConfig): Task[Unit] =
     ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} job submit process completed with ${serviceResult.getStatus}")
 
-  override def onSuccess: () => JobConfig = () => data.onSuccess(Status.Success)
+  override def onSuccess: JobConfig => JobConfig =
+    (data: JobConfig) => data.onSuccess(Status.Success)
 
   override def onFailure: Throwable => JobConfig = data.onFailure(Status.Failed)
 
   override def retries: Int = 0
-
 }
