@@ -1,6 +1,7 @@
-package com.dataintegration.core.impl.adapter
+package com.dataintegration.core.impl.adapter.contracts
 
 import com.dataintegration.core.binders.{IntegrationConf, Properties}
+import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
 import com.dataintegration.core.services.util.{ServiceConfig, ServiceManager}
 import com.dataintegration.core.util.ApplicationLogger
 import zio.{IsNotIntersection, Tag, UIO, ULayer, ZIO, ZLayer}

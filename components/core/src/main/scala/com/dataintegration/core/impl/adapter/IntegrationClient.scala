@@ -1,6 +1,7 @@
 package com.dataintegration.core.impl.adapter
 
 import com.dataintegration.core.binders.{IntegrationConf, JobConfig}
+import com.dataintegration.core.impl.adapter.contracts.{ComputeContract, JobContract, StorageContract}
 import com.dataintegration.core.util.ApplicationLogger
 import zio.config.ReadError
 import zio.{ZIO, ZLayer}

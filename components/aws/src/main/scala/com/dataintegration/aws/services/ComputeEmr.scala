@@ -5,12 +5,12 @@ import com.amazonaws.services.elasticmapreduce.model._
 import com.amazonaws.services.elasticmapreduce.util.StepFactory
 import com.amazonaws.services.elasticmapreduce.{AmazonElasticMapReduce, AmazonElasticMapReduceClientBuilder}
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
-import com.dataintegration.core.impl.adapter.ComputeContract
+import com.dataintegration.core.impl.adapter.contracts.ComputeContract
 import com.dataintegration.core.util.Status
 import zio.{ULayer, ZLayer}
 
 // https://sysadmins.co.za/aws-create-emr-cluster-with-java-sdk-examples/
-object ComputeContract extends ComputeContract[AmazonElasticMapReduce] {
+object ComputeEmr extends ComputeContract[AmazonElasticMapReduce] {
 
   override def createClient(properties: Properties): AmazonElasticMapReduce = {
     val credentialProfile = new ProfileCredentialsProvider("default")
@@ -54,10 +54,14 @@ object ComputeContract extends ComputeContract[AmazonElasticMapReduce] {
     val result = client.runJobFlow(request)
 
     //client.terminateJobFlows()
+    data.copy(status = Status.Success, additionalField1 = result.toString)
+  }
+
+  override def destroyService(client: AmazonElasticMapReduce, data: ComputeConfig): ComputeConfig = {
+    val clusterId = data.additionalField1 // fetch job flow id
+    client.terminateJobFlows(new TerminateJobFlowsRequest().withJobFlowIds(clusterId))
     data.copy(status = Status.Success)
   }
 
-  override def destroyService(client: AmazonElasticMapReduce, data: ComputeConfig): ComputeConfig = ???
-
-  override val contractLive: ULayer[ComputeContract.type] = ZLayer.succeed(this)
+  override val contractLive: ULayer[ComputeEmr.type] = ZLayer.succeed(this)
 }

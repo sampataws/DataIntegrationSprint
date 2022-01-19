@@ -1,4 +1,4 @@
-package com.dataintegration.core.impl.adapter
+package com.dataintegration.core.impl.adapter.contracts
 
 import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf}
 import com.dataintegration.core.impl.services.compute.{ComputeApi, ComputeManager}

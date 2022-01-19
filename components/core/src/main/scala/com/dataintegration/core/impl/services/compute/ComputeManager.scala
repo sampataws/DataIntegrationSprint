@@ -1,7 +1,8 @@
 package com.dataintegration.core.impl.services.compute
 
-import com.dataintegration.core.impl.adapter.{ServiceContract, ServiceLayerGenericImpl}
+import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
 import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf, Properties}
+import com.dataintegration.core.impl.adapter.contracts.ServiceContract
 import com.dataintegration.core.services.util.ServiceManager
 import zio.{IsNotIntersection, Tag, Task, ZIO, ZLayer}
 

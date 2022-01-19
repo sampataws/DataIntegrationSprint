@@ -1,7 +1,8 @@
 package com.dataintegration.core.impl.services.jobsubmit
 
-import com.dataintegration.core.impl.adapter.{ServiceContract, ServiceLayerGenericImpl}
+import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
 import com.dataintegration.core.binders._
+import com.dataintegration.core.impl.adapter.contracts.ServiceContract
 import com.dataintegration.core.services.util.ServiceManager
 import com.dataintegration.core.util.{ApplicationUtils, Status}
 import zio.{IsNotIntersection, Tag, Task, ZIO}

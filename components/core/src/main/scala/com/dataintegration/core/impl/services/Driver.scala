@@ -1,7 +1,8 @@
 package com.dataintegration.core.impl.services
 
 import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, JobConfig, Properties}
-import com.dataintegration.core.impl.adapter.{ComputeContract, JobContract, StorageContract}
+import com.dataintegration.core.impl.adapter.StorageContract
+import com.dataintegration.core.impl.adapter.contracts.{ComputeContract, JobContract, StorageContract}
 import com.dataintegration.core.services.configuration.Configuration
 import com.dataintegration.core.util.{ApplicationLogger, Status}
 import zio.{ULayer, ZEnv, ZIO, ZIOAppArgs, ZLayer}
