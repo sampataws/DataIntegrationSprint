@@ -16,14 +16,14 @@ case class DeleteCluster(
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
   override def preJob(): Task[Unit] =
-    ServiceLogger.logAll(className, s"${data.getLoggingInfo} deletion process started")
+    ServiceLogger.logConsole(className, s"${data.getLoggingInfo} deletion process started")
 
   override def mainJob: Task[ComputeConfig] = Task {
     GoogleUtils.deleteCluster(data, client)
   }
 
   override def postJob(serviceResult: ComputeConfig): Task[Unit] =
-    ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo}  deletion process completed with status ${serviceResult.getStatus}")
+    ServiceLogger.logConsole(className, s"${serviceResult.getLoggingInfo}  deletion process completed with status ${serviceResult.getStatus}")
 
   override def onSuccess: ComputeConfig => ComputeConfig = (data: ComputeConfig) => data.onSuccess(Status.Success)
 

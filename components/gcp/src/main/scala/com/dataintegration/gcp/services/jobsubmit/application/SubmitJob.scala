@@ -16,14 +16,14 @@ case class SubmitJob(
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
   override def preJob(): Task[Unit] =
-    ServiceLogger.logAll(className, s"${data.getLoggingInfo} job submit process started")
+    ServiceLogger.logConsole(className, s"${data.getLoggingInfo} job submit process started")
 
   override def mainJob: Task[JobConfig] = Task {
     GoogleUtils.submitSparkJob(client, data)
   }
 
   override def postJob(serviceResult: JobConfig): Task[Unit] =
-    ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} job submit process completed with ${serviceResult.getStatus}")
+    ServiceLogger.logConsole(className, s"${serviceResult.getLoggingInfo} job submit process completed with ${serviceResult.getStatus}")
 
   override def onSuccess: JobConfig => JobConfig = (data: JobConfig) => data.onSuccess(Status.Success)
 

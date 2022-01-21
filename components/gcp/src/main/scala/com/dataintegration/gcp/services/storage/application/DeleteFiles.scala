@@ -16,14 +16,14 @@ case class DeleteFiles(
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
   override def preJob(): Task[Unit] =
-    ServiceLogger.logAll(className, s"${data.getLoggingInfo} deleting..")
+    ServiceLogger.logConsole(className, s"${data.getLoggingInfo} deleting..")
 
   override def mainJob: Task[FileStoreConfig] = Task {
     GoogleUtils.deleteFiles(client, data)
   }
 
   override def postJob(serviceResult: FileStoreConfig): Task[Unit] =
-    ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} deleted with status ${serviceResult.getStatus}")
+    ServiceLogger.logConsole(className, s"${serviceResult.getLoggingInfo} deleted with status ${serviceResult.getStatus}")
 
   override def onSuccess: FileStoreConfig => FileStoreConfig = (data: FileStoreConfig) => data.onSuccess(Status.Success)
 

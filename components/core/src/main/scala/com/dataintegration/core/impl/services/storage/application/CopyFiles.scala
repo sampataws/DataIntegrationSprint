@@ -16,14 +16,14 @@ case class CopyFiles[T](
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
   override def preJob(): Task[Unit] =
-    ServiceLogger.logAll(className, s"${data.getLoggingInfo} copying..")
+    ServiceLogger.logConsole(className, s"${data.getLoggingInfo} copying..")
 
   override def mainJob: Task[FileStoreConfig] = Task {
     job(client, data)
   }
 
   override def postJob(serviceResult: FileStoreConfig): Task[Unit] =
-    ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} copied with status ${serviceResult.getStatus}")
+    ServiceLogger.logConsole(className, s"${serviceResult.getLoggingInfo} copied with status ${serviceResult.getStatus}")
 
   override def onSuccess: FileStoreConfig => FileStoreConfig =
     (data: FileStoreConfig) => data.onSuccess(Status.Success)

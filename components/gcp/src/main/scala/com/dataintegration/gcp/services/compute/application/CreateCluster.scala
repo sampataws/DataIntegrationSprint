@@ -16,14 +16,14 @@ case class CreateCluster(
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
   override def preJob(): Task[Unit] =
-    ServiceLogger.logAll(className, s"${data.getLoggingInfo} creation process started")
+    ServiceLogger.logConsole(className, s"${data.getLoggingInfo} creation process started")
 
   override def mainJob: Task[ComputeConfig] = Task {
     GoogleUtils.createDataprocCluster(data, client)
   }
 
   override def postJob(serviceResult: ComputeConfig): Task[Unit] =
-    ServiceLogger.logAll(className, s"${serviceResult.getLoggingInfo} creation process completed with ${serviceResult.getStatus}")
+    ServiceLogger.logConsole(className, s"${serviceResult.getLoggingInfo} creation process completed with ${serviceResult.getStatus}")
 
   override def onSuccess: ComputeConfig => ComputeConfig = (data: ComputeConfig) => data.onSuccess(Status.Running)
 
