@@ -3,6 +3,8 @@ package com.dataintegration.core.impl.services
 import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, JobConfig, Properties}
 import com.dataintegration.core.impl.adapter.contracts.{ComputeContract, JobContract, StorageContract}
 import com.dataintegration.core.services.configuration.Configuration
+import com.dataintegration.core.services.log.audit.DatabaseService
+import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
 import com.dataintegration.core.util.{ApplicationLogger, Status}
 import zio.{ULayer, ZEnv, ZIO, ZIOAppArgs, ZLayer}
 
@@ -74,20 +76,21 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
 
   }
 
+  val audit: ULayer[AuditTableApi] = DatabaseService.live
   def jobAppBuilder[A, B, C](
                               compute: ComputeContract[A],
                               storage: StorageContract[B],
                               job: JobContract[C]): ZIO[Any, Throwable, List[JobConfig]] = {
 
-    val cd = compute.dependencies(configLayer)
-    val sd = storage.dependencies(configLayer)
-    val jd = job.dependencies(configLayer, cd, sd)
+    val cd = compute.dependencies(configLayer, audit)
+    val sd = storage.dependencies(configLayer, audit)
+    val jd = job.dependencies(configLayer,audit, cd, sd)
     job.serviceManager.Apis.startService.provideLayer(jd)
   }
 
-  val c2 = ComputeContract.dependencies(configLayer)
-  val s2 = StorageContract.dependencies(configLayer)
-  val jd = JobContract.dependencies(configLayer, c2, s2)
+  val c2 = ComputeContract.dependencies(configLayer,audit)
+  val s2 = StorageContract.dependencies(configLayer, audit)
+  val jd = JobContract.dependencies(configLayer,audit, c2, s2)
 
   override def run: ZIO[ZEnv with ZIOAppArgs, Any, Any] =
     jobAppBuilder(ComputeContract, StorageContract, JobContract)

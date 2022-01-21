@@ -21,7 +21,7 @@ object TableDefinition {
 
   case class LogService(
                          serviceId: String,
-                         jobId: String,
+                         jobId: String = null, // This gets updated on its own while writing - null as a placeholder
                          serviceName: String,
                          serviceType: String,
                          config: Map[String, String] = Map.empty,
@@ -29,9 +29,9 @@ object TableDefinition {
                          errorMessage: Seq[String] = Seq.empty,
                          additionalField1: String = null,
                          createdAt: ZonedDateTime = ZonedDateTime.now(),
-                         createdBy: String,
+                         createdBy: String = "dts",
                          modifiedAt: ZonedDateTime = ZonedDateTime.now(),
-                         modifiedBy: String)
+                         modifiedBy: String = "dts")
 
 
 }

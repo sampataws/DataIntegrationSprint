@@ -2,23 +2,25 @@ package com.dataintegration.core.binders
 
 import java.util.UUID
 
+import com.dataintegration.core.services.log.audit.TableDefinition
+import com.dataintegration.core.services.log.audit.TableDefinition.LogService
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.{ApplicationUtils, Status}
 
 case class JobConfig(
-                serviceId: String = UUID.randomUUID().toString,
-                name: String,
-                programArguments: Seq[String],
-                className: String,
-                compute: ComputeConfig = null,
-                sparkConf: Map[String, String],
-                libraryList: Seq[String],
-                status: Status.Type = Status.Pending,
-                errorMessage: Seq[String] = Seq.empty,
-                additionalField1 : String = null,
-                additionalField2 : String = null,
-                additionalField3 : String = null
-              ) extends ServiceConfig {
+                      serviceId: String = UUID.randomUUID().toString,
+                      name: String,
+                      programArguments: Seq[String],
+                      className: String,
+                      compute: ComputeConfig = null,
+                      sparkConf: Map[String, String],
+                      libraryList: Seq[String],
+                      status: Status.Type = Status.Pending,
+                      errorMessage: Seq[String] = Seq.empty,
+                      additionalField1: String = null,
+                      additionalField2: String = null,
+                      additionalField3: String = null
+                    ) extends ServiceConfig {
 
   override def getName: String = "SparkJob"
 
@@ -69,4 +71,11 @@ case class JobConfig(
     logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
   }
+  override def getLoggingService: TableDefinition.LogService = LogService(
+    serviceId = serviceId,
+    serviceName = s"Job creation $name",
+    serviceType = "JobSubmit",
+    config = keyParamsToPrint,
+    status = status,
+    errorMessage = errorMessage)
 }

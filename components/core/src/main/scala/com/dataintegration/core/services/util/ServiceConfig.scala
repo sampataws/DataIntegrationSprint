@@ -1,5 +1,6 @@
 package com.dataintegration.core.services.util
 
+import com.dataintegration.core.services.log.audit.TableDefinition
 import com.dataintegration.core.util.{ApplicationLogger, Status}
 
 trait ServiceConfig extends ApplicationLogger {
@@ -51,6 +52,8 @@ trait ServiceConfig extends ApplicationLogger {
    * @return
    */
   def getLoggingInfo: String = s"Service $getName : $getServiceId with params $mapToString"
+
+  def getLoggingService : TableDefinition.LogService
 
   private def mapToString =
     s"{${keyParamsToPrint.map(v => v._1 + " : " + v._2).mkString(",")}}"

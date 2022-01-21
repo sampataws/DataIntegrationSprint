@@ -2,32 +2,34 @@ package com.dataintegration.core.binders
 
 import java.util.UUID
 
+import com.dataintegration.core.services.log.audit.TableDefinition
+import com.dataintegration.core.services.log.audit.TableDefinition.LogService
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
 case class ComputeConfig(
-                    serviceId: String = UUID.randomUUID().toString,
-                    clusterName: String,
-                    bucketName: String,
-                    project: String,
-                    region: String,
-                    subnetUri: String,
-                    endpoint: String,
-                    imageVersion: String,
-                    masterMachineTypeUri: String,
-                    masterNumInstance: Int,
-                    masterBootDiskSizeGB: Int,
-                    workerMachineTypeUri: String,
-                    workerNumInstance: Int,
-                    workerBootDiskSizeGB: Int,
-                    idleDeletionDurationSec: Int,
-                    weightage: Int,
-                    status: Status.Type,
-                    errorMessage: Seq[String],
-                    additionalField1 : String = null,
-                    additionalField2 : String = null,
-                    additionalField3 : String = null
-                  ) extends ServiceConfig {
+                          serviceId: String = UUID.randomUUID().toString,
+                          clusterName: String,
+                          bucketName: String,
+                          project: String,
+                          region: String,
+                          subnetUri: String,
+                          endpoint: String,
+                          imageVersion: String,
+                          masterMachineTypeUri: String,
+                          masterNumInstance: Int,
+                          masterBootDiskSizeGB: Int,
+                          workerMachineTypeUri: String,
+                          workerNumInstance: Int,
+                          workerBootDiskSizeGB: Int,
+                          idleDeletionDurationSec: Int,
+                          weightage: Int,
+                          status: Status.Type,
+                          errorMessage: Seq[String],
+                          additionalField1: String = null,
+                          additionalField2: String = null,
+                          additionalField3: String = null
+                        ) extends ServiceConfig {
 
   override def getName: String = "Cluster"
 
@@ -59,5 +61,11 @@ case class ComputeConfig(
     logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
   }
-
+  override def getLoggingService: TableDefinition.LogService = LogService(
+    serviceId = serviceId,
+    serviceName = s"Cluster creation $clusterName",
+    serviceType = "Compute",
+    config = keyParamsToPrint,
+    status = status,
+    errorMessage = errorMessage)
 }

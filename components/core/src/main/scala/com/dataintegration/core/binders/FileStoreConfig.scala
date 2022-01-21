@@ -2,21 +2,23 @@ package com.dataintegration.core.binders
 
 import java.util.UUID
 
+import com.dataintegration.core.services.log.audit.TableDefinition
+import com.dataintegration.core.services.log.audit.TableDefinition.LogService
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
 
 case class FileStoreConfig(
-                      serviceId: String = UUID.randomUUID().toString,
-                      sourceBucket: String,
-                      sourcePath: String,
-                      targetBucket: Option[String],
-                      targetPath: Option[String],
-                      status: Status.Type,
-                      errorMessage: Seq[String],
-                      additionalField1 : String = null,
-                      additionalField2 : String = null,
-                      additionalField3 : String = null
-                    ) extends ServiceConfig {
+                            serviceId: String = UUID.randomUUID().toString,
+                            sourceBucket: String,
+                            sourcePath: String,
+                            targetBucket: Option[String],
+                            targetPath: Option[String],
+                            status: Status.Type,
+                            errorMessage: Seq[String],
+                            additionalField1: String = null,
+                            additionalField2: String = null,
+                            additionalField3: String = null
+                          ) extends ServiceConfig {
   override def getName: String = "FileStore"
 
   override def getServiceId: String = serviceId
@@ -67,4 +69,12 @@ case class FileStoreConfig(
   private def getTargetBucket: String = targetBucket.getOrElse(sourceBucket)
 
   private def getTargetPath: String = targetPath.getOrElse("")
+
+  override def getLoggingService: TableDefinition.LogService = LogService(
+    serviceId = serviceId,
+    serviceName = s"Copy files",
+    serviceType = "FileStore",
+    config = keyParamsToPrint,
+    status = status,
+    errorMessage = errorMessage)
 }
