@@ -10,7 +10,7 @@ import com.dataintegration.core.util.Status
 import zio.{ULayer, ZLayer}
 
 // https://sysadmins.co.za/aws-create-emr-cluster-with-java-sdk-examples/
-object ComputeEmr extends ComputeContract[AmazonElasticMapReduce] {
+object Compute extends ComputeContract[AmazonElasticMapReduce] {
 
   override def createClient(properties: Properties): AmazonElasticMapReduce = {
     val credentialProfile = new ProfileCredentialsProvider("default")
@@ -63,5 +63,5 @@ object ComputeEmr extends ComputeContract[AmazonElasticMapReduce] {
     data.copy(status = Status.Success)
   }
 
-  override val contractLive: ULayer[ComputeEmr.type] = ZLayer.succeed(this)
+  override val contractLive: ULayer[Compute.type] = ZLayer.succeed(this)
 }

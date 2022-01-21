@@ -8,7 +8,7 @@ import com.dataintegration.core.util.{ApplicationUtils, Status}
 case class JobConfig(
                 serviceId: String = UUID.randomUUID().toString,
                 name: String,
-                programArguments: Seq[String], // P
+                programArguments: Seq[String],
                 className: String,
                 compute: ComputeConfig = null,
                 sparkConf: Map[String, String],

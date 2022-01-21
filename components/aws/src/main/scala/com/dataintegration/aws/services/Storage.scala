@@ -11,7 +11,7 @@ import zio.{ULayer, ZLayer}
 
 import scala.jdk.CollectionConverters._
 
-object StorageS3 extends StorageContract[AmazonS3] {
+object Storage extends StorageContract[AmazonS3] {
   override def createClient(properties: Properties): AmazonS3 =
     AmazonS3ClientBuilder.standard().withRegion(Regions.DEFAULT_REGION).build()
 
@@ -49,5 +49,5 @@ object StorageS3 extends StorageContract[AmazonS3] {
     data.copy(status = Status.Success)
   }
 
-  override val contractLive: ULayer[StorageS3.type] = ZLayer.succeed(this)
+  override val contractLive: ULayer[Storage.type] = ZLayer.succeed(this)
 }

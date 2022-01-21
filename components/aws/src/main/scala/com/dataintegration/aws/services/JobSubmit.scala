@@ -10,7 +10,7 @@ import zio.{ULayer, ZLayer}
 
 import scala.jdk.CollectionConverters._
 
-object JobSubmitSparkEmr extends JobContract[AmazonElasticMapReduce] {
+object JobSubmit extends JobContract[AmazonElasticMapReduce] {
   override def createClient(properties: Properties): AmazonElasticMapReduce = {
     val credentialProfile = new ProfileCredentialsProvider("default")
     AmazonElasticMapReduceClientBuilder.standard().withCredentials(credentialProfile).withRegion("").build()
@@ -60,5 +60,5 @@ object JobSubmitSparkEmr extends JobContract[AmazonElasticMapReduce] {
 
   override def destroyService(client: AmazonElasticMapReduce, data: JobConfig): JobConfig = data
 
-  override val contractLive: ULayer[JobSubmitSparkEmr.type] = ZLayer.succeed(this)
+  override val contractLive: ULayer[JobSubmit.type] = ZLayer.succeed(this)
 }

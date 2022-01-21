@@ -27,6 +27,13 @@ lazy val awsLibraries = Seq(
   "com.amazonaws" % "aws-java-sdk-s3" % "1.12.141"
 )
 
+lazy val azureLibraries = Seq(
+  "com.microsoft.azure.hdinsight.v2018_06_01_preview" % "azure-mgmt-hdinsight" % "1.3.8",
+  "com.microsoft.azure" % "azure-client-authentication" % "1.7.14",
+  "com.microsoft.azure" % "azure-arm-client-runtime" % "1.7.14",
+  "com.azure" % "azure-storage-blob" % "12.14.3"
+)
+
 lazy val core = (project in file(s"$subProjectName/core"))
   .settings(
     name := "core",
@@ -43,4 +50,10 @@ lazy val aws = (project in file(s"$subProjectName/aws"))
   .settings(
     name := "aws",
     libraryDependencies ++= awsLibraries
+  ).dependsOn(core)
+
+lazy val azure = (project in file(s"$subProjectName/azure"))
+  .settings(
+    name := "azure",
+    libraryDependencies ++= azureLibraries
   ).dependsOn(core)
