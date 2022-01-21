@@ -6,7 +6,7 @@ import zio.Task
 /**
  * Sep class cause in future it will log to a database as well, hence the task
  */
-object ServiceLogger extends ApplicationLogger {
+object JobLogger extends ApplicationLogger {
 
   object Log {
 

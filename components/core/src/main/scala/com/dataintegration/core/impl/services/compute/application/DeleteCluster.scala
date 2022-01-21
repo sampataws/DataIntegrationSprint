@@ -1,7 +1,7 @@
 package com.dataintegration.core.impl.services.compute.application
 
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
-import com.dataintegration.core.services.log.ServiceLogger
+import com.dataintegration.core.services.log.JobLogger
 import com.dataintegration.core.services.util.ServiceApiV2
 import com.dataintegration.core.util.Status
 import zio.Task
@@ -16,14 +16,14 @@ case class DeleteCluster[T](
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
   override def preJob(): Task[Unit] =
-    ServiceLogger.logConsole(className, s"${data.getLoggingInfo} deletion process started")
+    JobLogger.logConsole(className, s"${data.getLoggingInfo} deletion process started")
 
   override def mainJob: Task[ComputeConfig] = Task {
     job(client, data)
   }
 
   override def postJob(serviceResult: ComputeConfig): Task[Unit] =
-    ServiceLogger.logConsole(className, s"${serviceResult.getLoggingInfo}  deletion process completed with status ${serviceResult.getStatus}")
+    JobLogger.logConsole(className, s"${serviceResult.getLoggingInfo}  deletion process completed with status ${serviceResult.getStatus}")
 
   override def onSuccess: ComputeConfig => ComputeConfig =
     (data : ComputeConfig) => data.onSuccess(Status.Success)
