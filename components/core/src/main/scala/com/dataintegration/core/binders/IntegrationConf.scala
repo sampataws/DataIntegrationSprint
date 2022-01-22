@@ -19,7 +19,7 @@ case class IntegrationConf(
     getExecutableFeatures.map(feature => feature.copy(
       basePath = getBasePath(feature),
       mainClass = Some(feature.mainClass.getOrElse(properties.parentMainClass)),
-      fileDependencies = moveFiles(feature.fileDependencies, getBasePath(feature)),
+      scenarios = feature.scenarios.copy(fileDependencies = moveFiles(feature.scenarios.fileDependencies, getBasePath(feature))),
       arguments = Some((feature.arguments.getOrElse(List.empty) ++ properties.jobArguments).distinct),
       sparkConf = Some(ApplicationUtils.updateMap(feature.sparkConf.getOrElse(Map.empty), properties.jobSparkConf))))
   }
@@ -35,7 +35,7 @@ case class IntegrationConf(
       )
     }
 
-  def getFileStore: List[FileStoreConfig] = getProperties.jarDependencies ++ getFeatures.flatMap(_.fileDependencies)
+  def getFileStore: List[FileStoreConfig] = getProperties.jarDependencies ++ getFeatures.flatMap(_.scenarios.fileDependencies)
 
   def getProperties: Properties =
     properties.copy(jarDependencies = moveFiles(properties.jarDependencies, basePath = properties.parentWorkingDir))

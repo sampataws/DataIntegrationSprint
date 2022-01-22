@@ -6,6 +6,7 @@ import java.util.UUID
 import zio.config._
 import ConfigDescriptor._
 import com.dataintegration.core.binders._
+import com.dataintegration.core.binders.Others._
 import com.dataintegration.core.util.Status
 
 object Descriptors {
@@ -47,11 +48,22 @@ object Descriptors {
       boolean("clean_up_directory")
       ).apply(Properties.apply, Properties.unapply)
 
+  def getAssertionDescriptor =
+    (string("name") |@| string("type"))(AssertScenario.apply,AssertScenario.unapply)
+
+  def getScenarioDescriptor = (
+    string("feature_name") |@|
+      string("description") |@|
+      list("file_dependencies")(getFileStoreDescriptor)|@|
+      list("assertions")(getAssertionDescriptor)
+    )(ScenarioConfig.apply,ScenarioConfig.unapply)
+
+
   def getFeatureDescriptor: ConfigDescriptor[Feature] =
     (string("name") |@|
       applyFunctionalTransformation(string("base_path")) |@|
       string("main_class").optional |@|
-      nested("storage")(list("file_dependencies")(getFileStoreDescriptor)) |@|
+      nested("storage")(getScenarioDescriptor) |@|
       list("args")(string).optional |@|
       map("spark_conf")(string).optional |@|
       boolean("runnable") |@|
