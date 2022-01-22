@@ -18,7 +18,7 @@ lazy val root = (project in file("."))
   .aggregate(core, gcp)
 
 lazy val gcpLibraries = Seq(
-  "com.google.cloud" % "google-cloud-dataproc" %  "2.3.1",
+  "com.google.cloud" % "google-cloud-dataproc" % "2.3.1",
   "com.google.cloud" % "google-cloud-storage" % "2.2.3"
 )
 
@@ -32,6 +32,11 @@ lazy val azureLibraries = Seq(
   "com.microsoft.azure" % "azure-client-authentication" % "1.7.14",
   "com.microsoft.azure" % "azure-arm-client-runtime" % "1.7.14",
   "com.azure" % "azure-storage-blob" % "12.14.3"
+)
+
+lazy val databaseLibraries = Seq(
+  "org.scalikejdbc" %% "scalikejdbc" % "4.0.0",
+  "mysql" % "mysql-connector-java" % "8.0.28"
 )
 
 lazy val core = (project in file(s"$subProjectName/core"))
@@ -56,4 +61,10 @@ lazy val azure = (project in file(s"$subProjectName/azure"))
   .settings(
     name := "azure",
     libraryDependencies ++= azureLibraries
+  ).dependsOn(core)
+
+lazy val database = (project in file(s"$subProjectName/database"))
+  .settings(
+    name := "database",
+    libraryDependencies ++= databaseLibraries
   ).dependsOn(core)

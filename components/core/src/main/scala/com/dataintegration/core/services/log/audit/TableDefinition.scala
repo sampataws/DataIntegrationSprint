@@ -15,9 +15,9 @@ object TableDefinition {
                      errorMessage: Seq[String] = Seq.empty,
                      additionalField1: String = null,
                      createdAt: ZonedDateTime = ZonedDateTime.now(),
-                     createdBy: String,
+                     createdBy: String = "dts",
                      modifiedAt: ZonedDateTime = ZonedDateTime.now(),
-                     modifiedBy: String)
+                     modifiedBy: String = "dts")
 
   case class LogService(
                          serviceId: String,
@@ -33,5 +33,17 @@ object TableDefinition {
                          modifiedAt: ZonedDateTime = ZonedDateTime.now(),
                          modifiedBy: String = "dts")
 
+  case class LogScenarios(
+                         scenarioId : String,
+                         featureId : String,
+                         scenarioName : String,
+                         scenarioDesc : String = null,
+                         assertion : String,
+                         status: Status.Type = Status.Pending,
+                         errorMessage: Seq[String] = Seq.empty,
+                         createdAt: ZonedDateTime = ZonedDateTime.now(),
+                         createdBy: String = "dts",
+                         modifiedAt: ZonedDateTime = ZonedDateTime.now(),
+                         modifiedBy: String = "dts")
 
 }
