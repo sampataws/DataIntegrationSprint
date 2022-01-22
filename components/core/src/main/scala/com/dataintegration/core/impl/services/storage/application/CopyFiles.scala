@@ -19,7 +19,7 @@ case class CopyFiles[T](
 
   override def preJob(): Task[Unit] = for {
     _ <- JobLogger.logConsole(className, s"${data.getLoggingInfo} copying..")
-    _ <- auditApi.insertInDatabase(data.getLoggingService)
+    _ <- auditApi.insertInDatabase(data)
   } yield ()
 
   override def mainJob: Task[FileStoreConfig] = Task {
@@ -28,7 +28,7 @@ case class CopyFiles[T](
 
   override def postJob(serviceResult: FileStoreConfig): Task[Unit] = for {
     _ <- JobLogger.logConsole(className, s"${serviceResult.getLoggingInfo} copied with status ${serviceResult.getStatus}")
-    _ <- auditApi.updateInDatabase(serviceResult.getLoggingService)
+    _ <- auditApi.updateInDatabase(serviceResult)
   } yield ()
 
   override def onSuccess: FileStoreConfig => FileStoreConfig =

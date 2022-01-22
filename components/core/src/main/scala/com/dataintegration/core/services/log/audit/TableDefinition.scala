@@ -2,7 +2,7 @@ package com.dataintegration.core.services.log.audit
 
 import java.time.ZonedDateTime
 
-import com.dataintegration.core.util.Status
+import com.dataintegration.core.util.{ServiceType, Status}
 
 object TableDefinition {
 
@@ -23,7 +23,7 @@ object TableDefinition {
                          serviceId: String,
                          jobId: String = null, // This gets updated on its own while writing - null as a placeholder
                          serviceName: String,
-                         serviceType: String,
+                         serviceType: ServiceType.Type,
                          config: Map[String, String] = Map.empty,
                          status: Status.Type,
                          errorMessage: Seq[String] = Seq.empty,

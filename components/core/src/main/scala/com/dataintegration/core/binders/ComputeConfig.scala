@@ -5,7 +5,7 @@ import java.util.UUID
 import com.dataintegration.core.services.log.audit.TableDefinition
 import com.dataintegration.core.services.log.audit.TableDefinition.LogService
 import com.dataintegration.core.services.util.ServiceConfig
-import com.dataintegration.core.util.Status
+import com.dataintegration.core.util.{ServiceType, Status}
 
 case class ComputeConfig(
                           serviceId: String = UUID.randomUUID().toString,
@@ -32,6 +32,8 @@ case class ComputeConfig(
                         ) extends ServiceConfig {
 
   override def getName: String = "Cluster"
+
+  override def getServiceType: ServiceType.Type = ServiceType.Compute
 
   override def getServiceId: String = serviceId
 
@@ -64,7 +66,7 @@ case class ComputeConfig(
   override def getLoggingService: TableDefinition.LogService = LogService(
     serviceId = serviceId,
     serviceName = s"Cluster creation $clusterName",
-    serviceType = "Compute",
+    serviceType = getServiceType,
     config = keyParamsToPrint,
     status = status,
     errorMessage = errorMessage)

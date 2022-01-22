@@ -6,3 +6,4 @@
 /components/aws/target/
 /components/core/src/main/scala/backup/
 /components/azure/target/
+/components/database/target/

@@ -19,7 +19,7 @@ case class CreateCluster[T](
 
   override def preJob(): Task[Unit] = for {
     _ <- JobLogger.logConsole(className, s"${data.getLoggingInfo} creation process started")
-    _ <- auditApi.insertInDatabase(data.getLoggingService)
+    _ <- auditApi.insertInDatabase(data)
   } yield()
 
   override def mainJob: Task[ComputeConfig] = Task {
@@ -28,7 +28,7 @@ case class CreateCluster[T](
 
   override def postJob(serviceResult: ComputeConfig): Task[Unit] = for {
     _ <- JobLogger.logConsole(className, s"${serviceResult.getLoggingInfo} creation process completed with ${serviceResult.getStatus}")
-    _ <- auditApi.updateInDatabase(serviceResult.getLoggingService)
+    _ <- auditApi.updateInDatabase(serviceResult)
   } yield ()
 
   override def onSuccess: ComputeConfig => ComputeConfig =

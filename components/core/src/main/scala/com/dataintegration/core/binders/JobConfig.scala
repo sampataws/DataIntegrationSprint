@@ -5,7 +5,7 @@ import java.util.UUID
 import com.dataintegration.core.services.log.audit.TableDefinition
 import com.dataintegration.core.services.log.audit.TableDefinition.LogService
 import com.dataintegration.core.services.util.ServiceConfig
-import com.dataintegration.core.util.{ApplicationUtils, Status}
+import com.dataintegration.core.util.{ApplicationUtils, ServiceType, Status}
 
 case class JobConfig(
                       serviceId: String = UUID.randomUUID().toString,
@@ -25,6 +25,8 @@ case class JobConfig(
   override def getName: String = "SparkJob"
 
   override def getServiceId: String = serviceId
+
+  override def getServiceType: ServiceType.Type = ServiceType.JobSubmit
 
   /**
    * Key parameters to print
@@ -74,7 +76,7 @@ case class JobConfig(
   override def getLoggingService: TableDefinition.LogService = LogService(
     serviceId = serviceId,
     serviceName = s"Job creation $name",
-    serviceType = "JobSubmit",
+    serviceType = getServiceType,
     config = keyParamsToPrint,
     status = status,
     errorMessage = errorMessage)

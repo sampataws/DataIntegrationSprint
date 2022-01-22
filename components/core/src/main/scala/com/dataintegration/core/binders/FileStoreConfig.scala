@@ -5,7 +5,7 @@ import java.util.UUID
 import com.dataintegration.core.services.log.audit.TableDefinition
 import com.dataintegration.core.services.log.audit.TableDefinition.LogService
 import com.dataintegration.core.services.util.ServiceConfig
-import com.dataintegration.core.util.Status
+import com.dataintegration.core.util.{ServiceType, Status}
 
 case class FileStoreConfig(
                             serviceId: String = UUID.randomUUID().toString,
@@ -22,6 +22,8 @@ case class FileStoreConfig(
   override def getName: String = "FileStore"
 
   override def getServiceId: String = serviceId
+
+  override def getServiceType: ServiceType.Type = ServiceType.Storage
 
   /**
    * Key parameters to print
@@ -73,7 +75,7 @@ case class FileStoreConfig(
   override def getLoggingService: TableDefinition.LogService = LogService(
     serviceId = serviceId,
     serviceName = s"Copy files",
-    serviceType = "FileStore",
+    serviceType = getServiceType,
     config = keyParamsToPrint,
     status = status,
     errorMessage = errorMessage)

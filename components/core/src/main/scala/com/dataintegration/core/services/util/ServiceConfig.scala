@@ -1,7 +1,7 @@
 package com.dataintegration.core.services.util
 
 import com.dataintegration.core.services.log.audit.TableDefinition
-import com.dataintegration.core.util.{ApplicationLogger, Status}
+import com.dataintegration.core.util.{ApplicationLogger, ServiceType, Status}
 
 trait ServiceConfig extends ApplicationLogger {
 
@@ -9,6 +9,8 @@ trait ServiceConfig extends ApplicationLogger {
 
 
   def getServiceId: String
+
+  def getServiceType : ServiceType.Type
 
   /**
    * Key parameters to print

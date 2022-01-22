@@ -1,7 +1,7 @@
 package com.dataintegration.database
 
 import com.dataintegration.core.services.log.audit.TableDefinition.LogService
-import com.dataintegration.core.util.ApplicationUtils
+import com.dataintegration.core.util.{ApplicationUtils, ServiceType, Status}
 import scalikejdbc._
 
 object LogServiceImpl extends AuditStructure[LogService] {
@@ -30,7 +30,7 @@ object LogServiceImpl extends AuditStructure[LogService] {
     col.serviceId -> data.serviceId,
     col.jobId -> data.jobId,
     col.serviceName -> data.serviceName,
-    col.serviceType -> data.serviceType,
+    col.serviceType -> data.serviceType.toString,
     col.config -> ApplicationUtils.mapToJson(data.config),
     col.status -> data.status.toString,
     col.errorMessage -> data.errorMessage.mkString(", "),
@@ -49,7 +49,7 @@ object LogServiceImpl extends AuditStructure[LogService] {
       rs.string("service_id"),
       rs.string("job_id"),
       rs.string("service_name"),
-      rs.string("service_type"),
+      stringToStatusForServiceType(rs.string("service_type")),
       ApplicationUtils.jsonToMap(rs.string("config")),
       stringToStatus(rs.string("status")),
       rs.string("error_message").split(", "),
@@ -60,4 +60,10 @@ object LogServiceImpl extends AuditStructure[LogService] {
       rs.string("modified_by")
     )).list.apply()
 
+  // todo generic impl
+  private def stringToStatusForServiceType(value: String): ServiceType.Type =
+    if (value == ServiceType.Compute.toString) ServiceType.Compute
+    else if (value == ServiceType.Storage.toString) ServiceType.Storage
+    else if (value == ServiceType.JobSubmit.toString) ServiceType.JobSubmit
+    else null
 }
