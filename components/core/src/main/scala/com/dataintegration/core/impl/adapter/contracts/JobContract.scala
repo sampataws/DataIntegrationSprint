@@ -2,7 +2,6 @@ package com.dataintegration.core.impl.adapter.contracts
 
 import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, IntegrationConf, JobConfig}
 import com.dataintegration.core.impl.services.jobsubmit.{JobApi, JobManager}
-import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
 import zio.config.ReadError
 import zio.{IsNotIntersection, Tag, ULayer, ZLayer}

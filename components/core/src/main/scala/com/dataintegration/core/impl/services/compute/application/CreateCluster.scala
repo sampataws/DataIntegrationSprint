@@ -3,7 +3,7 @@ package com.dataintegration.core.impl.services.compute.application
 import com.dataintegration.core.binders.{ComputeConfig, Properties}
 import com.dataintegration.core.services.log.JobLogger
 import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
-import com.dataintegration.core.services.util.ServiceApiV2
+import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
 import zio.Task
 
@@ -13,7 +13,7 @@ case class CreateCluster[T](
                              job: (T, ComputeConfig) => ComputeConfig,
                              auditApi: AuditTableApi,
                              properties: Properties
-                           ) extends ServiceApiV2[ComputeConfig] {
+                           ) extends ServiceApi[ComputeConfig] {
 
   val className: String = getClass.getSimpleName.stripSuffix("$")
 

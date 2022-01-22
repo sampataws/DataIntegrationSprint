@@ -3,7 +3,7 @@ package com.dataintegration.core.impl.services.storage.application
 import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.services.log.JobLogger
 import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
-import com.dataintegration.core.services.util.ServiceApiV2
+import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
 import zio.Task
 
@@ -13,7 +13,7 @@ case class CopyFiles[T](
                          job: (T, FileStoreConfig) => FileStoreConfig,
                          auditApi: AuditTableApi,
                          properties: Properties
-                       ) extends ServiceApiV2[FileStoreConfig] {
+                       ) extends ServiceApi[FileStoreConfig] {
 
   val className: String = getClass.getSimpleName.stripSuffix("$")
 

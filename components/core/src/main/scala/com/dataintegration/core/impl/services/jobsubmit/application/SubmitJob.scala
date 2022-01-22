@@ -3,7 +3,7 @@ package com.dataintegration.core.impl.services.jobsubmit.application
 import com.dataintegration.core.binders.{JobConfig, Properties}
 import com.dataintegration.core.services.log.JobLogger
 import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
-import com.dataintegration.core.services.util.ServiceApiV2
+import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
 import zio.Task
 
@@ -13,7 +13,7 @@ case class SubmitJob[T](
                          job: (T, JobConfig) => JobConfig,
                          auditApi: AuditTableApi,
                          properties: Properties
-                       ) extends ServiceApiV2[JobConfig] {
+                       ) extends ServiceApi[JobConfig] {
 
   val className: String = getClass.getSimpleName.stripSuffix("$")
 

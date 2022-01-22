@@ -2,7 +2,7 @@ package com.dataintegration.gcp.services.storage.application
 
 import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.services.log.JobLogger
-import com.dataintegration.core.services.util.ServiceApiV2
+import com.dataintegration.core.services.util.ServiceApi
 import com.dataintegration.core.util.Status
 import com.dataintegration.gcp.services.GoogleUtils
 import com.google.cloud.storage.Storage
@@ -11,7 +11,7 @@ import zio.Task
 case class CopyFiles(
                       client: Storage,
                       data: FileStoreConfig,
-                      properties: Properties) extends ServiceApiV2[FileStoreConfig] {
+                      properties: Properties) extends ServiceApi[FileStoreConfig] {
 
   val className: String = getClass.getSimpleName.stripSuffix("$")
 
