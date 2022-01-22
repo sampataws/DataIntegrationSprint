@@ -31,7 +31,7 @@ case class ComputeConfig(
                           additionalField3: String = null
                         ) extends ServiceConfig {
 
-  override def getName: String = "Cluster"
+  override def getName: String = s"Cluster $clusterName"
 
   override def getServiceType: ServiceType.Type = ServiceType.Compute
 
@@ -65,7 +65,7 @@ case class ComputeConfig(
   }
   override def getLoggingService: TableDefinition.LogService = LogService(
     serviceId = serviceId,
-    serviceName = s"Cluster creation $clusterName",
+    serviceName = getName,
     serviceType = getServiceType,
     config = keyParamsToPrint,
     status = status,

@@ -19,7 +19,7 @@ case class DeleteFiles[T](
 
   override def preJob(): Task[Unit] = for {
     _ <- JobLogger.logConsole(className, s"${data.getLoggingInfo} deleting..")
-    _ <- auditApi.insertInDatabase(data)
+    _ <- auditApi.updateInDatabase(data)
   } yield ()
 
   override def mainJob: Task[FileStoreConfig] = Task {

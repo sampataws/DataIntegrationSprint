@@ -10,7 +10,9 @@ object DatabaseService {
     def updateInDatabase(data: ServiceConfig): Task[Unit]
     def insertInDatabase(data: TableDefinition.LogJob): Task[Unit]
     def updateInDatabase(data: TableDefinition.LogJob): Task[Unit]
+    @deprecated
     def insertInDatabase(data: TableDefinition.LogService): Task[Unit]
+    @deprecated
     def updateInDatabase(data: TableDefinition.LogService): Task[Unit]
   }
 

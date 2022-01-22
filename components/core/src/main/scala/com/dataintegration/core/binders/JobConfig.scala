@@ -15,6 +15,7 @@ case class JobConfig(
                       compute: ComputeConfig = null,
                       sparkConf: Map[String, String],
                       libraryList: Seq[String],
+                      scenarios: Others.ScenarioConfig,
                       status: Status.Type = Status.Pending,
                       errorMessage: Seq[String] = Seq.empty,
                       additionalField1: String = null,
@@ -22,7 +23,7 @@ case class JobConfig(
                       additionalField3: String = null
                     ) extends ServiceConfig {
 
-  override def getName: String = "SparkJob"
+  override def getName: String = s"SparkJob $name"
 
   override def getServiceId: String = serviceId
 
@@ -75,7 +76,7 @@ case class JobConfig(
   }
   override def getLoggingService: TableDefinition.LogService = LogService(
     serviceId = serviceId,
-    serviceName = s"Job creation $name",
+    serviceName = getName,
     serviceType = getServiceType,
     config = keyParamsToPrint,
     status = status,

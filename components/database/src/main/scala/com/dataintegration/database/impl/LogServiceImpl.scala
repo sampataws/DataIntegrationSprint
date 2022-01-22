@@ -1,7 +1,7 @@
-package com.dataintegration.database
+package com.dataintegration.database.impl
 
 import com.dataintegration.core.services.log.audit.TableDefinition.LogService
-import com.dataintegration.core.util.{ApplicationUtils, ServiceType, Status}
+import com.dataintegration.core.util.{ApplicationUtils, ServiceType}
 import scalikejdbc._
 
 object LogServiceImpl extends AuditStructure[LogService] {

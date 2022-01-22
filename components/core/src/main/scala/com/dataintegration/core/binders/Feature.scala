@@ -6,7 +6,7 @@ case class Feature(
                     name: String,
                     basePath: String,
                     mainClass: Option[String],
-                    scenarios: Others.ScenarioConfig = null,
+                    scenarios: Others.ScenarioConfig,
                     arguments: Option[List[String]],
                     sparkConf: Option[Map[String, String]],
                     executableFlag: Boolean,

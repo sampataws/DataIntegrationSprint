@@ -19,7 +19,7 @@ case class DeleteCluster[T](
 
   override def preJob(): Task[Unit] = for {
     _ <- JobLogger.logConsole(className, s"${data.getLoggingInfo} deletion process started")
-    _ <- auditApi.insertInDatabase(data)
+    _ <- auditApi.updateInDatabase(data)
   } yield ()
 
   override def mainJob: Task[ComputeConfig] = Task {

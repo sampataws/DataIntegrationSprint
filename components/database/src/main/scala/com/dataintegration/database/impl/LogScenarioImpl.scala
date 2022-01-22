@@ -1,4 +1,4 @@
-package com.dataintegration.database
+package com.dataintegration.database.impl
 
 import com.dataintegration.core.services.log.audit.TableDefinition.LogScenarios
 import scalikejdbc._
@@ -12,7 +12,7 @@ object LogScenarioImpl extends AuditStructure[LogScenarios] {
 
   override def createTableStatement: SQL[Nothing, NoExtractor] =
     sql"""CREATE TABLE IF NOT EXISTS $table (
-          scenario_id VARCHAR(36) PRIMARY KEY,
+          scenario_id VARCHAR(36),
           feature_id VARCHAR(36),
           scenario_name TEXT,
           scenario_desc TEXT,

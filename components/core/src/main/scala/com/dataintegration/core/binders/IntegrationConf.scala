@@ -31,7 +31,8 @@ case class IntegrationConf(
         programArguments = feature.arguments.get :+ s"workingDir=${feature.basePath}",
         className = feature.mainClass.get,
         sparkConf = feature.sparkConf.get,
-        libraryList = properties.jarDependencies.map(_.targetPath.get)
+        libraryList = properties.jarDependencies.map(_.targetPath.get),
+        scenarios = feature.scenarios
       )
     }
 

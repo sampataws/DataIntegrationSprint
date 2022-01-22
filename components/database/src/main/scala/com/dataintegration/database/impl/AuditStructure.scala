@@ -1,4 +1,4 @@
-package com.dataintegration.database
+package com.dataintegration.database.impl
 
 import com.dataintegration.core.util.Status
 import scalikejdbc._
