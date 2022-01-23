@@ -1,6 +1,6 @@
 package com.dataintegration.core.services.log.audit
 
-import com.dataintegration.core.binders.Properties
+import com.dataintegration.core.binders.{IntegrationConf, Properties}
 import com.dataintegration.core.services.util.ServiceConfig
 import zio.{Task, ULayer, ZIO, ZLayer}
 
