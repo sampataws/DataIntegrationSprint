@@ -32,7 +32,7 @@ object LogJobImpl extends AuditStructure[LogJob] {
     col.jobType -> data.jobType,
     col.config -> ApplicationUtils.mapToJson(data.config),
     col.status -> data.status.toString,
-    col.errorMessage -> data.errorMessage.mkString(", "),
+    col.errorMessage -> (if(data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
     col.additionalField1 -> data.additionalField1,
     col.createdAt -> data.createdAt,
     col.createdBy -> data.createdBy,

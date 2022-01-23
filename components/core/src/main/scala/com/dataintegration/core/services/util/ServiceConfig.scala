@@ -62,7 +62,7 @@ trait ServiceConfig extends ApplicationLogger {
     serviceType = getServiceType,
     config = keyParamsToPrint,
     status = getStatus,
-    errorMessage = getErrorMessage.split(", "))
+    errorMessage = if(getErrorMessage.isEmpty) Seq.empty else getErrorMessage.split(", "))
 
   private def mapToString =
     s"{${keyParamsToPrint.map(v => v._1 + " : " + v._2).mkString(",")}}"

@@ -35,7 +35,7 @@ object LogScenarioImpl extends AuditStructure[LogScenarios] {
     col.scenarioDesc -> data.scenarioDesc,
     col.assertion -> data.assertion,
     col.status -> data.status.toString,
-    col.errorMessage -> data.errorMessage.mkString(", "),
+    col.errorMessage -> (if(data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
     col.createdAt -> data.createdAt,
     col.createdBy -> data.createdBy,
     col.modifiedAt -> data.modifiedAt,
