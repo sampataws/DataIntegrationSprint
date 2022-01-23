@@ -23,7 +23,7 @@ case class JobConfig(
                       additionalField3: String = null
                     ) extends ServiceConfig {
 
-  override def getName: String = s"SparkJob $name"
+  override def getName: String = s"SparkJob :- $name"
 
   override def getServiceId: String = serviceId
 
@@ -38,7 +38,7 @@ case class JobConfig(
     "job_name" -> name,
     "class_name" -> className,
     "program_args" -> programArguments.mkString(", "),
-    "spark_conf" -> ApplicationUtils.mapToJson(sparkConf),
+    //"spark_conf" -> ApplicationUtils.mapToJson(sparkConf),
     "libs" -> libraryList.mkString(", ")
   )
 
@@ -74,11 +74,4 @@ case class JobConfig(
     logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
   }
-  override def getLoggingService: TableDefinition.LogService = LogService(
-    serviceId = serviceId,
-    serviceName = getName,
-    serviceType = getServiceType,
-    config = keyParamsToPrint,
-    status = status,
-    errorMessage = errorMessage)
 }

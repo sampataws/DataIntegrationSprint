@@ -23,16 +23,16 @@ object AuditApi extends DatabaseService.AuditTableApi {
   override def insertInDatabase(data: ServiceConfig): Task[Unit] = Task {
     data match {
       case service: ComputeConfig => LogServiceImpl.insertIntoTable(service.getLoggingService).execute.apply()
-      case service: FileStoreConfig => LogServiceImpl.insertIntoTable(service.getLoggingService.copy(serviceId = randomString(data.getServiceId),config = Map.empty)).execute.apply()
-      case service: JobConfig => LogServiceImpl.insertIntoTable(service.getLoggingService.copy(config = Map.empty)).execute.apply()
+      case service: FileStoreConfig => LogServiceImpl.insertIntoTable(service.getLoggingService).execute.apply()
+      case service: JobConfig => LogServiceImpl.insertIntoTable(service.getLoggingService).execute.apply()
     }
   }
 
   override def updateInDatabase(data: ServiceConfig): Task[Unit] = Task {
     data match {
       case service: ComputeConfig => LogServiceImpl.updateIntoTable(service.getLoggingService).execute.apply()
-      case service: FileStoreConfig => ZIO.unit //LogServiceImpl.updateIntoTable(service.getLoggingService.copy(config = Map.empty)).execute.apply()
-      case service: JobConfig => LogServiceImpl.updateIntoTable(service.getLoggingService.copy(config = Map.empty)).execute.apply()
+      case service: FileStoreConfig => LogServiceImpl.updateIntoTable(service.getLoggingService).execute.apply()
+      case service: JobConfig => LogServiceImpl.updateIntoTable(service.getLoggingService).execute.apply()
     }
   }
 

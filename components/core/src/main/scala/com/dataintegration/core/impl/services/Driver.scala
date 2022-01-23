@@ -5,7 +5,7 @@ import com.dataintegration.core.impl.adapter.contracts.{ComputeContract, JobCont
 import com.dataintegration.core.services.configuration.Configuration
 import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
-import com.dataintegration.core.util.{ApplicationLogger, Status}
+import com.dataintegration.core.util.{ApplicationLogger, ApplicationUtils, Status}
 import zio.{ULayer, ZEnv, ZIO, ZIOAppArgs, ZLayer}
 
 object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogger {
@@ -40,11 +40,11 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
     override def createClient(properties: Properties): String = properties.jobName
     override def destroyClient(client: String): Unit = "ComputeContract Ended"
     override def createService(client: String, data: FileStoreConfig): FileStoreConfig = {
-      logger.info(s"Storage create started $client")
+      logger.info(s"Storage create started $client + ${data.getName} + ${ApplicationUtils.mapToJson(data.keyParamsToPrint)}")
       data.copy(status = Status.Running)
     }
     override def destroyService(client: String, data: FileStoreConfig): FileStoreConfig = {
-      logger.info(s"Storage create done $client")
+      logger.info(s"Storage create done $client + ${data.getName} + ${ApplicationUtils.mapToJson(data.keyParamsToPrint)}")
       data.copy(status = Status.Success)
     }
     //    override def liveClient(endpoint: String): ZLayer[Any, Throwable, String] =
@@ -60,11 +60,11 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
     override def createClient(properties: Properties): String = properties.jobName
     override def destroyClient(client: String): Unit = "ComputeContract Ended"
     override def createService(client: String, data: JobConfig): JobConfig = {
-      logger.info(s"Job create started $client")
+      logger.info(s"Job create started $client " + ApplicationUtils.mapToJson(data.keyParamsToPrint))
       data.copy(status = Status.Running)
     }
     override def destroyService(client: String, data: JobConfig): JobConfig = {
-      logger.info(s"Job create done $client")
+      logger.info(s"Job create done $client" + ApplicationUtils.mapToJson(data.keyParamsToPrint))
       data.copy(status = Status.Success)
     }
     //    override def liveClient(endpoint: String): ZLayer[Any, Throwable, String] =

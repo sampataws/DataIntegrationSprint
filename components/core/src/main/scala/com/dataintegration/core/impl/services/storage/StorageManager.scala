@@ -38,7 +38,7 @@ class StorageManager[T: Tag : IsNotIntersection] extends ServiceManager[FileStor
       parallelism = properties.maxParallelism)
 
     override def stopService(fileStoreList: List[FileStoreConfig]): ZIO[Any, Nothing, List[FileStoreConfig]] = serviceBuilder(
-      task = service.onCreate(client, contract.destroyService, auditApi, properties),
+      task = service.onDestroy(client, contract.destroyService, auditApi, properties),
       listOfResources = fileStoreList,
       failureType = FailFast,
       parallelism = properties.maxParallelism).orDie

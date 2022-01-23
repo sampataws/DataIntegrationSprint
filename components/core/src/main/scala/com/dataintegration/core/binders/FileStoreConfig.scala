@@ -19,7 +19,7 @@ case class FileStoreConfig(
                             additionalField2: String = null,
                             additionalField3: String = null
                           ) extends ServiceConfig {
-  override def getName: String = s"FileStore $sourcePath -> ${targetPath.get}"
+  override def getName: String = s"FileStore :- ${targetPath.get}"
 
   override def getServiceId: String = serviceId
 
@@ -31,7 +31,7 @@ case class FileStoreConfig(
    * @return
    */
   override def keyParamsToPrint: Map[String, String] =
-    Map("source_path" -> s"$sourceBucket/$sourcePath",
+    Map("source_path" -> s"$sourceBucket/${sourcePath.replaceAll("\\\\", "/")}",
       "target_path" -> s"$getTargetBucket/$getTargetPath")
 
   /**
@@ -71,11 +71,4 @@ case class FileStoreConfig(
 
   private def getTargetPath: String = targetPath.getOrElse("")
 
-  override def getLoggingService: TableDefinition.LogService = LogService(
-    serviceId = serviceId,
-    serviceName = getName,
-    serviceType = getServiceType,
-    config = keyParamsToPrint,
-    status = status,
-    errorMessage = errorMessage)
 }

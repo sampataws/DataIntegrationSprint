@@ -31,7 +31,7 @@ case class ComputeConfig(
                           additionalField3: String = null
                         ) extends ServiceConfig {
 
-  override def getName: String = s"Cluster $clusterName"
+  override def getName: String = s"Cluster :- $clusterName"
 
   override def getServiceType: ServiceType.Type = ServiceType.Compute
 
@@ -63,11 +63,5 @@ case class ComputeConfig(
     logger.error(failure.printStackTrace().toString)
     this.copy(status = updatedStatus, errorMessage = this.errorMessage :+ failure.getMessage)
   }
-  override def getLoggingService: TableDefinition.LogService = LogService(
-    serviceId = serviceId,
-    serviceName = getName,
-    serviceType = getServiceType,
-    config = keyParamsToPrint,
-    status = status,
-    errorMessage = errorMessage)
+
 }
