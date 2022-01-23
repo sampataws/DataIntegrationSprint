@@ -1,4 +1,4 @@
-package com.dataintegration.database.services
+package com.dataintegration.core.util
 
 case class SqlCredentials(
                          driver : String = "com.mysql.cj.jdbc.Driver",

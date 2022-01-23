@@ -1,5 +1,6 @@
 package com.dataintegration.database.services
 
+import com.dataintegration.core.util.SqlCredentials
 import scalikejdbc.ConnectionPool
 import zio.{Task, URIO, ZLayer, ZManaged}
 

@@ -21,7 +21,15 @@ trait IntegrationClient extends zio.ZIOAppDefault with ApplicationLogger {
     val computeDependencies = computeContract.dependencies(configLayer, auditLayer)
     val storageDependencies = storageContract.dependencies(configLayer, auditLayer)
     val jobDependencies = jobContract.dependencies(configLayer, auditLayer, computeDependencies, storageDependencies)
-    jobContract.serviceManager.Apis.startService.provideLayer(jobDependencies)
+
+    val serviceResult = for {
+      _ <- DatabaseService.Apis.insertInDatabase()
+      response <- jobContract.serviceManager.Apis.startService.provideLayer(jobDependencies).tapError(e =>
+        DatabaseService.Apis.updateInDatabase(error = Some(e)))
+      _ <- DatabaseService.Apis.updateInDatabase(error = None)
+    } yield response
+
+    serviceResult.provideLayer(configLayer >>> auditLayer)
   }
 
 }
