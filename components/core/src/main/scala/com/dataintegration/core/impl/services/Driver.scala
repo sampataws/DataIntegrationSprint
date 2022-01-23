@@ -1,10 +1,10 @@
 package com.dataintegration.core.impl.services
 
-import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, IntegrationConf, JobConfig, Properties}
+import com.dataintegration.core.binders._
 import com.dataintegration.core.impl.adapter.contracts.{ComputeContract, JobContract, StorageContract}
 import com.dataintegration.core.services.configuration.Configuration
-import com.dataintegration.core.services.log.audit.DatabaseServiceV2
-import com.dataintegration.core.services.log.audit.DatabaseServiceV2.{AuditTableApi, NoLog}
+import com.dataintegration.core.services.log.audit.DatabaseService
+import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
 import com.dataintegration.core.util.{ApplicationLogger, ApplicationUtils, Status}
 import zio.{ULayer, ZEnv, ZIO, ZIOAppArgs, ZLayer}
 
@@ -77,7 +77,7 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
   }
 
   //val audit: ULayer[AuditTableApi] = DatabaseService.live
-  val audit: ZLayer[IntegrationConf, Nothing, AuditTableApi] = DatabaseServiceV2.live
+  val audit: ZLayer[IntegrationConf, Nothing, AuditTableApi] = DatabaseService.live
 
   def jobAppBuilder[A, B, C](
                               compute: ComputeContract[A],

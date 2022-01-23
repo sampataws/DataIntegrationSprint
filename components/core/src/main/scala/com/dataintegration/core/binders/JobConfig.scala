@@ -2,10 +2,8 @@ package com.dataintegration.core.binders
 
 import java.util.UUID
 
-import com.dataintegration.core.services.log.audit.TableDefinition
-import com.dataintegration.core.services.log.audit.TableDefinition.LogService
 import com.dataintegration.core.services.util.ServiceConfig
-import com.dataintegration.core.util.{ApplicationUtils, ServiceType, Status}
+import com.dataintegration.core.util.{ServiceType, Status}
 
 case class JobConfig(
                       serviceId: String = UUID.randomUUID().toString,

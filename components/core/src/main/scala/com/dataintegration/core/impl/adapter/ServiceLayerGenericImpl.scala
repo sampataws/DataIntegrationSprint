@@ -1,7 +1,7 @@
 package com.dataintegration.core.impl.adapter
 
 import com.dataintegration.core.binders.Properties
-import com.dataintegration.core.services.log.audit.DatabaseServiceV2.AuditTableApi
+import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
 import com.dataintegration.core.util.ApplicationLogger
 import zio.Task
 

@@ -2,9 +2,9 @@ package com.dataintegration.core.impl.adapter.contracts
 
 import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf}
 import com.dataintegration.core.impl.services.storage.{StorageApi, StorageManager}
-import com.dataintegration.core.services.log.audit.DatabaseServiceV2.AuditTableApi
+import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
 import zio.config.ReadError
-import zio.{IsNotIntersection, Tag, ULayer, ZIO, ZLayer}
+import zio.{IsNotIntersection, Tag, ZLayer}
 
 abstract class StorageContract[T: Tag : IsNotIntersection] extends ServiceContract[FileStoreConfig, T] {
 
