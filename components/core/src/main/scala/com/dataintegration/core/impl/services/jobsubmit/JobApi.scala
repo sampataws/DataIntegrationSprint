@@ -3,7 +3,7 @@ package com.dataintegration.core.impl.services.jobsubmit
 import com.dataintegration.core.binders.{JobConfig, Properties}
 import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
 import com.dataintegration.core.impl.services.jobsubmit.application.SubmitJob
-import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
+import com.dataintegration.core.services.log.audit.DatabaseServiceV2.AuditTableApi
 import zio.Task
 
 class JobApi[T] extends ServiceLayerGenericImpl[JobConfig, T] {

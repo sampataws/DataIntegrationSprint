@@ -36,7 +36,8 @@ object Descriptors {
       ).apply(ComputeConfig.apply, ComputeConfig.unapply)
 
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
-    (string("job_name") |@|
+    (addColumn("uuid", UUID.randomUUID().toString) |@|
+      string("job_name") |@|
       string("source_system") |@|
       string("main_class") |@|
       string("working_directory") |@|

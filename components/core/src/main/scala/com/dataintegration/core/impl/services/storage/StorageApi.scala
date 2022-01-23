@@ -3,7 +3,7 @@ package com.dataintegration.core.impl.services.storage
 import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
 import com.dataintegration.core.impl.services.storage.application.{CopyFiles, DeleteFiles}
-import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
+import com.dataintegration.core.services.log.audit.DatabaseServiceV2.AuditTableApi
 import zio.Task
 
 class StorageApi[T] extends ServiceLayerGenericImpl[FileStoreConfig, T] {

@@ -3,8 +3,8 @@ package com.dataintegration.core.impl.services.storage
 import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf, Properties}
 import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
 import com.dataintegration.core.impl.adapter.contracts.ServiceContract
-import com.dataintegration.core.services.log.audit.DatabaseService
-import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
+import com.dataintegration.core.services.log.audit.{DatabaseServiceV2 => DatabaseService}
+import com.dataintegration.core.services.log.audit.DatabaseServiceV2.AuditTableApi
 import com.dataintegration.core.services.util.ServiceManager
 import zio.{IsNotIntersection, Tag, Task, ZIO, ZLayer}
 

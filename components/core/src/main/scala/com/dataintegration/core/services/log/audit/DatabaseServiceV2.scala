@@ -2,12 +2,11 @@ package com.dataintegration.core.services.log.audit
 
 import com.dataintegration.core.binders.{IntegrationConf, Properties}
 import com.dataintegration.core.services.util.ServiceConfig
-import zio.{Task, ZIO}
+import zio.{Task, ZIO, ZLayer}
 
 object DatabaseServiceV2 {
 
   trait AuditTableApi {
-    val jobId: String
     def insertInDatabase(data: ServiceConfig): Task[Unit]
     def updateInDatabase(data: ServiceConfig): Task[Unit]
     def insertInDatabase(): Task[Unit]
@@ -23,14 +22,13 @@ object DatabaseServiceV2 {
 
   }
 
-  val live: ZIO[IntegrationConf, Nothing, NoLog] = {
+  val live: ZLayer[IntegrationConf, Nothing, AuditTableApi] = {
     for {
       config <- ZIO.service[IntegrationConf]
     } yield NoLog(config.getProperties)
-  }
+  }.toLayer
 
   case class NoLog(properties: Properties) extends AuditTableApi {
-    override val jobId: String = null
     override def insertInDatabase(data: ServiceConfig): Task[Unit] = ZIO.unit
     override def updateInDatabase(data: ServiceConfig): Task[Unit] = ZIO.unit
     override def insertInDatabase(): Task[Unit] = ZIO.unit
