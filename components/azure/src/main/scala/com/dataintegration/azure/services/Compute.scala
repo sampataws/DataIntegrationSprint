@@ -3,13 +3,14 @@ package com.dataintegration.azure.services
 import java.io.File
 import java.util.Collections
 
-import com.dataintegration.core.binders.{ComputeConfig, Properties}
+import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf, Properties}
 import com.dataintegration.core.impl.adapter.contracts.ComputeContract
+import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
 import com.microsoft.azure.credentials.ApplicationTokenCredentials
 import com.microsoft.azure.management.hdinsight.v2018_06_01_preview._
 import com.microsoft.azure.management.hdinsight.v2018_06_01_preview.implementation.{ClusterInner, HDInsightManagementClientImpl}
-import zio.{ULayer, ZLayer}
+import zio.ZLayer
 
 import scala.jdk.CollectionConverters._
 
@@ -81,10 +82,11 @@ object Compute extends ComputeContract[HDInsightManagementClientImpl] {
     val resourceGroupName = System.getenv("RESOURCE_GROUP_NAME") // todo
     client.clusters().delete(resourceGroupName, data.clusterName)
 
-    client.clusters().executeScriptActions(resourceGroupName,data.clusterName, new ExecuteScriptActionParameters())
+    client.clusters().executeScriptActions(resourceGroupName, data.clusterName, new ExecuteScriptActionParameters())
 
     data.copy(status = Status.Success)
   }
 
-  override val contractLive: ULayer[Compute.this.type] = ZLayer.succeed(this)
+  override def partialDependencies: ZLayer[Any with IntegrationConf with DatabaseService.AuditTableApi, Throwable, List[ComputeConfig]] =
+    (contractLive ++ serviceApiLive ++ clientLive) >>> serviceManager.liveManaged
 }

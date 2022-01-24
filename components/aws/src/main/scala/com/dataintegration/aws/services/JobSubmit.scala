@@ -3,10 +3,11 @@ package com.dataintegration.aws.services
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.services.elasticmapreduce.model._
 import com.amazonaws.services.elasticmapreduce.{AmazonElasticMapReduce, AmazonElasticMapReduceClientBuilder}
-import com.dataintegration.core.binders.{JobConfig, Properties}
+import com.dataintegration.core.binders._
 import com.dataintegration.core.impl.adapter.contracts.JobContract
+import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
-import zio.{ULayer, ZLayer}
+import zio.ZLayer
 
 import scala.jdk.CollectionConverters._
 
@@ -60,5 +61,6 @@ object JobSubmit extends JobContract[AmazonElasticMapReduce] {
 
   override def destroyService(client: AmazonElasticMapReduce, data: JobConfig): JobConfig = data
 
-  override val contractLive: ULayer[JobSubmit.type] = ZLayer.succeed(this)
+  override def partialDependencies: ZLayer[Any with IntegrationConf with DatabaseService.AuditTableApi with List[ComputeConfig] with List[FileStoreConfig], Nothing, JobSubmit.serviceManager.JobLive] =
+    (contractLive ++ serviceApiLive ++ clientLive) >>> serviceManager.live
 }

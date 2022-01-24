@@ -29,15 +29,8 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
       data.copy(status = Status.Success)
     }
 
-    override val contractLive: ULayer[ComputeContract.type] = ZLayer.succeed(this)
-
-    val serviceApi2: ServiceLayerGenericImpl[ComputeConfig,String] = new ComputeApi[String]
-    val contractLive2: ULayer[ServiceContract[ComputeConfig,String]] = ZLayer.succeed(this)
-
-   // type PD = Any with IntegrationConf with AuditTableApi
-
-    def partialDependencies: ZLayer[Any with IntegrationConf with AuditTableApi, Throwable, List[ComputeConfig]] =
-      (contractLive2 ++ ZLayer.succeed(serviceApi2) ++ clientLive) >>> serviceManager.liveManaged
+    override def partialDependencies: ZLayer[Any with IntegrationConf with AuditTableApi, Throwable, List[ComputeConfig]] =
+      (contractLive ++ serviceApiLive ++ clientLive) >>> serviceManager.liveManaged
 
   }
 
@@ -52,15 +45,9 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
       logger.info(s"Storage create done $client + ${data.getName} + ${ApplicationUtils.mapToJson(data.keyParamsToPrint)}")
       data.copy(status = Status.Success)
     }
-    override val contractLive: ULayer[StorageContract.type] = ZLayer.succeed(this)
 
-    val serviceApi2: ServiceLayerGenericImpl[FileStoreConfig,String] = new StorageApi[String]
-    val contractLive2: ULayer[ServiceContract[FileStoreConfig,String]] = ZLayer.succeed(this)
-
-    //type PD = Any with IntegrationConf with AuditTableApi
-
-    def partialDependencies: ZLayer[Any with IntegrationConf with AuditTableApi, Throwable, List[FileStoreConfig]] =
-      (contractLive2 ++ ZLayer.succeed(serviceApi2) ++ clientLive) >>> serviceManager.liveManaged
+    override def partialDependencies: ZLayer[Any with IntegrationConf with AuditTableApi, Throwable, List[FileStoreConfig]] =
+      (contractLive ++ serviceApiLive ++ clientLive) >>> serviceManager.liveManaged
 
   }
 
@@ -75,14 +62,9 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
       logger.info(s"Job create done $client" + ApplicationUtils.mapToJson(data.keyParamsToPrint))
       data.copy(status = Status.Success)
     }
-    override val contractLive: ULayer[JobContract.type] = ZLayer.succeed(this)
 
-    val serviceApi2: ServiceLayerGenericImpl[JobConfig,String] = new JobApi[String]
-    val contractLive2: ULayer[ServiceContract[JobConfig,String]] = ZLayer.succeed(this)
-
-    def partialDependencies: ZLayer[Any with IntegrationConf with AuditTableApi with List[ComputeConfig] with List[FileStoreConfig], Nothing, Driver.JobContract.serviceManager.JobLive] =
-      (contractLive2 ++ ZLayer.succeed(serviceApi2) ++ clientLive) >>> JobContract.serviceManager.live
-
+    override def partialDependencies: ZLayer[Any with IntegrationConf with AuditTableApi with List[ComputeConfig] with List[FileStoreConfig], Nothing, Driver.JobContract.serviceManager.JobLive] =
+      (contractLive ++ serviceApiLive ++ clientLive) >>> JobContract.serviceManager.live
 
   }
 
@@ -106,7 +88,7 @@ object Driver extends zio.ZIOAppDefault with Configuration with ApplicationLogge
       //.provideLayer()
 
   override def run: ZIO[ZEnv with ZIOAppArgs, Any, Any] =
-    //JobContract.serviceManager.Apis.startService.provideLayer(hello)
-    jobAppBuilder(ComputeContract, StorageContract, JobContract)
+    JobContract.serviceManager.Apis.startService.provideLayer(hello)
+    //jobAppBuilder(ComputeContract, StorageContract, JobContract)
   //JobContract.manager.Apis.startService.provideLayer(jd)
 }

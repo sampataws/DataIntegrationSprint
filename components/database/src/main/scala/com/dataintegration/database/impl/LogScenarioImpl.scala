@@ -12,7 +12,7 @@ object LogScenarioImpl extends AuditStructure[LogScenarios] {
 
   override def createTableStatement: SQL[Nothing, NoExtractor] =
     sql"""CREATE TABLE IF NOT EXISTS $table (
-          scenario_id VARCHAR(36),
+          scenario_id VARCHAR(36) PRIMARY KEY,
           feature_id VARCHAR(36),
           scenario_name TEXT,
           scenario_desc TEXT,

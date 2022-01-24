@@ -4,8 +4,9 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.services.elasticmapreduce.model._
 import com.amazonaws.services.elasticmapreduce.util.StepFactory
 import com.amazonaws.services.elasticmapreduce.{AmazonElasticMapReduce, AmazonElasticMapReduceClientBuilder}
-import com.dataintegration.core.binders.{ComputeConfig, Properties}
+import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf, Properties}
 import com.dataintegration.core.impl.adapter.contracts.ComputeContract
+import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
 import zio.{ULayer, ZLayer}
 
@@ -63,5 +64,6 @@ object Compute extends ComputeContract[AmazonElasticMapReduce] {
     data.copy(status = Status.Success)
   }
 
-  override val contractLive: ULayer[Compute.type] = ZLayer.succeed(this)
+  override def partialDependencies: ZLayer[Any with IntegrationConf with DatabaseService.AuditTableApi, Throwable, List[ComputeConfig]] =
+    (contractLive ++ serviceApiLive ++ clientLive) >>> serviceManager.liveManaged
 }

@@ -19,8 +19,8 @@ abstract class ServiceContract[S <: ServiceConfig, T: Tag : IsNotIntersection] e
       .map(prop => createClient(prop.getProperties))
       .toManagedWith(client => UIO(destroyClient(client))).toLayer
 
-  val serviceApi: ServiceLayerGenericImpl[S, T]
-  val contractLive: ULayer[this.type]
+  val serviceApiLive: ULayer[ServiceLayerGenericImpl[S, T]] // should be a ulayer
+  val contractLive: ULayer[ServiceContract[S,T]] // should be ServiceContract[sp]
 
   val serviceManager: ServiceManager[S]
 

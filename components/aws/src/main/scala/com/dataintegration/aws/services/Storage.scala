@@ -4,10 +4,11 @@ import java.io.File
 
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
-import com.dataintegration.core.binders.{FileStoreConfig, Properties}
+import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf, Properties}
 import com.dataintegration.core.impl.adapter.contracts.StorageContract
+import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
-import zio.{ULayer, ZLayer}
+import zio.ZLayer
 
 import scala.jdk.CollectionConverters._
 
@@ -49,5 +50,6 @@ object Storage extends StorageContract[AmazonS3] {
     data.copy(status = Status.Success)
   }
 
-  override val contractLive: ULayer[Storage.type] = ZLayer.succeed(this)
+  override def partialDependencies: ZLayer[Any with IntegrationConf with DatabaseService.AuditTableApi, Throwable, List[FileStoreConfig]] =
+    (contractLive ++ serviceApiLive ++ clientLive) >>> serviceManager.liveManaged
 }

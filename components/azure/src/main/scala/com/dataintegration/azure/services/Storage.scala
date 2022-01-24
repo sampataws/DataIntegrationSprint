@@ -4,8 +4,9 @@ import java.time.OffsetDateTime
 
 import com.azure.storage.blob.sas.{BlobContainerSasPermission, BlobServiceSasSignatureValues}
 import com.azure.storage.blob.{BlobServiceClient, BlobServiceClientBuilder}
-import com.dataintegration.core.binders.{FileStoreConfig, Properties}
+import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf, Properties}
 import com.dataintegration.core.impl.adapter.contracts.StorageContract
+import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
 import zio.{ULayer, ZLayer}
 
@@ -66,5 +67,6 @@ object Storage extends StorageContract[BlobServiceClient] {
     data.copy(status = Status.Success)
   }
 
-  override val contractLive: ULayer[Storage.this.type] = ZLayer.succeed(this)
+  override def partialDependencies: ZLayer[Any with IntegrationConf with DatabaseService.AuditTableApi, Throwable, List[FileStoreConfig]] =
+    (contractLive ++ serviceApiLive ++ clientLive) >>> serviceManager.liveManaged
 }
