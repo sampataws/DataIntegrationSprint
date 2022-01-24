@@ -7,8 +7,11 @@ import scalikejdbc._
 object LogServiceImpl extends AuditStructure[LogService] {
 
   override val tableName = "dts_services"
+
   override def primaryKey: scalikejdbc.SQLSyntax = col.serviceId
+
   override def connectionPoolName: String = "default"
+
   implicit val session: AutoSession.type = AutoSession
 
   override def createTableStatement: SQL[Nothing, NoExtractor] =
@@ -33,7 +36,7 @@ object LogServiceImpl extends AuditStructure[LogService] {
     col.serviceType -> data.serviceType.toString,
     col.config -> ApplicationUtils.mapToJson(data.config),
     col.status -> data.status.toString,
-    col.errorMessage -> (if(data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
+    col.errorMessage -> (if (data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
     col.additionalField1 -> data.additionalField1,
     col.createdAt -> data.createdAt,
     col.createdBy -> data.createdBy,

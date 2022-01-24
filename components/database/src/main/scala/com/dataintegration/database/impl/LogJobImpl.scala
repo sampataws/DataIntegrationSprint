@@ -7,8 +7,11 @@ import scalikejdbc._
 object LogJobImpl extends AuditStructure[LogJob] {
 
   override val tableName = "dts_job"
+
   override def primaryKey: scalikejdbc.SQLSyntax = col.jobId
+
   override def connectionPoolName: String = "default"
+
   implicit val session: AutoSession.type = AutoSession
 
   override def createTableStatement: SQL[Nothing, NoExtractor] =
@@ -32,7 +35,7 @@ object LogJobImpl extends AuditStructure[LogJob] {
     col.jobType -> data.jobType,
     col.config -> ApplicationUtils.mapToJson(data.config),
     col.status -> data.status.toString,
-    col.errorMessage -> (if(data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
+    col.errorMessage -> (if (data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
     col.additionalField1 -> data.additionalField1,
     col.createdAt -> data.createdAt,
     col.createdBy -> data.createdBy,

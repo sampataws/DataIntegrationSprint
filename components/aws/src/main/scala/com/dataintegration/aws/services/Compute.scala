@@ -8,7 +8,7 @@ import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf, Propert
 import com.dataintegration.core.impl.adapter.contracts.ComputeContract
 import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
-import zio.{ULayer, ZLayer}
+import zio.ZLayer
 
 // https://sysadmins.co.za/aws-create-emr-cluster-with-java-sdk-examples/
 object Compute extends ComputeContract[AmazonElasticMapReduce] {

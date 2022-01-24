@@ -20,7 +20,7 @@ case class CreateCluster[T](
   override def preJob(): Task[Unit] = for {
     _ <- JobLogger.logConsole(className, s"${data.getLoggingInfo} creation process started")
     _ <- auditApi.insertInDatabase(data)
-  } yield()
+  } yield ()
 
   override def mainJob: Task[ComputeConfig] = Task {
     job(client, data)

@@ -6,14 +6,14 @@ import zio.{Task, URIO, ZLayer, ZManaged}
 
 object JobClient extends ApplicationLogger {
 
-  def createClient(endpoint : String): Task[JobControllerClient] = Task {
+  def createClient(endpoint: String): Task[JobControllerClient] = Task {
     val jobControllerSettings = JobControllerSettings.newBuilder().setEndpoint(endpoint).build()
     val jobControllerClient = JobControllerClient.create(jobControllerSettings)
     logger.info("Job client initiated")
     jobControllerClient
   }
 
-  def destroyClient(client : JobControllerClient): URIO[Any, Unit] = Task {
+  def destroyClient(client: JobControllerClient): URIO[Any, Unit] = Task {
     client.shutdown()
     client.close()
     logger.info("Job client destroyed")

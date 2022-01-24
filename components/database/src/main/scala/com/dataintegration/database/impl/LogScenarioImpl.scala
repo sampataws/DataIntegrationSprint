@@ -6,8 +6,11 @@ import scalikejdbc._
 object LogScenarioImpl extends AuditStructure[LogScenarios] {
 
   override val tableName = "dts_scenarios"
+
   override def primaryKey: scalikejdbc.SQLSyntax = col.scenarioId
+
   override def connectionPoolName: String = "default"
+
   implicit val session: AutoSession.type = AutoSession
 
   override def createTableStatement: SQL[Nothing, NoExtractor] =
@@ -35,7 +38,7 @@ object LogScenarioImpl extends AuditStructure[LogScenarios] {
     col.scenarioDesc -> data.scenarioDesc,
     col.assertion -> data.assertion,
     col.status -> data.status.toString,
-    col.errorMessage -> (if(data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
+    col.errorMessage -> (if (data.errorMessage.isEmpty) null else data.errorMessage.mkString(", ")),
     col.createdAt -> data.createdAt,
     col.createdBy -> data.createdBy,
     col.modifiedAt -> data.modifiedAt,

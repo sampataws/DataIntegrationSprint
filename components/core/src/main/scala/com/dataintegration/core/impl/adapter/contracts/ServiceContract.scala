@@ -9,9 +9,11 @@ import zio.{IsNotIntersection, Tag, UIO, ULayer, ZIO, ZLayer}
 abstract class ServiceContract[S <: ServiceConfig, T: Tag : IsNotIntersection] extends ApplicationLogger {
 
   def createClient(properties: Properties): T
+
   def destroyClient(client: T): Unit
 
   def createService(client: T, data: S): S
+
   def destroyService(client: T, data: S): S
 
   def clientLive: ZLayer[IntegrationConf, Nothing, T] =
@@ -20,7 +22,7 @@ abstract class ServiceContract[S <: ServiceConfig, T: Tag : IsNotIntersection] e
       .toManagedWith(client => UIO(destroyClient(client))).toLayer
 
   val serviceApiLive: ULayer[ServiceLayerGenericImpl[S, T]] // should be a ulayer
-  val contractLive: ULayer[ServiceContract[S,T]] // should be ServiceContract[sp]
+  val contractLive: ULayer[ServiceContract[S, T]] // should be ServiceContract[sp]
 
   val serviceManager: ServiceManager[S]
 

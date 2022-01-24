@@ -3,7 +3,7 @@ package com.dataintegration.core.binders
 import java.util.UUID
 
 case class Properties(
-                       jobId : String = UUID.randomUUID().toString,
+                       jobId: String = UUID.randomUUID().toString,
                        jobName: String,
                        systemName: String,
                        parentMainClass: String,

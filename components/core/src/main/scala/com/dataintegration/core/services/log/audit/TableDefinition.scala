@@ -34,16 +34,16 @@ object TableDefinition {
                          modifiedBy: String = "dts")
 
   case class LogScenarios(
-                         scenarioId : String,
-                         featureId : String,
-                         scenarioName : String,
-                         scenarioDesc : String = null,
-                         assertion : String,
-                         status: Status.Type = Status.Pending,
-                         errorMessage: Seq[String] = Seq.empty,
-                         createdAt: ZonedDateTime = ZonedDateTime.now(),
-                         createdBy: String = "dts",
-                         modifiedAt: ZonedDateTime = ZonedDateTime.now(),
-                         modifiedBy: String = "dts")
+                           scenarioId: String,
+                           featureId: String,
+                           scenarioName: String,
+                           scenarioDesc: String = null,
+                           assertion: String,
+                           status: Status.Type = Status.Pending,
+                           errorMessage: Seq[String] = Seq.empty,
+                           createdAt: ZonedDateTime = ZonedDateTime.now(),
+                           createdBy: String = "dts",
+                           modifiedAt: ZonedDateTime = ZonedDateTime.now(),
+                           modifiedBy: String = "dts")
 
 }

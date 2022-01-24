@@ -8,8 +8,11 @@ object DatabaseService {
 
   trait AuditTableApi {
     def insertInDatabase(data: ServiceConfig): Task[Unit]
+
     def updateInDatabase(data: ServiceConfig): Task[Unit]
+
     def insertInDatabase(): Task[Unit]
+
     def updateInDatabase(error: Option[Throwable]): Task[Unit]
   }
 
@@ -30,8 +33,11 @@ object DatabaseService {
 
   case class NoLog(properties: Properties) extends AuditTableApi {
     override def insertInDatabase(data: ServiceConfig): Task[Unit] = ZIO.unit
+
     override def updateInDatabase(data: ServiceConfig): Task[Unit] = ZIO.unit
+
     override def insertInDatabase(): Task[Unit] = ZIO.unit
+
     override def updateInDatabase(error: Option[Throwable]): Task[Unit] = ZIO.unit
   }
 

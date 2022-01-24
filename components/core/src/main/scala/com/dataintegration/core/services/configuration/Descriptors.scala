@@ -50,14 +50,14 @@ object Descriptors {
       ).apply(Properties.apply, Properties.unapply)
 
   def getAssertionDescriptor =
-    (string("name") |@| string("type"))(AssertScenario.apply,AssertScenario.unapply)
+    (string("name") |@| string("type")) (AssertScenario.apply, AssertScenario.unapply)
 
   def getScenarioDescriptor = (
     string("feature_name") |@|
       string("description") |@|
-      list("file_dependencies")(getFileStoreDescriptor)|@|
+      list("file_dependencies")(getFileStoreDescriptor) |@|
       list("assertions")(getAssertionDescriptor)
-    )(ScenarioConfig.apply,ScenarioConfig.unapply)
+    ) (ScenarioConfig.apply, ScenarioConfig.unapply)
 
 
   def getFeatureDescriptor: ConfigDescriptor[Feature] =

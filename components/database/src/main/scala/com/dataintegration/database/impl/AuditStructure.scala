@@ -6,7 +6,8 @@ import scalikejdbc._
 trait AuditStructure[T] extends SQLSyntaxSupport[T] {
 
   val col: ColumnName[T] = column
-  def primaryKey : SQLSyntax
+
+  def primaryKey: SQLSyntax
 
   def createTableStatement: SQL[Nothing, NoExtractor]
 
@@ -14,7 +15,7 @@ trait AuditStructure[T] extends SQLSyntaxSupport[T] {
     insertInto(this).namedValues(namedValueList(data): _*)
   }
 
-  def updateIntoTable(data: T, id : String): SQL[UpdateOperation, NoExtractor] = withSQL {
+  def updateIntoTable(data: T, id: String): SQL[UpdateOperation, NoExtractor] = withSQL {
     update(this).set(
       namedValueList(data): _*
     ).where.eq(primaryKey, id)

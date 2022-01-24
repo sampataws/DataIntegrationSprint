@@ -2,7 +2,6 @@ package com.dataintegration.core.impl.adapter.contracts
 
 import com.dataintegration.core.binders.{ComputeConfig, IntegrationConf}
 import com.dataintegration.core.impl.adapter.ServiceLayerGenericImpl
-import com.dataintegration.core.impl.services.Driver.ComputeContract.{contractLive, serviceManager}
 import com.dataintegration.core.impl.services.compute.{ComputeApi, ComputeManager}
 import com.dataintegration.core.services.log.audit.DatabaseService.AuditTableApi
 import zio.config.ReadError

@@ -8,9 +8,10 @@ import com.dataintegration.core.binders.{FileStoreConfig, IntegrationConf, Prope
 import com.dataintegration.core.impl.adapter.contracts.StorageContract
 import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
-import zio.{ULayer, ZLayer}
+import zio.ZLayer
 
 import scala.jdk.CollectionConverters._
+
 // https://stackoverflow.com/questions/64870147/how-to-move-file-between-azure-blob-containers-using-java
 object Storage extends StorageContract[BlobServiceClient] {
 
