@@ -6,13 +6,11 @@ import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, JobConf
 import com.dataintegration.core.services.log.audit.{DatabaseService, TableDefinition}
 import com.dataintegration.core.services.util.ServiceConfig
 import com.dataintegration.core.util.Status
-import com.dataintegration.database.impl.{LogJobImpl, LogServiceImpl}
+import com.dataintegration.database.impl.{LogJobImpl, LogScenarioImpl, LogServiceImpl}
 import scalikejdbc.{DB, NoExtractor, SQL}
 import zio.Task
 
 case class AuditApi(properties: Properties) extends DatabaseService.AuditTableApi {
-
-  // todo - This class is created twice because of dependency issue
 
   private def sqlQueryWrapper(query: => SQL[scalikejdbc.UpdateOperation, NoExtractor]): Task[Unit] = Task {
     DB localTx { implicit s =>
@@ -26,11 +24,20 @@ case class AuditApi(properties: Properties) extends DatabaseService.AuditTableAp
     sqlQueryWrapper(query(updatedData))
   }
 
+  private def updateLoggingScenarios(service: JobConfig): Task[Unit] = Task {
+    DB localTx { implicit s =>
+      service.scenarios.getLoggingService.map { self =>
+        LogScenarioImpl.insertIntoTable(self.copy(featureId = service.serviceId)).execute.apply()
+      }
+    }
+  }
+
+
   override def insertInDatabase(data: ServiceConfig): Task[Unit] = {
     data match {
       case service: ComputeConfig => sqlQueryBuilder(LogServiceImpl.insertIntoTable, service.getLoggingService)
       case service: FileStoreConfig => sqlQueryBuilder(LogServiceImpl.insertIntoTable, service.getLoggingService)
-      case service: JobConfig => sqlQueryBuilder(LogServiceImpl.insertIntoTable, service.getLoggingService)
+      case service: JobConfig => sqlQueryBuilder(LogServiceImpl.insertIntoTable, service.getLoggingService) *> updateLoggingScenarios(service)
     }
   }
 

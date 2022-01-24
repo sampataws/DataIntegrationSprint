@@ -35,7 +35,7 @@ object TableDefinition {
 
   case class LogScenarios(
                            scenarioId: String,
-                           featureId: String,
+                           featureId: String = null, // This gets updated on its own while writing - null as a placeholder
                            scenarioName: String,
                            scenarioDesc: String = null,
                            assertion: String,
