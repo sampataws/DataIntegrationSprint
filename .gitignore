@@ -8,3 +8,4 @@
 /components/azure/target/
 /components/database/target/
 /components/gcp-managed/target/
+/examples/gcp-demo/target/

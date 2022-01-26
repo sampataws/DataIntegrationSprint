@@ -1,5 +1,9 @@
 com.dataintegration.demo.job.IndiaDayCount
 
 inputPath=gs://dts-dev-bucket/testinglib/input/covid_variants.csv
-outputPath=gs://dts-dev-bucket/testinglib/input/
+outputPath=gs://dts-dev-bucket/testinglib/output/indiaDayCount
 jarpath=gs://dts-dev-bucket/testinglib/libs/gcp-demo-assembly-0.1.jar
+
+
+com.dataintegration.demo.job.Variants
+outputPath=gs://dts-dev-bucket/testinglib/output/variants

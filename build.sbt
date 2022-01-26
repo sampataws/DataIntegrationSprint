@@ -1,7 +1,7 @@
 name := "DataIntegrationSprint"
 
 ThisBuild / version := "0.1"
-ThisBuild / scalaVersion := "2.13.7"
+ThisBuild / scalaVersion := "2.12.15"
 ThisBuild / organization := "com.dataintegration"
 ThisBuild / organizationName := "DataIntegrationSprint"
 
@@ -14,6 +14,7 @@ lazy val dependencies = Seq(
 
 lazy val subProjectName = "components"
 lazy val subProjectNameExamples = "examples"
+lazy val scalaVersionsToCompile = Seq("2.13.7", "2.12.15")
 
 lazy val root = (project in file("."))
   .aggregate(core, gcp)
@@ -43,6 +44,7 @@ lazy val databaseLibraries = Seq(
 lazy val core = (project in file(s"$subProjectName/core"))
   .settings(
     name := "core",
+    crossScalaVersions := scalaVersionsToCompile,
     libraryDependencies ++= dependencies
   )
 
@@ -55,6 +57,7 @@ lazy val gcp = (project in file(s"$subProjectName/gcp"))
 lazy val gcpManaged = (project in file(s"$subProjectName/gcp-managed"))
   .settings(
     name := "gcp-managed",
+    crossScalaVersions := scalaVersionsToCompile,
     libraryDependencies ++= gcpLibraries
   ).dependsOn(core)
 
@@ -78,15 +81,16 @@ lazy val database = (project in file(s"$subProjectName/database"))
   ).dependsOn(core)
 
 lazy val sparkLibraries = Seq(
-  "org.apache.spark" %% "spark-core" % "3.2.0" % "provided",
-  "org.apache.spark" %% "spark-sql" % "3.2.0" % "provided"
+  "org.apache.spark" %% "spark-core" % "3.1.2" % "provided",
+  "org.apache.spark" %% "spark-sql" % "3.1.2" % "provided"
 )
 lazy val gcpDemo = (project in file(s"$subProjectNameExamples/gcp-demo"))
   .settings(
     name := "gcp-demo",
+    crossScalaVersions := scalaVersionsToCompile,
     libraryDependencies ++= sparkLibraries,
     assemblyMergeStrategy in assembly := {
-      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case PathList("META-INF", xs@_*) => MergeStrategy.discard
       case x => MergeStrategy.first
     }
   ).dependsOn(core, gcpManaged, database)
