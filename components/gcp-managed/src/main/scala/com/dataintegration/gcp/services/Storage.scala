@@ -37,6 +37,7 @@ object Storage extends StorageContract[GoogleCloudStorage] {
       ApplicationUtils.cleanForwardSlash(bucket + "/" + path)
 
     def copyLocalToGCS: Boolean = {
+      logger.info(s"[$className] Files Copy starting from ${data.sourcePath} to " + getFullPath(data.targetBucket.get, data.targetPath.get))
       val blobInfo = BlobInfo.newBuilder(data.targetBucket.get, data.targetPath.get).build()
       val response = client.create(blobInfo, Files.readAllBytes(Paths.get(data.sourcePath)))
       logger.info(s"[$className] Files Copied from ${data.sourcePath} to " + getFullPath(data.targetBucket.get, data.targetPath.get) +
@@ -46,10 +47,12 @@ object Storage extends StorageContract[GoogleCloudStorage] {
 
     def copyGCStoGCS: Boolean = {
       val blobList = client.list(data.sourceBucket, GoogleCloudStorage.BlobListOption.prefix(data.sourcePath))
+      logger.info(s"[$className] Files Copy starting from ${data.sourceBucket}/${data.sourcePath} to " + getFullPath(data.targetBucket.get, data.targetPath.get))
       blobList.iterateAll().asScala.foreach { blob =>
-        val res: CopyWriter = blob.copyTo(data.targetBucket.get, data.targetPath.get)
+        val copyToPath = ApplicationUtils.cleanForwardSlash(data.targetPath.get + "/" + blob.getName.replace(data.sourcePath,""))
+        val res: CopyWriter = blob.copyTo(data.targetBucket.get, copyToPath)
 
-        logger.info(s"[$className] Files Copied from ${data.sourceBucket}" + getFullPath(data.targetBucket.get, data.targetPath.get) +
+        logger.info(s"[$className] Files Copied from ${data.sourceBucket}/${blob.getName} to " + getFullPath(data.targetBucket.get, copyToPath) +
           s" with Api response ${res.toString}")
       }
       true
