@@ -7,3 +7,4 @@
 /components/core/src/main/scala/backup/
 /components/azure/target/
 /components/database/target/
+/components/gcp-managed/target/

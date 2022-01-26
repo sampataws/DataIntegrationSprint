@@ -51,6 +51,13 @@ lazy val gcp = (project in file(s"$subProjectName/gcp"))
     libraryDependencies ++= gcpLibraries
   ).dependsOn(core)
 
+lazy val gcpManaged = (project in file(s"$subProjectName/gcp-managed"))
+  .settings(
+    name := "gcp-managed",
+    libraryDependencies ++= gcpLibraries
+  ).dependsOn(core)
+
+
 lazy val aws = (project in file(s"$subProjectName/aws"))
   .settings(
     name := "aws",
