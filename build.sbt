@@ -13,6 +13,7 @@ lazy val dependencies = Seq(
 )
 
 lazy val subProjectName = "components"
+lazy val subProjectNameExamples = "examples"
 
 lazy val root = (project in file("."))
   .aggregate(core, gcp)
@@ -75,3 +76,19 @@ lazy val database = (project in file(s"$subProjectName/database"))
     name := "database",
     libraryDependencies ++= databaseLibraries
   ).dependsOn(core)
+
+lazy val sparkLibraries = Seq(
+  "org.apache.spark" %% "spark-core" % "3.2.0" % "provided",
+  "org.apache.spark" %% "spark-sql" % "3.2.0" % "provided"
+)
+lazy val gcpDemo = (project in file(s"$subProjectNameExamples/gcp-demo"))
+  .settings(
+    name := "gcp-demo",
+    libraryDependencies ++= sparkLibraries,
+    assemblyMergeStrategy in assembly := {
+      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case x => MergeStrategy.first
+    }
+  ).dependsOn(core, gcpManaged, database)
+
+

@@ -13,7 +13,7 @@ trait ManagedTestSuiteWrapper extends ApplicationLogger {
 
   def assertions(value: Seq[LogScenarios]): Seq[LogScenarios]
 
-  def postStep(args: Array[String]): Unit = Unit
+  def postStep(args: Array[String]): Unit = ()
 
   def main(args: Array[String]): Unit = {
     val response = try {

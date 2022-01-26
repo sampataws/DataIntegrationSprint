@@ -51,7 +51,7 @@ object Compute extends ComputeContract[ClusterControllerClient] {
       .setMasterConfig(masterInstanceGroup)
       .setWorkerConfig(workedInstanceGroup)
       .setConfigBucket(data.bucketName)
-      .setField(FieldDescriptor.Type.STRING("endpoint"), data.endpoint)
+      //.setField(FieldDescriptor.Type.STRING("endpoint"), data.endpoint)
       .setLifecycleConfig(LifecycleConfig.newBuilder().setIdleDeleteTtl(Duration.newBuilder().setSeconds(data.idleDeletionDurationSec)))
       .build()
 

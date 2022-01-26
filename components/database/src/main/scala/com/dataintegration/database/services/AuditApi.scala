@@ -5,17 +5,31 @@ import java.time.ZonedDateTime
 import com.dataintegration.core.binders.{ComputeConfig, FileStoreConfig, JobConfig, Properties}
 import com.dataintegration.core.services.log.audit.{DatabaseService, TableDefinition}
 import com.dataintegration.core.services.util.ServiceConfig
-import com.dataintegration.core.util.Status
+import com.dataintegration.core.util.{ApplicationLogger, Status}
 import com.dataintegration.database.impl.{LogJobImpl, LogScenarioImpl, LogServiceImpl}
 import scalikejdbc.{DB, NoExtractor, SQL}
 import zio.Task
 
-case class AuditApi(properties: Properties) extends DatabaseService.AuditTableApi {
+case class AuditApi(properties: Properties) extends DatabaseService.AuditTableApi with ApplicationLogger {
 
   private def sqlQueryWrapper(query: => SQL[scalikejdbc.UpdateOperation, NoExtractor]): Task[Unit] = Task {
     DB localTx { implicit s =>
-      // todo - log sql query and map errors
+      logger.info(s"[SQL query] :- ${logSqlStatements(query)}")
       query.execute.apply()
+    }
+  }.mapError({ exception =>
+    logger.error("SQL query failed :- " + exception.printStackTrace())
+    exception
+  }).unit
+
+  private def logSqlStatements(query: => SQL[scalikejdbc.UpdateOperation, NoExtractor]): String = {
+    val statement = query.statement
+    val params = query.parameters.map { value =>
+      if (value == null) "null" else value.toString
+    }
+
+    params.foldLeft(statement) { (text, param) =>
+      text.replaceFirst("\\?", param)
     }
   }
 
