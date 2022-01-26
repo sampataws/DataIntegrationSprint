@@ -5,7 +5,6 @@ import com.dataintegration.core.impl.adapter.contracts.ComputeContract
 import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
 import com.google.cloud.dataproc.v1._
-import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Duration
 import zio.ZLayer
 

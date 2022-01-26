@@ -49,7 +49,7 @@ object Storage extends StorageContract[GoogleCloudStorage] {
       val blobList = client.list(data.sourceBucket, GoogleCloudStorage.BlobListOption.prefix(data.sourcePath))
       logger.info(s"[$className] Files Copy starting from ${data.sourceBucket}/${data.sourcePath} to " + getFullPath(data.targetBucket.get, data.targetPath.get))
       blobList.iterateAll().asScala.foreach { blob =>
-        val copyToPath = ApplicationUtils.cleanForwardSlash(data.targetPath.get + "/" + blob.getName.replace(data.sourcePath,""))
+        val copyToPath = ApplicationUtils.cleanForwardSlash(data.targetPath.get + "/" + blob.getName.replace(data.sourcePath, ""))
         val res: CopyWriter = blob.copyTo(data.targetBucket.get, copyToPath)
 
         logger.info(s"[$className] Files Copied from ${data.sourceBucket}/${blob.getName} to " + getFullPath(data.targetBucket.get, copyToPath) +
@@ -62,7 +62,7 @@ object Storage extends StorageContract[GoogleCloudStorage] {
   }
 
   override def destroyService(client: GoogleCloudStorage, data: FileStoreConfig): FileStoreConfig = {
-    val blobList = client.list(data.sourceBucket, GoogleCloudStorage.BlobListOption.prefix(data.sourcePath))
+    val blobList = client.list(data.targetBucket.getOrElse(data.sourceBucket), GoogleCloudStorage.BlobListOption.prefix(data.targetPath.get))
     blobList.iterateAll().asScala.foreach { file =>
       val response = file.delete()
       logger.info(s"[$className] Deleted Files " + ApplicationUtils.cleanForwardSlash(file.getBucket + "/" + file.getName) +
