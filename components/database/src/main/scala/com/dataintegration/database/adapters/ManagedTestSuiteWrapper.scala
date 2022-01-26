@@ -7,11 +7,11 @@ import com.dataintegration.database.services.CreateConnection
 
 trait ManagedTestSuiteWrapper extends ApplicationLogger {
 
-  def preStep(args: Array[String], featureId: String, workingDir: String): Unit
+  def preStep(args: Array[String], featureId: String, workingDir: String): Array[String]
 
   def transformationStep(args: Array[String], featureId: String, workingDir: String): Unit
 
-  def assertions(value: Seq[LogScenarios]): Seq[LogScenarios]
+  def assertions(value: Seq[LogScenarios],args: Array[String]): Seq[LogScenarios]
 
   def postStep(args: Array[String]): Unit = ()
 
@@ -23,10 +23,10 @@ trait ManagedTestSuiteWrapper extends ApplicationLogger {
       CreateConnection.createClient
       logger.info(s"Job started with feature id as $featureId and working directory as $workingDir")
 
-      preStep(args, featureId, workingDir)
-      transformationStep(args, featureId, workingDir)
+      val updatedArguments = preStep(args, featureId, workingDir)
+      transformationStep(updatedArguments, featureId, workingDir)
 
-      val assertionsResponse = assertions(LogScenarioImpl.readTable(featureId))
+      val assertionsResponse = assertions(LogScenarioImpl.readTable(featureId), updatedArguments)
       LogScenarioImpl.updateIntoTable(assertionsResponse)
 
       val jobStatus = validateScenarioStatus(assertionsResponse)
