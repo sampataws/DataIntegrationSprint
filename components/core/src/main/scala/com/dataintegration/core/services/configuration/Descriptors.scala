@@ -61,7 +61,8 @@ object Descriptors {
 
 
   def getFeatureDescriptor: ConfigDescriptor[Feature] =
-    (string("name") |@|
+    (addColumn("uuid", UUID.randomUUID().toString) |@|
+      string("name") |@|
       applyFunctionalTransformation(string("base_path")) |@|
       string("main_class").optional |@|
       nested("storage")(getScenarioDescriptor) |@|

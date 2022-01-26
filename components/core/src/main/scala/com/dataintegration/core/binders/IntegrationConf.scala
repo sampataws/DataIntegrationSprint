@@ -27,8 +27,9 @@ case class IntegrationConf(
   def getJob: List[JobConfig] =
     getFeatures.map { feature =>
       JobConfig(
+        serviceId = feature.serviceId,
         name = feature.name,
-        programArguments = feature.arguments.get :+ s"workingDir=${feature.basePath}",
+        programArguments = feature.arguments.get ++ Seq(s"workingDir=${feature.basePath}",s"featureId=${feature.serviceId}"),
         className = feature.mainClass.get,
         sparkConf = feature.sparkConf.get,
         libraryList = properties.jarDependencies.map(_.targetPath.get),

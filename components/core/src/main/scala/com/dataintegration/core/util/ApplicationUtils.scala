@@ -95,4 +95,10 @@ object ApplicationUtils {
         distributionList = distributionList.tail :+ distributionList.head,
         accumulator = accumulator ++ Map(primaryList.head -> distributionList.head))
   }
+
+  def findInArgs(list : Array[String], prefix : String) : String = {
+    val filteredList = list.filter(_.startsWith(prefix))
+    if(filteredList.nonEmpty) filteredList.head.split("=").last.trim
+    else throw new RuntimeException(s"Prefix $prefix not found in ${list.mkString(",")}")
+  }
 }

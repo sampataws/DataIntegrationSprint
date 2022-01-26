@@ -1,22 +1,22 @@
 package com.dataintegration.database.services
 
-import com.dataintegration.core.util.SqlCredentials
+import com.dataintegration.core.util.{ApplicationLogger, SqlCredentials}
 import scalikejdbc.ConnectionPool
-import zio.{Task, URIO, ZLayer, ZManaged}
+import zio.{Task, ZLayer, ZManaged}
 
-object CreateConnection {
-  def createClient: Task[Unit] = Task {
+object CreateConnection extends ApplicationLogger {
+  def createClient: Unit = {
     val sqlCredentials = SqlCredentials()
     Class.forName(sqlCredentials.driver)
     ConnectionPool.singleton(sqlCredentials.url, sqlCredentials.user, sqlCredentials.password)
-    println("connection created")
+    logger.info("Database connection created")
   }
 
-  def destroyClient: URIO[Any, Unit] = Task {
+  def destroyClient: Unit = {
     ConnectionPool.closeAll()
-    println("connection destroyed")
-  }.orDie
+    logger.info("Database connection destroyed")
+  }
 
   val live: ZLayer[Any, Throwable, Unit] =
-    ZManaged.acquireReleaseWith(acquire = createClient)(release = _ => destroyClient).toLayer
+    ZManaged.acquireReleaseWith(acquire = Task(createClient))(release = _ => Task(destroyClient).orDie).toLayer
 }
