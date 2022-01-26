@@ -39,9 +39,7 @@ object Compute extends ComputeContract[ClusterControllerClient] {
       InstanceGroupConfig.newBuilder()
         .setMachineTypeUri(imageName)
         .setNumInstances(numInstances)
-        .setImageUri(data.imageVersion)
         .setDiskConfig(diskConf(diskVolume))
-        //.setPreemptibility(Preemptibility.PREEMPTIBLE)
         .build()
 
     val masterInstanceGroup = createInstanceGroup(data.masterMachineTypeUri, data.masterNumInstance, data.masterBootDiskSizeGB)
@@ -50,8 +48,8 @@ object Compute extends ComputeContract[ClusterControllerClient] {
     val clusterConfig = ClusterConfig.newBuilder()
       .setMasterConfig(masterInstanceGroup)
       .setWorkerConfig(workedInstanceGroup)
+      .setSoftwareConfig(SoftwareConfig.newBuilder().setImageVersion(data.imageVersion))
       .setConfigBucket(data.bucketName)
-      //.setField(FieldDescriptor.Type.STRING("endpoint"), data.endpoint)
       .setLifecycleConfig(LifecycleConfig.newBuilder().setIdleDeleteTtl(Duration.newBuilder().setSeconds(data.idleDeletionDurationSec)))
       .build()
 
@@ -66,7 +64,7 @@ object Compute extends ComputeContract[ClusterControllerClient] {
   override def destroyService(client: ClusterControllerClient, data: ComputeConfig): ComputeConfig = {
     val runningCluster = listOfRunningClusters(client, data)
     if (runningCluster.contains(data.clusterName)) {
-      val response = client.deleteClusterAsync(data.project, data.region, data.clusterName)
+      val response = client.deleteClusterAsync(data.project, data.region, data.clusterName).get()
       logger.info(s"[$className] Cluster ${data.getName} deleted with Api response ${response.toString}")
       data.copy(status = Status.Success)
     } else {

@@ -6,6 +6,7 @@ import java.util.UUID
 import com.dataintegration.core.util.{ApplicationLogger, ApplicationUtils, Status}
 import zio.config._
 import ConfigDescriptor._
+import com.dataintegration.core.services.configuration.Descriptors.addColumn
 import zio.config.typesafe.TypesafeConfigSource
 
 object Configuration extends App with ApplicationLogger {
@@ -19,14 +20,15 @@ object Configuration extends App with ApplicationLogger {
       |}
       |""".stripMargin
 
-  private case class TEST(serviceId: String, name: String, jars: List[TESTFILE])
+  private case class TEST(serviceId: String,status: Status.Type, name: String, jars: List[String])
 
   private case class TESTFILE(bucket: String, path: String)
 
   private def getDesc = (
     addColumn("service_id", Seq("abc", "def").mkString(",")) |@|
+      addColumn[Status.Type]("status", Status.Pending) |@|
       string("name") |@|
-      nested("jars")(list("dep")(getFiles))
+      nested("jars")(list("dep")(string))
     ) (TEST.apply, TEST.unapply)
 
   private def getFiles = (
@@ -34,7 +36,7 @@ object Configuration extends App with ApplicationLogger {
     ) (TESTFILE.apply, TESTFILE.unapply)
 
   private lazy val conf =
-    TypesafeConfigSource.fromHoconFile(new File(""))
+    TypesafeConfigSource.fromHoconString(str)
       .flatMap(x => read(getDesc from x))
 
   private lazy val readableConf = conf match {
@@ -53,6 +55,9 @@ object Configuration extends App with ApplicationLogger {
 
   private def addErrorColumn(): ConfigDescriptor[Seq[String]] =
     string("error_message").optional.transform[Seq[String]]((abc: Option[String]) => Seq.empty[String], s => Option(s.toString))
+
+  private def addColumnV2[T](name: String, transformation: => T): ConfigDescriptor[T] =
+    string(name).optional.transform[T](_ => transformation, s => Option(s.toString))
 
 
   ApplicationUtils.prettyPrintCaseClass(Seq(readableConf), logger)

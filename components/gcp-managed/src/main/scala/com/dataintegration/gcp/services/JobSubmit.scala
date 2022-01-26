@@ -4,7 +4,7 @@ import com.dataintegration.core.binders._
 import com.dataintegration.core.impl.adapter.contracts.JobContract
 import com.dataintegration.core.services.log.audit.DatabaseService
 import com.dataintegration.core.util.Status
-import com.google.cloud.dataproc.v1.{Job, JobControllerClient, JobControllerSettings, JobPlacement, SparkJob}
+import com.google.cloud.dataproc.v1._
 import zio.ZLayer
 
 import scala.jdk.CollectionConverters._
@@ -48,13 +48,10 @@ object JobSubmit extends JobContract[JobControllerClient] {
     val jobBuilder = Job.newBuilder().setPlacement(jobPlacement).setSparkJob(sparkJob).build()
 
     @scala.annotation.tailrec
-    def poolStatus(sparkJob: Job): JobConfig = {
+    def poolStatus(jobId: String): JobConfig = {
+      val status = client.getJob(data.compute.project, data.compute.region, jobId).getStatus.getState.toString.toUpperCase
 
-      val status = sparkJob.getStatus.getState.toString.toUpperCase
-
-      def loggingText = s"[$className] ${data.name} status :- ${sparkJob.getStatus.getState} with Api response " + sparkJob.getStatus.getDetails
-
-      logger.info(s"[$className] ${data.name} status :- ${sparkJob.getStatus.getState}")
+      def loggingText = s"[$className] ${data.name}:$jobId status :- $status"
 
       status match {
         case "DONE" =>
@@ -64,17 +61,21 @@ object JobSubmit extends JobContract[JobControllerClient] {
           logger.error(loggingText)
           throw new Exception(loggingText)
         case "PENDING" | "RUNNING" =>
-          Thread.sleep(1000 * 20)
-          poolStatus(sparkJob)
+          logger.info(loggingText)
+          Thread.sleep(1000 * 10)
+          poolStatus(jobId)
         case _ =>
-          logger.debug(loggingText)
-          Thread.sleep(1000 * 30)
-          poolStatus(sparkJob)
+          logger.info(loggingText)
+          Thread.sleep(1000 * 10)
+          poolStatus(jobId)
+
       }
     }
 
-    val response = client.submitJobAsOperationAsync(data.compute.project, data.compute.region, jobBuilder).get()
-    poolStatus(response)
+    val response = client.submitJob(data.compute.project, data.compute.region, jobBuilder)
+    val jobId = response.getReference.getJobId
+    logger.info(s"Job submitted as $jobId")
+    poolStatus(jobId)
   }
 
   override def destroyService(client: JobControllerClient, data: JobConfig): JobConfig = data

@@ -22,8 +22,8 @@ case class ComputeConfig(
                           workerBootDiskSizeGB: Int,
                           idleDeletionDurationSec: Int,
                           weightage: Int,
-                          status: Status.Type,
-                          errorMessage: Seq[String],
+                          status: Status.Type = Status.Pending,
+                          errorMessage: Seq[String] = Seq.empty,
                           additionalField1: String = null,
                           additionalField2: String = null,
                           additionalField3: String = null

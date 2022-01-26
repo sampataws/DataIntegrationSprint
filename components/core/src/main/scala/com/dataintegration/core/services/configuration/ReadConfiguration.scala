@@ -12,7 +12,7 @@ object ReadConfiguration {
   def apply(configPath: String): ZLayer[Any, ReadError[String], IntegrationConf] = {
     val conf =
       TypesafeConfigSource.fromHoconFile(new File(configPath))
-        .flatMap(configSource => read(Descriptors.getIntegrationConf from configSource))
+        .flatMap(configSource => read(DescriptorsForScala12.getIntegrationConf from configSource))
     ZIO.fromEither(conf).toLayer
   }
 }

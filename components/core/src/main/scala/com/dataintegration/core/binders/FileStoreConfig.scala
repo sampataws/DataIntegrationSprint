@@ -11,8 +11,8 @@ case class FileStoreConfig(
                             sourcePath: String,
                             targetBucket: Option[String],
                             targetPath: Option[String],
-                            status: Status.Type,
-                            errorMessage: Seq[String],
+                            status: Status.Type = Status.Pending,
+                            errorMessage: Seq[String] = Seq.empty,
                             additionalField1: String = null,
                             additionalField2: String = null,
                             additionalField3: String = null

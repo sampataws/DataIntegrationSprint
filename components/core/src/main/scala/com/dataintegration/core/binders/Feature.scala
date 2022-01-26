@@ -13,7 +13,7 @@ case class Feature(
                     arguments: Option[List[String]],
                     sparkConf: Option[Map[String, String]],
                     executableFlag: Boolean,
-                    status: Status.Type,
-                    errorMessage: Seq[String]
+                    status: Status.Type = Status.Pending,
+                    errorMessage: Seq[String] = Seq.empty
                   )
 
