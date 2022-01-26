@@ -4,7 +4,7 @@ import com.dataintegration.core.binders._
 
 object DescriptorCustomApply {
   def propertiesApply =
-    (jobName: String, systemName: String, parentMainClass: String, parentWorkingDir: String, jobArguments: List[String], jobSparkConf: Map[String, String], jarDependencies: List[FileStoreConfig], maxParallelism: Int, maxRetries: Int, cleanUpFlag: Boolean) =>
+    (jobName: String, systemName: String, parentMainClass: String, parentWorkingDir: String, jobArguments: List[String], jobSparkConf: Map[String, String], jarDependencies: List[FileStoreConfig],cloudStoragePrefix : String, maxParallelism: Int, maxRetries: Int, cleanUpFlag: Boolean) =>
       Properties.apply(jobName = jobName,
         systemName = systemName,
         parentMainClass = parentMainClass,
@@ -12,6 +12,7 @@ object DescriptorCustomApply {
         jobArguments = jobArguments,
         jobSparkConf = jobSparkConf,
         jarDependencies = jarDependencies,
+        cloudStoragePrefix = cloudStoragePrefix,
         maxParallelism = maxParallelism,
         maxRetries = maxRetries,
         cleanUpFlag = cleanUpFlag)
@@ -26,6 +27,7 @@ object DescriptorCustomApply {
       properties.jobArguments,
       properties.jobSparkConf,
       properties.jarDependencies,
+      properties.cloudStoragePrefix,
       properties.maxParallelism,
       properties.maxRetries,
       properties.cleanUpFlag)

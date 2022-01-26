@@ -11,6 +11,7 @@ case class Properties(
                        jobArguments: List[String],
                        jobSparkConf: Map[String, String],
                        jarDependencies: List[FileStoreConfig],
+                       cloudStoragePrefix : String,
                        maxParallelism: Int,
                        maxRetries: Int,
                        cleanUpFlag: Boolean

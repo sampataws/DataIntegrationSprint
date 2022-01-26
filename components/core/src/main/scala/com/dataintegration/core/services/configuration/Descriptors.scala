@@ -44,6 +44,7 @@ object Descriptors {
       list("args")(string) |@|
       map("spark_conf")(string) |@|
       nested("jars")(list("jar_dependencies")(getFileStoreDescriptor)) |@|
+      string("cloud_storage_prefix") |@|
       int("max_cluster_parallelism") |@|
       int("max_cluster_retries") |@|
       boolean("clean_up_directory")

@@ -32,7 +32,8 @@ case class IntegrationConf(
         programArguments = feature.arguments.get ++ Seq(s"workingDir=${feature.basePath}",s"featureId=${feature.serviceId}"),
         className = feature.mainClass.get,
         sparkConf = feature.sparkConf.get,
-        libraryList = properties.jarDependencies.map(_.targetPath.get),
+        libraryList = properties.jarDependencies
+          .map(x => properties.cloudStoragePrefix + ApplicationUtils.cleanForwardSlash(x.targetBucket.get + "/" + properties.parentWorkingDir + "/" + x.targetPath.get)),
         scenarios = feature.scenarios
       )
     }
@@ -54,7 +55,7 @@ case class IntegrationConf(
   private def moveFilesCloudToCloud(file: FileStoreConfig, basePath: String): FileStoreConfig =
     file.copy(
       targetBucket = Some(file.targetBucket.getOrElse(file.sourceBucket)),
-      targetPath = Some(ApplicationUtils.cleanForwardSlash(basePath + file.targetPath.getOrElse("")))
+      targetPath = Some(ApplicationUtils.cleanForwardSlash(basePath + "/" + file.targetPath.getOrElse("")))
     )
 
   // local to cloud
