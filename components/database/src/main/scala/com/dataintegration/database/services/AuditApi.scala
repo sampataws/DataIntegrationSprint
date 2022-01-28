@@ -69,6 +69,7 @@ case class AuditApi(properties: Properties) extends DatabaseService.AuditTableAp
       jobName = properties.jobName,
       jobType = "IntegrationTestSuite", // todo
     )
+    logger.info(s"Application ID of ${properties.jobName} :- ${properties.jobId}")
     sqlQueryWrapper(LogJobImpl.insertIntoTable(logData))
   }
 

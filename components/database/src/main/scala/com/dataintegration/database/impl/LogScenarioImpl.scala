@@ -60,7 +60,7 @@ object LogScenarioImpl extends AuditStructure[LogScenarios] {
       modifiedBy = rs.string("modified_by")
     )).list.apply()
 
-  def readTable(featureId : String*): Seq[LogScenarios] =
+  def readTable(featureId: String*): Seq[LogScenarios] =
     sql"select * from $table where feature_id in ($featureId)".map(rs => LogScenarios(
       scenarioId = rs.string("scenario_id"),
       featureId = rs.string("feature_id"),
@@ -68,7 +68,7 @@ object LogScenarioImpl extends AuditStructure[LogScenarios] {
       scenarioDesc = rs.string("scenario_desc"),
       assertion = rs.string("assertion"),
       status = stringToStatus(rs.string("status")),
-      errorMessage = rs.string("error_message").split(", "),
+      errorMessage = if (rs.string("error_message") != null) rs.string("error_message").split(", ") else null,
       createdAt = rs.zonedDateTime("created_at"),
       createdBy = rs.string("created_by"),
       modifiedAt = rs.zonedDateTime("modified_at"),
