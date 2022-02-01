@@ -30,6 +30,7 @@ trait ManagedTestSuiteWrapper extends ApplicationLogger {
       LogScenarioImpl.updateIntoTable(assertionsResponse)
 
       val jobStatus = validateScenarioStatus(assertionsResponse)
+      logger.info(s"[Job Validation Status] :- $jobStatus")
       postStep(args)
       jobStatus
     } catch {

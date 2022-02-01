@@ -25,3 +25,11 @@ object Driver extends IntegrationClient {
     jobContract = JobSubmit
   ).provideLayer(CreateConnection.live)
 }
+
+/*
+
+ select * from dts_job where job_id = "0b5d4f73-4850-4bff-9db1-958d70bf5a14";
+ select * from dts_services where job_id = "0b5d4f73-4850-4bff-9db1-958d70bf5a14";
+ select * from dts_scenarios where feature_id = "0b5d4f73-4850-4bff-9db1-958d70bf5a14";
+
+ */
