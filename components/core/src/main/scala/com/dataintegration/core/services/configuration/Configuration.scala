@@ -12,7 +12,7 @@ trait Configuration {
 
   private lazy val conf =
     TypesafeConfigSource.fromHoconFile(new File(configPath))
-      .flatMap(c => read(Descriptors.getIntegrationConf from c))
+      .flatMap(c => read(DescriptorsForScala12.getIntegrationConf from c))
 
   @deprecated("Use configLayer")
   protected lazy val readableConf: IntegrationConf = conf match {

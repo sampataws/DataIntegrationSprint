@@ -5,6 +5,7 @@ import java.util.UUID
 
 import zio.config._
 import ConfigDescriptor._
+import com.dataintegration.core.binders.Others._
 import com.dataintegration.core.binders._
 import com.dataintegration.core.util.Status
 
@@ -28,27 +29,44 @@ object Descriptors {
       int("idle_deletion_duration_sec") |@|
       int("weightage") |@|
       addColumn[Status.Type]("status", Status.Pending) |@|
-      addColumn("error_message", Seq.empty[String])
+      addColumn("error_message", Seq.empty[String]) |@|
+      addColumn[String]("additional_field1", null) |@|
+      addColumn[String]("additional_field2", null) |@|
+      addColumn[String]("additional_field3", null)
       ).apply(ComputeConfig.apply, ComputeConfig.unapply)
 
   def getPropertiesDescriptor: ConfigDescriptor[Properties] =
-    (string("job_name") |@|
+    (addColumn("uuid", UUID.randomUUID().toString) |@|
+      string("job_name") |@|
       string("source_system") |@|
       string("main_class") |@|
       string("working_directory") |@|
       list("args")(string) |@|
       map("spark_conf")(string) |@|
       nested("jars")(list("jar_dependencies")(getFileStoreDescriptor)) |@|
+      string("cloud_storage_prefix") |@|
       int("max_cluster_parallelism") |@|
       int("max_cluster_retries") |@|
       boolean("clean_up_directory")
       ).apply(Properties.apply, Properties.unapply)
 
+  def getAssertionDescriptor =
+    (string("name") |@| string("type")) (AssertScenario.apply, AssertScenario.unapply)
+
+  def getScenarioDescriptor = (
+    string("feature_name") |@|
+      string("description") |@|
+      list("file_dependencies")(getFileStoreDescriptor) |@|
+      list("assertions")(getAssertionDescriptor)
+    ) (ScenarioConfig.apply, ScenarioConfig.unapply)
+
+
   def getFeatureDescriptor: ConfigDescriptor[Feature] =
-    (string("name") |@|
+    (addColumn("uuid", UUID.randomUUID().toString) |@|
+      string("name") |@|
       applyFunctionalTransformation(string("base_path")) |@|
       string("main_class").optional |@|
-      nested("storage")(list("file_dependencies")(getFileStoreDescriptor)) |@|
+      nested("storage")(getScenarioDescriptor) |@|
       list("args")(string).optional |@|
       map("spark_conf")(string).optional |@|
       boolean("runnable") |@|
@@ -63,7 +81,10 @@ object Descriptors {
       string("target_bucket").optional |@|
       string("target_path").optional |@|
       addColumn[Status.Type]("status", Status.Pending) |@|
-      addColumn("error_message", Seq.empty[String])
+      addColumn("error_message", Seq.empty[String]) |@|
+      addColumn[String]("additional_field1", null) |@|
+      addColumn[String]("additional_field2", null) |@|
+      addColumn[String]("additional_field3", null)
       ).apply(FileStoreConfig.apply, FileStoreConfig.unapply)
 
   def getIntegrationConf: ConfigDescriptor[IntegrationConf] =

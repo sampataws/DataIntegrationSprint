@@ -2,11 +2,11 @@ package com.dataintegration.gcp.services.storage
 
 import com.dataintegration.core.binders.{FileStoreConfig, Properties}
 import com.dataintegration.core.services.util.ServiceLayer
-import com.dataintegration.gcp.services.storage.application.{DeleteFiles, CopyFiles}
+import com.dataintegration.gcp.services.storage.application.{CopyFiles, DeleteFiles}
 import com.google.cloud.storage.Storage
 import zio.{Task, ULayer, ZLayer}
 
-object StorageApi extends ServiceLayer[FileStoreConfig, Storage]{
+object StorageApi extends ServiceLayer[FileStoreConfig, Storage] {
 
   override val layer: ULayer[ServiceLayer[FileStoreConfig, Storage]] = ZLayer.succeed(this)
 

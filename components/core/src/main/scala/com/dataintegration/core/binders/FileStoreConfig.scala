@@ -3,20 +3,25 @@ package com.dataintegration.core.binders
 import java.util.UUID
 
 import com.dataintegration.core.services.util.ServiceConfig
-import com.dataintegration.core.util.Status
+import com.dataintegration.core.util.{ServiceType, Status}
 
 case class FileStoreConfig(
-                      serviceId: String = UUID.randomUUID().toString,
-                      sourceBucket: String,
-                      sourcePath: String,
-                      targetBucket: Option[String],
-                      targetPath: Option[String],
-                      status: Status.Type,
-                      errorMessage: Seq[String]
-                    ) extends ServiceConfig {
-  override def getName: String = "FileStore"
+                            serviceId: String = UUID.randomUUID().toString,
+                            sourceBucket: String,
+                            sourcePath: String,
+                            targetBucket: Option[String],
+                            targetPath: Option[String],
+                            status: Status.Type = Status.Pending,
+                            errorMessage: Seq[String] = Seq.empty,
+                            additionalField1: String = null,
+                            additionalField2: String = null,
+                            additionalField3: String = null
+                          ) extends ServiceConfig {
+  override def getName: String = s"FileStore :- ${targetPath.get}"
 
   override def getServiceId: String = serviceId
+
+  override def getServiceType: ServiceType.Type = ServiceType.Storage
 
   /**
    * Key parameters to print
@@ -24,9 +29,8 @@ case class FileStoreConfig(
    * @return
    */
   override def keyParamsToPrint: Map[String, String] =
-    Map("source_path" -> s"$sourceBucket/$sourcePath",
-      "target_path" -> s"$getTargetBucket/$getTargetPath"
-    )
+    Map("source_path" -> s"$sourceBucket/${sourcePath.replaceAll("\\\\", "/")}",
+      "target_path" -> s"$getTargetBucket/$getTargetPath")
 
   /**
    * Return error message as string
@@ -64,4 +68,5 @@ case class FileStoreConfig(
   private def getTargetBucket: String = targetBucket.getOrElse(sourceBucket)
 
   private def getTargetPath: String = targetPath.getOrElse("")
+
 }

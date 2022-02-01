@@ -10,7 +10,7 @@ trait ServiceApi[T] {
 
   def postJob(serviceResult: T): Task[Unit]
 
-  def onSuccess: () => T
+  def onSuccess: T => T
 
   def onFailure: Throwable => T
 
@@ -18,8 +18,9 @@ trait ServiceApi[T] {
 
   def execute: ZIO[Any, Throwable, T] = for {
     _ <- preJob()
-    serviceResult <- mainJob.fold(onFailure, _ => onSuccess())
+    serviceResult <- mainJob.fold(onFailure, onSuccess)
     _ <- postJob(serviceResult)
   } yield serviceResult
+
 
 }

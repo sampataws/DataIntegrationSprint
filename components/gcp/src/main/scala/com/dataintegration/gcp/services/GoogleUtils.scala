@@ -24,7 +24,7 @@ object GoogleUtils extends ApplicationLogger {
       InstanceGroupConfig.newBuilder()
         .setMachineTypeUri(imageName)
         .setNumInstances(numInstances)
-        .setImageUri(data.imageVersion)
+        //.setImageUri(data.imageVersion)
         .setDiskConfig(diskConf(diskVolume))
         //.setPreemptibility(Preemptibility.PREEMPTIBLE)
         .build()
@@ -35,8 +35,8 @@ object GoogleUtils extends ApplicationLogger {
     val clusterConfig = ClusterConfig.newBuilder()
       .setMasterConfig(masterInstanceGroup)
       .setWorkerConfig(workedInstanceGroup)
+      .setSoftwareConfig(SoftwareConfig.newBuilder().setImageVersion(data.imageVersion))
       .setConfigBucket(data.bucketName)
-      .setField(FieldDescriptor.Type.STRING("endpoint"), data.endpoint)
       .setLifecycleConfig(LifecycleConfig.newBuilder().setIdleDeleteTtl(Duration.newBuilder().setSeconds(data.idleDeletionDurationSec)))
       .build()
 
@@ -50,7 +50,7 @@ object GoogleUtils extends ApplicationLogger {
 
   // Later on first check if cluster exists via status apis.
   def deleteCluster(config: ComputeConfig, client: ClusterControllerClient): ComputeConfig = {
-    val response = client.deleteClusterAsync(config.project, config.region, config.clusterName)
+    val response = client.deleteClusterAsync(config.project, config.region, config.clusterName).get()
     logger.info(s"[$className] Cluster ${config.getName} deleted with Api response ${response.toString}")
     config.copy(status = Status.Success)
   }
@@ -60,6 +60,10 @@ object GoogleUtils extends ApplicationLogger {
     clusterList.iterateAll().asScala.map(cluster => cluster.getClusterName).toSeq
   }
 
+  /**
+   * Note :-
+   *    path should'nt start with / and should be the name of the file
+   */
   def copyFiles(storage: Storage, data: FileStoreConfig): FileStoreConfig = {
     data.sourceBucket.trim.toLowerCase match {
       case "local" => copyLocalToGCS
@@ -101,7 +105,10 @@ object GoogleUtils extends ApplicationLogger {
     data.copy(status = Status.Success)
   }
 
-  def submitSparkJob(client : JobControllerClient ,jobConfig: JobConfig): JobConfig = {
+  /**
+   * everything has to be in gs
+   */
+  def submitSparkJob(client: JobControllerClient, jobConfig: JobConfig): JobConfig = {
 
     val jobPlacement = JobPlacement.newBuilder().setClusterName(jobConfig.compute.clusterName).build()
 
@@ -120,13 +127,11 @@ object GoogleUtils extends ApplicationLogger {
     val jobBuilder = Job.newBuilder().setPlacement(jobPlacement).setSparkJob(sparkJob).build()
 
     @scala.annotation.tailrec
-    def poolStatus(sparkJob: Job): JobConfig = {
+    def poolStatus(jobId: String): JobConfig = {
 
-      val status = sparkJob.getStatus.getState.toString.toUpperCase
+      val status = client.getJob(jobConfig.compute.project, jobConfig.compute.region,jobId).getStatus.getState.toString.toUpperCase
 
-      def loggingText = s"[$className] ${jobConfig.name} status :- ${sparkJob.getStatus.getState} with Api response " + sparkJob.getStatus.getDetails
-
-      logger.info(s"[$className] ${jobConfig.name} status :- ${sparkJob.getStatus.getState}")
+      def loggingText = s"[$className] ${jobConfig.name}:$jobId status :- $status"
 
       status match {
         case "DONE" =>
@@ -136,18 +141,21 @@ object GoogleUtils extends ApplicationLogger {
           logger.error(loggingText)
           throw new Exception(loggingText)
         case "PENDING" | "RUNNING" =>
-          Thread.sleep(1000 * 20)
-          poolStatus(sparkJob)
+          logger.info(loggingText)
+          Thread.sleep(1000 * 10)
+          poolStatus(jobId)
         case _ =>
-          logger.debug(loggingText)
-          Thread.sleep(1000 * 30)
-          poolStatus(sparkJob)
+          logger.info(status)
+          logger.info(loggingText)
+          Thread.sleep(1000 * 10)
+          poolStatus(jobId)
 
       }
     }
-
-    val response = client.submitJobAsOperationAsync(jobConfig.compute.project, jobConfig.compute.region, jobBuilder).get()
-    poolStatus(response)
+    val response = client.submitJob(jobConfig.compute.project, jobConfig.compute.region, jobBuilder)
+    val jobId = response.getReference.getJobId
+    logger.info(s"Job submitted as $jobId")
+    poolStatus(jobId)
   }
 
 }

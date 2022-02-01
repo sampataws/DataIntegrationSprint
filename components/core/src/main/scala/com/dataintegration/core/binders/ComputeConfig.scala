@@ -3,30 +3,35 @@ package com.dataintegration.core.binders
 import java.util.UUID
 
 import com.dataintegration.core.services.util.ServiceConfig
-import com.dataintegration.core.util.Status
+import com.dataintegration.core.util.{ServiceType, Status}
 
 case class ComputeConfig(
-                    serviceId: String = UUID.randomUUID().toString,
-                    clusterName: String,
-                    bucketName: String,
-                    project: String,
-                    region: String,
-                    subnetUri: String,
-                    endpoint: String,
-                    imageVersion: String,
-                    masterMachineTypeUri: String,
-                    masterNumInstance: Int,
-                    masterBootDiskSizeGB: Int,
-                    workerMachineTypeUri: String,
-                    workerNumInstance: Int,
-                    workerBootDiskSizeGB: Int,
-                    idleDeletionDurationSec: Int,
-                    weightage: Int,
-                    status: Status.Type,
-                    errorMessage: Seq[String]
-                  ) extends ServiceConfig {
+                          serviceId: String = UUID.randomUUID().toString,
+                          clusterName: String,
+                          bucketName: String,
+                          project: String,
+                          region: String,
+                          subnetUri: String,
+                          endpoint: String,
+                          imageVersion: String,
+                          masterMachineTypeUri: String,
+                          masterNumInstance: Int,
+                          masterBootDiskSizeGB: Int,
+                          workerMachineTypeUri: String,
+                          workerNumInstance: Int,
+                          workerBootDiskSizeGB: Int,
+                          idleDeletionDurationSec: Int,
+                          weightage: Int,
+                          status: Status.Type = Status.Pending,
+                          errorMessage: Seq[String] = Seq.empty,
+                          additionalField1: String = null,
+                          additionalField2: String = null,
+                          additionalField3: String = null
+                        ) extends ServiceConfig {
 
-  override def getName: String = "Cluster"
+  override def getName: String = s"Cluster :- $clusterName"
+
+  override def getServiceType: ServiceType.Type = ServiceType.Compute
 
   override def getServiceId: String = serviceId
 

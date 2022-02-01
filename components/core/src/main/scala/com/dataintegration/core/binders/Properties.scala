@@ -1,6 +1,9 @@
 package com.dataintegration.core.binders
 
+import java.util.UUID
+
 case class Properties(
+                       jobId: String = UUID.randomUUID().toString,
                        jobName: String,
                        systemName: String,
                        parentMainClass: String,
@@ -8,6 +11,7 @@ case class Properties(
                        jobArguments: List[String],
                        jobSparkConf: Map[String, String],
                        jarDependencies: List[FileStoreConfig],
+                       cloudStoragePrefix : String,
                        maxParallelism: Int,
                        maxRetries: Int,
                        cleanUpFlag: Boolean

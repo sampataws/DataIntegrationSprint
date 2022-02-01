@@ -10,6 +10,7 @@ object ApplicationUtils {
    * @param listOfCases Seq of case class
    */
   def prettyPrintCaseClass(listOfCases: Seq[AnyRef], logger: Logger): String = {
+    if (listOfCases.isEmpty) return "List is empty"
     val getHeader = (p: AnyRef) => p.getClass.getDeclaredFields.map(x => {
       x.setAccessible(true)
       x.getName -> (if (x.get(p) == null) "null" else x.get(p).toString)
@@ -62,7 +63,22 @@ object ApplicationUtils {
     primary ++ secondary
 
   def mapToJson[I, O](data: Map[I, O]): String =
-    "{" + data.foreach { self => s"${self._1.toString} : ${self._2.toString}" + "}" }
+    if (data.isEmpty) "{}"
+    else {
+      val fixStringType = (data: String) => s""""$data""""
+      "{" + data.map { self => fixStringType(self._1.toString) + ":" + fixStringType(self._2.toString) }.mkString(", ") + "}"
+    }
+
+  def jsonToMap(data: String): Map[String, String] = try {
+    val filteredData = data.replaceAll("\\{", "").replaceAll("}", "").trim
+    if (filteredData == "") Map.empty[String, String]
+    else filteredData.split(",").map { value =>
+      val splitData = value.split(":")
+      splitData.head.trim -> splitData.last.trim
+    }.toMap
+  } catch {
+    case e: Throwable => Map.empty[String, String]
+  }
 
   @scala.annotation.tailrec
   def equallyDistributeList[C, J](
@@ -78,5 +94,11 @@ object ApplicationUtils {
         primaryList = primaryList.tail,
         distributionList = distributionList.tail :+ distributionList.head,
         accumulator = accumulator ++ Map(primaryList.head -> distributionList.head))
+  }
+
+  def findInArgs(list : Array[String], prefix : String) : String = {
+    val filteredList = list.filter(_.startsWith(prefix))
+    if(filteredList.nonEmpty) filteredList.head.split("=").last.trim
+    else throw new RuntimeException(s"Prefix $prefix not found in ${list.mkString(",")}")
   }
 }

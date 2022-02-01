@@ -6,7 +6,7 @@ import zio.Task
 /**
  * Sep class cause in future it will log to a database as well, hence the task
  */
-object ServiceLogger extends ApplicationLogger {
+object JobLogger extends ApplicationLogger {
 
   object Log {
 
@@ -20,7 +20,7 @@ object ServiceLogger extends ApplicationLogger {
 
   }
 
-  def logAll(preText: String, text: String, logType: Log.Type = Log.LogInfo): Task[Unit] = Task {
+  def logConsole(preText: String, text: String, logType: Log.Type = Log.LogInfo): Task[Unit] = Task {
     val format = s"[$preText] :- $text"
     logType match {
       case Log.LogInfo => logger.info(format)
